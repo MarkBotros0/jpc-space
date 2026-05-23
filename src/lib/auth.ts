@@ -3,28 +3,13 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { loadScopes } from "@/lib/auth/scopes";
 import type { UserRole } from "@/generated/prisma/enums";
 
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
 });
-
-async function loadScopes(userId: number) {
-  const [adminRows, leaderRows, profile] = await Promise.all([
-    db.seasonAdmin.findMany({ where: { userId }, select: { seasonId: true } }),
-    db.groupLeader.findMany({ where: { userId }, select: { groupId: true } }),
-    db.studentProfile.findUnique({
-      where: { userId },
-      select: { activeSeasonId: true },
-    }),
-  ]);
-  return {
-    seasonAdminIds: adminRows.map((r) => r.seasonId),
-    groupLeaderIds: leaderRows.map((r) => r.groupId),
-    activeSeasonId: profile?.activeSeasonId ?? null,
-  };
-}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },

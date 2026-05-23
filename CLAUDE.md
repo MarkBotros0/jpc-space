@@ -1,12 +1,49 @@
 @AGENTS.md
 
-# CLAUDE.md
+# JPC Portal — Claude Context
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## Project Overview
 
-## Stack
+A seasonal program-management portal. Admins run **Seasons** (courses) containing **Groups**, **Sessions** (calendar events), and **Assignments**. Students enroll in seasons, are placed in a current group, attend sessions, and submit work. Leaders run their groups; mentors get read-all visibility; SUPER users have global oversight.
 
-Next.js 16 (App Router) + React 19 + TypeScript, Tailwind v4 (PostCSS), Prisma 7 (PostgreSQL via `@prisma/adapter-pg`), Auth.js v5 (`next-auth@5-beta`) with credentials provider, Zod 4, shadcn-style UI on top of Base UI (`@base-ui/react`). Package manager is **npm** (not pnpm). Note: Next 16 / React 19 / Prisma 7 all have breaking changes from prior majors — see `AGENTS.md`.
+Built with **Next.js 16 App Router**, **React 19**, **TypeScript**, **Prisma 7** (PostgreSQL via `@prisma/adapter-pg`), **Auth.js v5** (`next-auth@5-beta`, credentials provider), **Tailwind v4**, and shadcn-style components on top of **Base UI** (`@base-ui/react`). Package manager is **npm**.
+
+> This is **not** the Next.js you may know — Next 16 / React 19 / Prisma 7 / Auth.js v5 all have breaking changes. Read the relevant guide under `node_modules/next/dist/docs/` before writing code that touches framework APIs.
+
+---
+
+## Project Structure
+
+```
+src/
+  app/
+    api/                # Route handlers (e.g. api/auth/[...nextauth]/route.ts)
+    layout.tsx, page.tsx, globals.css
+
+  lib/                  # Shared library code — DB, auth, RBAC, storage, helpers
+    db.ts               # Prisma client singleton (PrismaPg adapter)
+    auth.ts             # Auth.js v5 config + JWT scope loading
+    rbac.ts             # Role/scope helpers (isAdminOfSeason, isLeaderOfGroup, …)
+    invites.ts          # Invite-token logic
+    public-id.ts        # nanoid generator for Submission.publicId
+    slug.ts             # URL slug helpers
+    storage/            # Storage interface + Local/S3 drivers
+    utils.ts
+
+  components/
+    ui/                 # shadcn-style primitives on Base UI
+
+  generated/prisma/     # Generated Prisma client — import from here, NOT @prisma/client
+
+prisma/
+  schema.prisma         # Single source of truth for DB schema
+  migrations/
+  seed.ts
+```
+
+Path alias `@/*` → `src/*`.
+
+---
 
 ## Commands
 
@@ -21,44 +58,104 @@ npm run db:seed      # tsx prisma/seed.ts
 npm run db:studio    # prisma studio
 ```
 
-Env required for any DB-touching command: `DATABASE_URL` (PostgreSQL). Auth needs `AUTH_SECRET`, `AUTH_URL`. See `.env.example` for the full list including storage driver config.
+Required env: `DATABASE_URL`, `AUTH_SECRET`, `AUTH_URL`, `STORAGE_DRIVER`. See `.env.example`.
 
-Schema changes require user approval before running `prisma migrate dev` (per the comment at the top of `prisma/schema.prisma`).
+---
 
-## Architecture
+## Git Workflow
 
-### Prisma client lives under `src/generated/prisma/`
+- Branch from `main`: `feat/<name>`, `fix/<name>`, `chore/<name>`, `docs/<name>`, `refactor/<name>`, `test/<name>`
+- All branches use **kebab-case**, concise and descriptive
+- Open a **PR** and merge to `main` — never commit directly to `main`
+- Keep PRs focused — one feature or fix per PR
 
-`schema.prisma` sets `generator client { output = "../src/generated/prisma" }`. Import from `@/generated/prisma/client` (PrismaClient), `@/generated/prisma/enums` (UserRole, SeasonStatus, …), or `@/generated/prisma/models/*` — **not** from `@prisma/client`. The singleton lives in `src/lib/db.ts` as `db`, wired through `PrismaPg` adapter.
+---
 
-### Domain model (see `prisma/schema.prisma` for full schema)
+## Database
 
-The portal manages **Seasons** (courses, identified by a URL-friendly `code` like `"gbv-2026"`) containing **Groups**, **Sessions** (calendar events), and **Assignments**. Students enroll in seasons (`SeasonEnrollment` is append-only history; `GroupStudent` is current membership only and enforces one current group per student via a `@unique` on `studentUserId`). Submissions belong to a student+assignment pair (unique together) and are the **only** entity using a `publicId` (nanoid 10-char, see `src/lib/public-id.ts`) — every other entity uses integer IDs in URLs. Soft delete (`deletedAt`) applies to User, Season, StudentProfile, Assignment. Audit columns (`createdById`/`updatedById`) on Season, Assignment, Submission.
+- Schema lives in `prisma/schema.prisma` and is the single source of truth
+- Apply schema changes with `npx prisma migrate dev` — and **get user approval before running it** (the schema header comment is the review gate)
+- Prisma client is generated to `src/generated/prisma/`; import from `@/generated/prisma/client`, `@/generated/prisma/enums`, etc. — **never** from `@prisma/client`
+- Use the singleton `db` exported from `@/lib/db` — do not instantiate `PrismaClient` directly
+- **Soft delete** (`deletedAt`) applies to `User`, `Season`, `StudentProfile`, `Assignment` — set the timestamp, do not hard-delete those records
+- **Audit columns** (`createdById` / `updatedById`) exist on `Season`, `Assignment`, `Submission` — populate them on every create/update of those entities from the current session user
+- URL identifiers: `Season.code` (human-readable slug), `Submission.publicId` (nanoid, 10 chars via `newPublicId()`). Everything else uses the integer `id`
+- Integer PKs throughout (`Int @id @default(autoincrement())`); do not switch to BigInt/UUID
 
-A student's "active season" is denormalized onto `StudentProfile.activeSeasonId` and additionally enforced by business rules (one active season at a time).
+---
 
-### RBAC
+## Access Control
 
-Five roles: `SUPER`, `ADMIN`, `LEADER`, `STUDENT`, `MENTOR`. Authorization is scoped:
+Five roles. Authorization is **scoped**, not flat — `ADMIN` and `LEADER` only apply within specific seasons/groups, which are loaded into the JWT at sign-in.
 
-- `SUPER` — global; only role that can manage users.
-- `ADMIN` — admin **of specific seasons** via `SeasonAdmin` join table; their season IDs are loaded into the JWT as `seasonAdminIds`.
-- `LEADER` — leader **of specific groups** via `GroupLeader`; loaded as `groupLeaderIds`.
-- `MENTOR` — read-all-students, no write scope by default.
-- `STUDENT` — owns own submissions / profile.
+| Role     | Scope                                                                 |
+|----------|----------------------------------------------------------------------|
+| **SUPER**   | Global. Only role that can manage users.                          |
+| **ADMIN**   | Season-scoped, via `SeasonAdmin` join → `session.user.seasonAdminIds` |
+| **LEADER**  | Group-scoped, via `GroupLeader` join → `session.user.groupLeaderIds`  |
+| **MENTOR**  | Read-all-students; no write scope by default.                    |
+| **STUDENT** | Owns their own submissions, profile, attendance records.         |
 
-`src/lib/auth.ts`'s `loadScopes()` queries these joins on sign-in / session refresh and stuffs them into the JWT, then the session callback exposes them on `session.user`. Helpers in `src/lib/rbac.ts` (`isAdminOfSeason`, `isLeaderOfGroup`, `canReadAllStudents`, `canManageUsers`) take a `SessionUser` and the resource ID — use these rather than re-checking roles ad hoc.
+Use helpers in `src/lib/rbac.ts` (`isAdminOfSeason(u, seasonId)`, `isLeaderOfGroup(u, groupId)`, `canReadAllStudents(u)`, `canManageUsers(u)`) — pass the `SessionUser` and the resource id rather than re-checking roles ad hoc. Never expose data beyond the user's scope.
 
-### Storage abstraction
+---
 
-`src/lib/storage/index.ts` exports a `Storage` interface with `LocalFsStorage` and `S3Storage` impls; pick via `STORAGE_DRIVER` env (`local` | `s3`). Get the singleton via `getStorage()`. Use `buildStorageKey({ bucket, publicId, originalName })` to produce paths like `submissions/2026/05/<publicId>-<sanitized-name>` — keys are namespaced by bucket/year/month and sanitized.
+## Rules & Restrictions
 
-### Auth flow
+### TypeScript
+- **Never use `any`** — always define explicit types; reuse types generated under `src/generated/prisma/` before inventing new ones
+- Strict mode is on — keep it that way
+- No unused variables; prefix intentionally unused vars with `_`
+- Use `const` by default; `let` only when reassignment is needed
+- No `var`
+- Use strict equality (`===`, never `==`)
+- No `debugger` statements left in code
 
-Credentials provider in `src/lib/auth.ts`. Users without a `passwordHash` represent unaccepted invites (see `InviteToken` and `src/lib/invites.ts`). JWT session strategy; the `jwt` callback re-runs `loadScopes()` on sign-in, manual `update`, or whenever scope claims are missing from the token.
+### Code Quality
+- **No repeated code** — extract shared logic into `src/lib/`
+- **No over-engineering** — solve only what is asked; do not add features, abstractions, or configurability beyond the current task
+- Write clean, readable code — prefer clarity over cleverness
+- Keep functions small and single-purpose
+- Do not add docstrings or comments unless the logic is genuinely non-obvious
 
-## Project conventions
+### Architecture
+- API route handlers handle HTTP only — validate input (Zod), check auth/scope, call a library function, return response
+- All shared business logic and DB queries belong in `src/lib/` — do not duplicate DB calls across route handlers
 
-- Integer PKs everywhere (`Int @id @default(autoincrement())`), not BigInt or UUID — see schema header comment for rationale.
-- URL identifiers: `Season.code` (human-readable slug), `Submission.publicId` (nanoid). Everything else uses the int `id`.
-- Path alias `@/*` → `src/*`.
+### Next.js (v16) Best Practices
+- **Server Components by default** — only add `"use client"` when the component needs interactivity, browser APIs, or React hooks
+- **Data fetching in Server Components** — fetch directly in async server components; avoid client-side fetching unless necessary
+- **Route Handlers** (`src/app/api/`) are for client-initiated mutations and external integrations — not for server-to-server data fetching
+- **`next/image`** — always use for images; never use raw `<img>` tags
+- **`next/link`** — always use for internal navigation; never use raw `<a>` tags for same-app routes
+- **`next/font`** — use for fonts to avoid layout shift
+- **Layouts** — put shared UI in `layout.tsx`; do not repeat it across pages
+- **Loading & error boundaries** — add `loading.tsx` and `error.tsx` per route segment where appropriate
+- **Metadata** — define `metadata` exports or `generateMetadata` in page files for SEO
+- **Server Actions** — prefer for form submissions and mutations called from client components; avoid creating an API route just to wrap a library call
+- **Environment variables** — server-only secrets must NOT be prefixed with `NEXT_PUBLIC_`; only expose what the client genuinely needs
+- **No `useEffect` for data fetching** — fetch in Server Components or use Server Actions instead
+- **Base UI / shadcn hydration** — any reusable component that renders Base UI primitives (Select, Dialog, Popover, etc.) must have `'use client'` at the top of its file; omitting it causes `aria-controls` ID mismatches between SSR and client hydration
+
+---
+
+## Testing
+
+Tests are not wired up in this repo yet. When adding the first tests:
+
+- Place them under `__tests__/` (Vitest is the planned runner — match the conventions used by sibling Money Manager repo)
+- Mock the Prisma client at `@/lib/db` — never hit the real database in tests
+- Every new API route should cover: success case, access control (unauthorized / wrong role / wrong scope), invalid input / error handling
+- Every new library function should have a unit test
+
+Until the test runner is added, lean on `npm run typecheck` and `npm run lint` as the gating checks.
+
+---
+
+## Working with Claude
+
+- **Use sub-agents** when tasks can be parallelised or isolated — prefer the `Explore` agent for codebase research and `Plan` agent for architectural decisions
+- Before writing new code, search for existing implementations in `src/lib/` that can be reused
+- Read files before editing them — understand existing patterns first
+- Make targeted, minimal changes — do not refactor surrounding code unless asked
+- Heed `AGENTS.md`: this is Next 16, not the Next.js in your training data — consult `node_modules/next/dist/docs/` when in doubt

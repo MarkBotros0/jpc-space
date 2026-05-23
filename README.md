@@ -87,6 +87,7 @@ Default password for **every** seeded account is `password123`.
 | `npm run db:generate` | `prisma generate` |
 | `npm run db:seed` | Seed dev data |
 | `npm run db:studio` | Prisma Studio |
+| `npm run verify:auth` | Runs `scripts/verify-auth.ts` — exercises permission helpers across all roles and prints a pass/fail table |
 
 ## Project layout
 
@@ -112,6 +113,54 @@ src/
     utils.ts                    # shadcn cn() helper
 uploads/                        # local dev file storage (gitignored)
 ```
+
+## Authentication & RBAC
+
+Auth is **Auth.js v5** with a Credentials provider (email + bcrypt password) and JWT sessions. On sign-in the JWT is hydrated with the user's scoped assignments (`seasonAdminIds`, `groupLeaderIds`, `activeSeasonId`) so most permission checks are zero-DB.
+
+### Files
+
+- `src/lib/auth.ts` — NextAuth config (provider, JWT/session callbacks).
+- `src/lib/auth/scopes.ts` — `loadScopes(userId)`, used by both auth and the verify script.
+- `src/lib/auth/session.ts` — `getCurrentUser()` and `getCurrentUserOrRedirect()` for Server Components.
+- `src/lib/auth/permissions.ts` — resource-level helpers (`canAccessSeason`, `canAccessGroup`, `canEditSeason`, `canCreateSeason`, `canMarkAttendance`, `canViewSubmission`, `getVisibleStudents`, `getStudentSeasonAccess`) plus `requireRole(user, allowedRoles)` for route-level guards. Throws `UnauthorizedError` / `ForbiddenError` from `src/lib/auth/errors.ts`.
+- `src/lib/auth/post-login.ts` — `dashboardPathForRole(role)` and `rolePrefixAllowed(role, pathname)`.
+- `src/lib/auth/password-reset.ts` — `requestPasswordReset(email)` / `resetPassword(token, newPassword)`. Tokens hashed (sha256) before storage in the existing `PasswordResetToken` table; raw token included only in the dev console link.
+- `src/lib/rbac.ts` — simple predicates (`isSuper`, `isAdminOfSeason`, …) — re-exported from `permissions.ts`.
+
+### Route protection
+
+`src/middleware.ts` enforces:
+
+- Unauthenticated requests to any non-public path → `/login?callbackUrl=<original>`.
+- Path prefixes are role-gated: `/super/*` requires SUPER, `/admin/*` requires ADMIN (SUPER passes everywhere by design), and similarly for `/leader`, `/student`, `/mentor`.
+- Mismatched role → redirect to `/forbidden`.
+- Public: `/login`, `/forgot-password`, `/reset-password`, `/forbidden`, `/`, and `/api/auth/*`.
+
+Server Components also call `getCurrentUserOrRedirect()` + `requireRole([...])` as defence in depth.
+
+### Login flow
+
+1. `/login` renders `LoginForm` (client). Submission triggers `loginAction` (`src/app/login/actions.ts`).
+2. The action calls `signIn("credentials", ...)`, then reads the session and `redirect()`s to `dashboardPathForRole(role)` (or the `callbackUrl` if it was passed through).
+3. After login each role lands on its dashboard: `/super/dashboard`, `/admin/dashboard`, `/leader/dashboard`, `/student/dashboard`, `/mentor/dashboard`.
+
+### Password reset (dev)
+
+1. POST `/forgot-password` with an email.
+2. `requestPasswordReset` writes a fresh `PasswordResetToken` (sha256 hash, 1 h TTL) and `console.log`s the link `http://localhost:3000/reset-password?token=…` — the dev server console is the dev "email inbox".
+3. The user opens the link and submits a new password; `resetPassword` updates `passwordHash` and marks the token used (single-use).
+
+### Verifying RBAC
+
+Run the manual checker against the seeded data:
+
+```bash
+npm run db:seed
+npm run verify:auth
+```
+
+It exercises every `can*` helper for each role against representative seeded resources and prints a PASS/FAIL table. Exits non-zero on any failure.
 
 ## Architectural decisions
 
