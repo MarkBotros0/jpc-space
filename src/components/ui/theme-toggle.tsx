@@ -3,9 +3,8 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
-
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/components/providers/theme-provider";
 
 export function ThemeToggle({
   className,
