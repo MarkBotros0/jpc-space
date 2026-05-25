@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
+import { redirect } from "next/navigation";
 
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
-import { requireRole } from "@/lib/auth/permissions";
 import { AppShell } from "@/components/layout/app-shell";
+import { dashboardPathForRole } from "@/lib/auth/post-login";
 import type { UserRole } from "@/generated/prisma/enums";
 
 interface RoleLayoutProps {
@@ -12,6 +13,8 @@ interface RoleLayoutProps {
 
 export async function RoleLayout({ allowedRoles, children }: RoleLayoutProps) {
   const user = await getCurrentUserOrRedirect();
-  requireRole(user, allowedRoles);
+  if (!allowedRoles.includes(user.role)) {
+    redirect(dashboardPathForRole(user.role));
+  }
   return <AppShell user={user}>{children}</AppShell>;
 }
