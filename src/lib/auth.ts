@@ -11,44 +11,75 @@ const credentialsSchema = z.object({
   password: z.string().min(1),
 });
 
+const isDev = process.env.DEV_USER_SWITCHER === "1";
+
+const credentialsProvider = Credentials({
+  credentials: {
+    email: { label: "Email", type: "email" },
+    password: { label: "Password", type: "password" },
+  },
+  authorize: async (raw) => {
+    const parsed = credentialsSchema.safeParse(raw);
+    if (!parsed.success) return null;
+    const { email, password } = parsed.data;
+
+    const user = await db.user.findUnique({ where: { email } });
+    if (!user) return null;
+    if (user.deletedAt) return null;
+    if (!user.passwordHash) return null; // invite not yet accepted
+
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) return null;
+
+    await db.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    return {
+      id: String(user.id),
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
+  },
+});
+
+const devSwitchSchema = z.object({ email: z.string().email() });
+
+const devSwitchProvider = Credentials({
+  id: "dev-switch",
+  name: "Dev Switch",
+  credentials: { email: { label: "Email", type: "email" } },
+  authorize: async (raw) => {
+    if (!isDev) return null;
+    const parsed = devSwitchSchema.safeParse(raw);
+    if (!parsed.success) return null;
+
+    const user = await db.user.findUnique({ where: { email: parsed.data.email } });
+    if (!user) return null;
+    if (user.deletedAt) return null;
+
+    await db.user.update({
+      where: { id: user.id },
+      data: { lastLoginAt: new Date() },
+    });
+
+    return {
+      id: String(user.id),
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    };
+  },
+});
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      authorize: async (raw) => {
-        const parsed = credentialsSchema.safeParse(raw);
-        if (!parsed.success) return null;
-        const { email, password } = parsed.data;
-
-        const user = await db.user.findUnique({ where: { email } });
-        if (!user) return null;
-        if (user.deletedAt) return null;
-        if (!user.passwordHash) return null; // invite not yet accepted
-
-        const ok = await bcrypt.compare(password, user.passwordHash);
-        if (!ok) return null;
-
-        await db.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() },
-        });
-
-        return {
-          id: String(user.id),
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        };
-      },
-    }),
-  ],
+  providers: isDev ? [credentialsProvider, devSwitchProvider] : [credentialsProvider],
   callbacks: {
     async jwt({ token, user, trigger }) {
       if (user) {

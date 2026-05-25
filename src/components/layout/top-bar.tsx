@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { HelpCircle, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -47,6 +48,7 @@ interface TopBarProps {
   unreadCount: number;
   notificationsHref: string;
   markAllNotificationsReadAction: () => Promise<void>;
+  devSwitcher?: React.ReactNode;
 }
 
 export function TopBar({
@@ -58,6 +60,7 @@ export function TopBar({
   unreadCount,
   notificationsHref,
   markAllNotificationsReadAction,
+  devSwitcher,
 }: TopBarProps) {
   const pathname = usePathname();
   const title = deriveTitle(pathname ?? "");
@@ -92,6 +95,7 @@ export function TopBar({
           {role}
         </Badge>
         <ThemeToggle />
+        {devSwitcher}
         <NotificationBell
           items={notifications}
           unread={unreadCount}
