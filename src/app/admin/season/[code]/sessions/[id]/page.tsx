@@ -41,7 +41,15 @@ export default async function SessionDetailPage({ params }: PageProps) {
   const session = await loadSessionById(Number(id));
   if (session.seasonId !== season.id) redirect(`/admin/season/${season.code}/calendar`);
 
-  const checkInOpen = !!session.checkInOpenAt && !session.checkInClosedAt;
+  const CHECK_IN_DURATION_MS = 3 * 60 * 60 * 1000;
+  const checkInOpen =
+    !!session.checkInOpenAt &&
+    !session.checkInClosedAt &&
+    Date.now() - session.checkInOpenAt.getTime() < CHECK_IN_DURATION_MS;
+  const checkInExpiresAt =
+    session.checkInOpenAt && checkInOpen
+      ? new Date(session.checkInOpenAt.getTime() + CHECK_IN_DURATION_MS)
+      : null;
   const checkInUrl = session.checkInToken
     ? `${process.env.AUTH_URL}/checkin/${session.checkInToken}`
     : null;
@@ -165,6 +173,11 @@ export default async function SessionDetailPage({ params }: PageProps) {
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
+          {checkInOpen && checkInExpiresAt && (
+            <p className="text-xs text-muted-foreground">
+              Closes at {format(checkInExpiresAt, "h:mm a")}
+            </p>
+          )}
           {checkInOpen && checkInUrl && (
             <CheckInQr url={checkInUrl} sessionId={session.id} />
           )}

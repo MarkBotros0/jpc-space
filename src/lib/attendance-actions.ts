@@ -167,6 +167,11 @@ export async function checkInByTokenAction(token: string): Promise<CheckInResult
   if (!session.checkInOpenAt) return { ok: false, error: "not_open" };
   if (session.checkInClosedAt) return { ok: false, error: "closed" };
 
+  const now = new Date();
+  if (now.getTime() - session.checkInOpenAt.getTime() > 3 * 60 * 60 * 1000) {
+    return { ok: false, error: "closed" };
+  }
+
   const enrollment = await db.seasonEnrollment.findUnique({
     where: {
       studentUserId_seasonId: {
@@ -197,10 +202,9 @@ export async function checkInByTokenAction(token: string): Promise<CheckInResult
     };
   }
 
-  const now = new Date();
   const minutesLate = Math.max(
     0,
-    Math.floor((now.getTime() - session.startsAt.getTime()) / 60_000),
+    Math.floor((now.getTime() - session.checkInOpenAt.getTime()) / 60_000),
   );
   const status: "PRESENT" | "LATE" =
     minutesLate > session.season.lateThresholdMinutes ? "LATE" : "PRESENT";
