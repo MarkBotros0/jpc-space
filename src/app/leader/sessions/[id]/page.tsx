@@ -7,11 +7,9 @@ import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { isLeaderInSeason } from "@/lib/rbac";
 import { loadSessionById } from "@/lib/sessions-query";
-import { openCheckInAction, closeCheckInAction } from "@/lib/session-actions";
 import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { CheckInQr } from "@/components/sessions/check-in-qr";
+import { Badge } from "@/components/ui/badge";
 import { CheckInAttendanceList } from "@/components/sessions/check-in-attendance-list";
 import { AttendanceStatus } from "@/generated/prisma/enums";
 
@@ -32,9 +30,6 @@ export default async function LeaderSessionPage({ params }: PageProps) {
   }
 
   const checkInOpen = !!session.checkInOpenAt && !session.checkInClosedAt;
-  const checkInUrl = session.checkInToken
-    ? `${process.env.AUTH_URL}/checkin/${session.checkInToken}`
-    : null;
 
   const groupStudents = await db.groupStudent.findMany({
     where: {
@@ -78,34 +73,13 @@ export default async function LeaderSessionPage({ params }: PageProps) {
             Check-in
           </CardTitle>
           {checkInOpen ? (
-            <form
-              action={async () => {
-                "use server";
-                await closeCheckInAction(session.id);
-              }}
-            >
-              <Button type="submit" variant="outline" size="sm">
-                Close check-in
-              </Button>
-            </form>
+            <Badge variant="success">Open</Badge>
           ) : (
-            <form
-              action={async () => {
-                "use server";
-                await openCheckInAction(session.id);
-              }}
-            >
-              <Button type="submit" size="sm">
-                Open check-in
-              </Button>
-            </form>
+            <Badge variant="outline">Closed</Badge>
           )}
         </CardHeader>
 
         <CardContent className="flex flex-col gap-6">
-          {checkInOpen && checkInUrl && (
-            <CheckInQr url={checkInUrl} sessionId={session.id} />
-          )}
           <CheckInAttendanceList
             sessionId={session.id}
             students={studentRows}
