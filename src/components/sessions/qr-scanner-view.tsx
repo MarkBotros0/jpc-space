@@ -5,16 +5,18 @@ import QrScanner from "qr-scanner";
 
 interface QrScannerViewProps {
   onScan: (data: string) => void;
+  onError?: (err: Error) => void;
   active: boolean;
 }
 
-export function QrScannerView({ onScan, active }: QrScannerViewProps) {
+export function QrScannerView({ onScan, onError, active }: QrScannerViewProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // Stable ref so the effect doesn't restart when onScan identity changes
   const onScanRef = useRef(onScan);
+  const onErrorRef = useRef(onError);
   useEffect(() => {
     onScanRef.current = onScan;
-  }, [onScan]);
+    onErrorRef.current = onError;
+  }, [onScan, onError]);
 
   useEffect(() => {
     if (!videoRef.current || !active) return;
@@ -26,20 +28,26 @@ export function QrScannerView({ onScan, active }: QrScannerViewProps) {
         returnDetailedScanResult: true,
         highlightScanRegion: true,
         highlightCodeOutline: true,
+        onDecodeError: () => {},
       },
     );
 
-    scanner.start();
+    const startPromise = scanner.start().catch((err: unknown) => {
+      const error = err instanceof Error ? err : new Error(String(err));
+      onErrorRef.current?.(error);
+    });
 
     return () => {
-      scanner.stop();
-      scanner.destroy();
+      void startPromise.finally(() => {
+        scanner.stop();
+        scanner.destroy();
+      });
     };
   }, [active]);
 
   return (
     <div className="overflow-hidden rounded-xl bg-black">
-      <video ref={videoRef} className="w-full" />
+      <video ref={videoRef} className="aspect-video w-full" aria-hidden="true" />
     </div>
   );
 }
