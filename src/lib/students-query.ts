@@ -12,6 +12,7 @@ export interface StudentListRow {
   university: string | null;
   year: string | null;
   photoPath: string | null;
+  avatarUrl?: string | null;
   activeSeasonTitle: string | null;
   groupName: string | null;
 }
