@@ -2,8 +2,9 @@ import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { listSessionsForSeason } from "@/lib/sessions-query";
+import { listJpcEvents } from "@/lib/jpc-events-query";
 import { PageHeader } from "@/components/layout/page-header";
-import { CalendarList } from "@/components/sessions/calendar-list";
+import { SeasonCalendar } from "@/components/sessions/season-calendar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
 
@@ -31,20 +32,24 @@ export default async function LeaderCalendarPage() {
     select: { seasonId: true },
   });
   const seasonIds = Array.from(new Set(groups.map((g) => g.seasonId)));
-  const sessions = (
-    await Promise.all(seasonIds.map((id) => listSessionsForSeason(id)))
-  ).flat().sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+
+  const [allSessions, jpcEvents] = await Promise.all([
+    Promise.all(seasonIds.map((id) => listSessionsForSeason(id))).then((arr) =>
+      arr.flat().sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()),
+    ),
+    listJpcEvents({ includeAlumniOnly: true }),
+  ]);
 
   return (
     <>
       <PageHeader
         title="Calendar"
-        description={`${sessions.length} session${sessions.length === 1 ? "" : "s"}`}
+        description={`${allSessions.length} session${allSessions.length === 1 ? "" : "s"}`}
       />
-      <CalendarList
-        sessions={sessions}
-        basePath="/leader/sessions"
-        showAttendanceLink
+      <SeasonCalendar
+        sessions={allSessions}
+        jpcEvents={jpcEvents}
+        sessionPathTemplate="/leader/sessions/{id}"
       />
     </>
   );

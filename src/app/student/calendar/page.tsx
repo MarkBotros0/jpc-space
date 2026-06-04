@@ -1,8 +1,9 @@
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { listSessionsForSeason } from "@/lib/sessions-query";
+import { listJpcEvents } from "@/lib/jpc-events-query";
 import { PageHeader } from "@/components/layout/page-header";
-import { CalendarList } from "@/components/sessions/calendar-list";
+import { SeasonCalendar } from "@/components/sessions/season-calendar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
 
@@ -25,7 +26,10 @@ export default async function StudentCalendarPage() {
     );
   }
 
-  const sessions = await listSessionsForSeason(user.activeSeasonId);
+  const [sessions, jpcEvents] = await Promise.all([
+    listSessionsForSeason(user.activeSeasonId),
+    listJpcEvents({ includeAlumniOnly: false }),
+  ]);
 
   return (
     <>
@@ -33,7 +37,11 @@ export default async function StudentCalendarPage() {
         title="Calendar"
         description={`${sessions.length} session${sessions.length === 1 ? "" : "s"} in your current season`}
       />
-      <CalendarList sessions={sessions} basePath="/student/sessions" />
+      <SeasonCalendar
+        sessions={sessions}
+        jpcEvents={jpcEvents}
+        sessionPathTemplate="/student/sessions/{id}"
+      />
     </>
   );
 }
