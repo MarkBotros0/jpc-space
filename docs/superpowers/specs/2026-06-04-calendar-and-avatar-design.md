@@ -8,21 +8,21 @@ _Date: 2026-06-04_
 
 Three UX improvements requested for JPC Space:
 
-1. **Calendar views** currently render as a plain list. Replace them with a real month-grid `SessionCalendar` so members can see sessions in weekly context.
+1. **Calendar views** currently render as a plain list. Replace them with a real month-grid `SeasonCalendar` so members can see sessions in weekly context.
 2. **JPC general calendar** — Super admin publishes organisation-wide events (retreats, outreach, etc.) visible to all members on the same calendar grid; some events are alumni-only (visible to LEADER, ADMIN, MENTOR, SUPER but not STUDENT).
 3. **Member display pictures** — students upload a profile photo that shows in rosters.
 
 ---
 
-## Feature 1 — SessionCalendar Month Grid
+## Feature 1 — SeasonCalendar Month Grid
 
-### Component: `SessionCalendar`
+### Component: `SeasonCalendar`
 
-New file: `src/components/sessions/session-calendar.tsx` — `"use client"` (needs month navigation state).
+New file: `src/components/sessions/season-calendar.tsx` — `"use client"` (needs month navigation state).
 
 **Props:**
 ```ts
-interface SessionCalendarProps {
+interface SeasonCalendarProps {
   sessions: SessionListRow[]
   jpcEvents: JpcEventRow[]
   getSessionHref: (id: number) => string
@@ -50,7 +50,7 @@ interface SessionCalendarProps {
 
 ### What it replaces
 
-`CalendarList` is kept in the codebase but no longer used by calendar pages. All pages below swap to `SessionCalendar`.
+`CalendarList` is kept in the codebase but no longer used by calendar pages. All pages below swap to `SeasonCalendar`.
 
 ### Pages updated
 
