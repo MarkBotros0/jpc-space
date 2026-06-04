@@ -47,6 +47,9 @@ export async function listSessionsForSeason(seasonId: number): Promise<SessionLi
     seasonId: s.season.id,
     seasonCode: s.season.code,
     seasonTitle: s.season.title,
+    checkInToken: s.checkInToken,
+    checkInOpenAt: s.checkInOpenAt,
+    checkInClosedAt: s.checkInClosedAt,
   }));
 }
 
@@ -61,6 +64,9 @@ export async function listSessionsForAllActiveSeasons(): Promise<SessionListRow[
       durationMinutes: true,
       location: true,
       recurrenceGroupId: true,
+      checkInToken: true,
+      checkInOpenAt: true,
+      checkInClosedAt: true,
       _count: { select: { attendance: true } },
       season: { select: { id: true, code: true, title: true } },
     },

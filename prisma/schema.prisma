@@ -203,10 +203,6 @@ model Season {
   updatedById Int?
   updatedBy   User?     @relation("SeasonUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
   deletedAt             DateTime?
-  lateThresholdMinutes  Int       @default(15)
-  absenceBudgetMinutes  Int       @default(180)
-  absenceWeightMinutes  Int       @default(90)
-  lateWeightMinutes     Int       @default(30)
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
