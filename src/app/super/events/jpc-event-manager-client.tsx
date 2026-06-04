@@ -1,12 +1,14 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { CalendarDays, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { deleteJpcEventAction } from "@/lib/jpc-event-actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { JpcEventRow } from "@/lib/jpc-events-query";
 import { JpcEventForm } from "./jpc-event-form";
@@ -16,12 +18,18 @@ interface JpcEventManagerClientProps {
 }
 
 export function JpcEventManagerClient({ events: initialEvents }: JpcEventManagerClientProps) {
+  const router = useRouter();
   const [creating, setCreating] = React.useState(false);
   const [editingId, setEditingId] = React.useState<number | null>(null);
+  const [deletingId, setDeletingId] = React.useState<number | null>(null);
+  const [confirmId, setConfirmId] = React.useState<number | null>(null);
 
   async function handleDelete(id: number) {
-    if (!confirm("Delete this event?")) return;
+    setDeletingId(id);
     await deleteJpcEventAction(id);
+    router.refresh();
+    setDeletingId(null);
+    setConfirmId(null);
   }
 
   if (creating) {
@@ -98,7 +106,8 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleDelete(e.id)}
+                  onClick={() => setConfirmId(e.id)}
+                  disabled={deletingId === e.id}
                 >
                   <Trash2 className="size-3.5 text-error-500" />
                 </Button>
@@ -107,6 +116,17 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
           ))}
         </ol>
       )}
+
+      <ConfirmDialog
+        open={confirmId !== null}
+        onOpenChange={(open) => { if (!open) setConfirmId(null); }}
+        title="Delete event?"
+        description="This action cannot be undone."
+        confirmLabel="Delete"
+        destructive
+        pending={deletingId !== null}
+        onConfirm={() => { if (confirmId !== null) void handleDelete(confirmId); }}
+      />
     </div>
   );
 }

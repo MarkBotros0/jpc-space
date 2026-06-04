@@ -38,6 +38,9 @@ export async function createJpcEventAction(formData: FormData) {
 
   revalidatePath("/super/events");
   revalidatePath("/super/calendar");
+  revalidatePath("/student/calendar");
+  revalidatePath("/leader/calendar");
+  revalidatePath("/admin/calendar");
   return { success: true };
 }
 
@@ -65,6 +68,9 @@ export async function updateJpcEventAction(id: number, formData: FormData) {
 
   revalidatePath("/super/events");
   revalidatePath("/super/calendar");
+  revalidatePath("/student/calendar");
+  revalidatePath("/leader/calendar");
+  revalidatePath("/admin/calendar");
   return { success: true };
 }
 
@@ -76,5 +82,8 @@ export async function deleteJpcEventAction(id: number) {
 
   revalidatePath("/super/events");
   revalidatePath("/super/calendar");
+  revalidatePath("/student/calendar");
+  revalidatePath("/leader/calendar");
+  revalidatePath("/admin/calendar");
   return { success: true };
 }

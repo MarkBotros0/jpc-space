@@ -1,9 +1,17 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { createJpcEventAction, updateJpcEventAction } from "@/lib/jpc-event-actions";
 import type { JpcEventRow } from "@/lib/jpc-events-query";
 
@@ -13,8 +21,12 @@ interface JpcEventFormProps {
 }
 
 export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
+  const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
+  const [visibility, setVisibility] = React.useState<"ALL" | "ALUMNI_ONLY">(
+    event?.visibility ?? "ALL"
+  );
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +40,7 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
     if (result && "error" in result) {
       setError(result.error ?? "Unknown error");
     } else {
+      router.refresh();
       onDone();
     }
   }
@@ -69,15 +82,16 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium" htmlFor="visibility">Visibility</label>
-        <select
-          id="visibility"
-          name="visibility"
-          defaultValue={event?.visibility ?? "ALL"}
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-        >
-          <option value="ALL">Everyone</option>
-          <option value="ALUMNI_ONLY">Alumni only (leaders, admins)</option>
-        </select>
+        <Select value={visibility} onValueChange={(v) => setVisibility(v as "ALL" | "ALUMNI_ONLY")}>
+          <SelectTrigger id="visibility">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Everyone</SelectItem>
+            <SelectItem value="ALUMNI_ONLY">Alumni only (leaders, admins)</SelectItem>
+          </SelectContent>
+        </Select>
+        <input type="hidden" name="visibility" value={visibility} />
       </div>
 
       {error && <p className="text-sm text-error-500">{error}</p>}
