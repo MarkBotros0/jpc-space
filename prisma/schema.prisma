@@ -69,6 +69,11 @@ enum NotificationType {
   MENTOR_FOLLOWUP
 }
 
+enum JpcVisibility {
+  ALL
+  ALUMNI_ONLY
+}
+
 // ---------------------------------------------------------------------------
 // Identity & auth
 // ---------------------------------------------------------------------------
@@ -113,6 +118,7 @@ model User {
   notificationPreference NotificationPreference?
   studentDocuments       StudentDocument[]       @relation("StudentDocumentStudent")
   studentDocumentsUploaded StudentDocument[]     @relation("StudentDocumentUploader")
+  jpcEventsCreated       JpcEvent[]              @relation("JpcEventCreator")
 
   @@index([role])
   @@index([deletedAt])
@@ -186,6 +192,11 @@ model Season {
   endDate        DateTime
   status         SeasonStatus @default(DRAFT)
   coverImagePath String?
+
+  lateThresholdMinutes  Int @default(15)
+  absenceBudgetMinutes  Int @default(180)
+  absenceWeightMinutes  Int @default(90)
+  lateWeightMinutes     Int @default(30)
 
   createdById Int?
   createdBy   User?     @relation("SeasonCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
@@ -490,4 +501,21 @@ model StudentDocument {
   uploadedAt    DateTime @default(now())
 
   @@index([studentUserId])
+}
+
+// ---------------------------------------------------------------------------
+// JPC Events (public-facing calendar)
+// ---------------------------------------------------------------------------
+
+model JpcEvent {
+  id          Int           @id @default(autoincrement())
+  title       String
+  date        DateTime
+  url         String?
+  visibility  JpcVisibility @default(ALL)
+  createdById Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  createdBy   User          @relation("JpcEventCreator", fields: [createdById], references: [id])
 }
