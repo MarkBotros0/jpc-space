@@ -17,11 +17,12 @@ import {
 } from "date-fns";
 import { Calendar, ChevronLeft, ChevronRight, ExternalLink, Lock } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import type { SessionListRow } from "@/lib/sessions-query";
 import type { JpcEventRow } from "@/lib/jpc-events-query";
 
-const SEASON_PALETTE = [
+export const SEASON_PALETTE = [
   "bg-info-800 text-info-300",
   "bg-success-800 text-success-300",
   "bg-warning-800 text-warning-300",
@@ -92,21 +93,23 @@ export function SeasonCalendar({
     <div className="flex flex-col gap-4">
       {/* Month nav */}
       <div className="flex items-center justify-between">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setCurrent((d) => subMonths(d, 1))}
-          className="rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           aria-label="Previous month"
         >
           <ChevronLeft className="size-4" />
-        </button>
+        </Button>
         <h2 className="text-base font-semibold">{format(current, "MMMM yyyy")}</h2>
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setCurrent((d) => addMonths(d, 1))}
-          className="rounded-md p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           aria-label="Next month"
         >
           <ChevronRight className="size-4" />
-        </button>
+        </Button>
       </div>
 
       {/* Season legend (super only) */}
@@ -147,7 +150,7 @@ export function SeasonCalendar({
             >
               <span
                 className={`self-start flex size-6 items-center justify-center rounded-full text-xs font-medium
-                  ${today ? "bg-brand-teal-500 text-white" : "text-foreground"}`}
+                  ${today ? "bg-brand-teal-500 text-brand-navy-950" : "text-foreground"}`}
               >
                 {format(day, "d")}
               </span>
