@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { isPast, formatDistanceToNowStrict } from "date-fns";
+import { format, isPast, formatDistanceToNowStrict } from "date-fns";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
@@ -70,7 +70,7 @@ export default async function StudentAssignmentPage({ params }: PageProps) {
               variant={isPast(assignment.dueAt) ? "error" : "warning"}
             >
               {isPast(assignment.dueAt)
-                ? "Past due"
+                ? `Due ${format(assignment.dueAt, "MMM d, yyyy")}`
                 : `Due in ${formatDistanceToNowStrict(assignment.dueAt)}`}
             </Badge>
           )}

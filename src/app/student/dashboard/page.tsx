@@ -256,7 +256,7 @@ export default async function StudentDashboard() {
                         className="shrink-0 text-[10px]"
                       >
                         {isPast(a.dueAt)
-                          ? "Past due"
+                          ? `Due ${format(a.dueAt, "MMM d")}`
                           : `Due in ${formatDistanceToNowStrict(a.dueAt)}`}
                       </Badge>
                     )}
