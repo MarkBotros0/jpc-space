@@ -1,9 +1,11 @@
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
   label: string;
   value: React.ReactNode;
   sublabel?: string;
+  href?: string;
   variant?: "white" | "navy" | "teal";
   className?: string;
 }
@@ -12,22 +14,23 @@ export function StatCard({
   label,
   value,
   sublabel,
+  href,
   variant = "white",
   className,
 }: StatCardProps) {
-  return (
-    <div
-      className={cn(
-        "rounded-xl p-4",
-        variant === "white" &&
-          "bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60",
-        variant === "navy" &&
-          "bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 shadow-[0_4px_20px_rgba(31,50,96,0.25)]",
-        variant === "teal" &&
-          "bg-brand-teal-100 ring-1 ring-brand-teal-200",
-        className,
-      )}
-    >
+  const cls = cn(
+    "rounded-xl p-4",
+    href && "transition-opacity hover:opacity-80",
+    variant === "white" &&
+      "bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60",
+    variant === "navy" &&
+      "bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 shadow-[0_4px_20px_rgba(31,50,96,0.25)]",
+    variant === "teal" &&
+      "bg-brand-teal-100 ring-1 ring-brand-teal-200",
+    className,
+  );
+  const inner = (
+    <>
       <p
         className={cn(
           "text-[10px] font-bold uppercase tracking-widest",
@@ -60,6 +63,10 @@ export function StatCard({
           {sublabel}
         </p>
       )}
-    </div>
+    </>
   );
+  if (href) {
+    return <Link href={href} className={cls}>{inner}</Link>;
+  }
+  return <div className={cls}>{inner}</div>;
 }

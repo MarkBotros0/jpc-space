@@ -155,15 +155,18 @@ export default async function StudentDashboard() {
             <StatCard
               label="Attendance"
               value={attendancePct !== null ? `${attendancePct}%` : "—"}
+              sublabel="this season"
+              href="/student/calendar"
             />
             <StatCard
               label="Streak"
               value={streak > 0 ? `🔥 ${streak}` : streak}
             />
             <StatCard
-              label="Pending"
+              label="Assignments"
               value={pending.length}
-              sublabel="assignments"
+              sublabel={pending.length === 1 ? "pending" : "pending"}
+              href="/student/assignments"
               variant={pending.length > 0 ? "teal" : "white"}
             />
           </div>
