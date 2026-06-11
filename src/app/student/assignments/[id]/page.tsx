@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { format, isPast, formatDistanceToNowStrict } from "date-fns";
+import { isPast, formatDistanceToNowStrict } from "date-fns";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
