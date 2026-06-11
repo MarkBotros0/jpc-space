@@ -57,33 +57,36 @@ export default async function StudentAssignmentPage({ params }: PageProps) {
       <div>
         <Link
           href="/student/assignments"
-          className="text-xs font-semibold text-brand-teal-700 hover:underline"
+          className="text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
         >
           ← Assignments
         </Link>
-        <h1 className="mt-1 text-2xl font-black text-brand-navy-900">
-          {assignment.title}
-        </h1>
-        <div className="mt-1.5 flex flex-wrap gap-1.5">
-          {assignment.dueAt && (
-            <Badge
-              variant={isPast(assignment.dueAt) ? "error" : "warning"}
-            >
-              {isPast(assignment.dueAt)
-                ? `Due ${format(assignment.dueAt, "MMM d, yyyy")}`
-                : `Due in ${formatDistanceToNowStrict(assignment.dueAt)}`}
-            </Badge>
-          )}
-          {!assignment.dueAt && (
-            <Badge variant="outline">No due date</Badge>
-          )}
+        {/* Navy hero card */}
+        <div className="mt-2 rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
+          <h1 className="text-xl font-black text-white">
+            {assignment.title}
+          </h1>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {assignment.dueAt && (
+              <Badge
+                variant={isPast(assignment.dueAt) ? "error" : "warning"}
+              >
+                {isPast(assignment.dueAt)
+                  ? `Due ${format(assignment.dueAt, "MMM d, yyyy")}`
+                  : `Due in ${formatDistanceToNowStrict(assignment.dueAt)}`}
+              </Badge>
+            )}
+            {!assignment.dueAt && (
+              <Badge className="border-white/20 bg-white/10 text-white">No due date</Badge>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Description */}
       {assignment.description && (
-        <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
             Brief
           </p>
           <RichTextView html={assignment.description} />
