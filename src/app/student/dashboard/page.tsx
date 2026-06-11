@@ -5,7 +5,7 @@ import { AlertTriangle, Flame, Sparkles } from "lucide-react";
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
-import { computeEngagementForStudent, computeAttendanceBudget, computeAttendanceStreak } from "@/lib/engagement";
+import { computeAttendanceBudget, computeAttendanceStreak } from "@/lib/engagement";
 import { listAssignmentsForStudent } from "@/lib/assignments-query";
 import { StaggerReveal } from "@/components/motion/stagger-reveal";
 import { Badge } from "@/components/ui/badge";
@@ -36,9 +36,8 @@ export default async function StudentDashboard() {
   const seasonId = user.activeSeasonId;
   const season = profile?.studentProfile?.activeSeason ?? null;
 
-  const [engagement, nextSession, assignments, budget, streak, allSubmissions, weeksTotal, weeksCompleted] = seasonId
+  const [nextSession, assignments, budget, streak, allSubmissions, weeksTotal, weeksCompleted] = seasonId
     ? await Promise.all([
-        computeEngagementForStudent(user.userId, seasonId),
         db.session.findFirst({
           where: { seasonId, startsAt: { gte: new Date() } },
           orderBy: { startsAt: "asc" },
@@ -71,7 +70,7 @@ export default async function StudentDashboard() {
           where: { seasonId, startsAt: { lte: new Date() } },
         }),
       ])
-    : ([null, null, [], null, 0, [], 0, 0] as const);
+    : ([null, [], null, 0, [], 0, 0] as const);
 
   const pending = assignments.filter(
     (a) => a.status === "PENDING" || a.status === "DRAFT",
