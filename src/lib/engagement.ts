@@ -154,3 +154,34 @@ export async function computeAttendanceBudget(
     lateCount,
   };
 }
+
+/**
+ * Consecutive sessions attended (PRESENT or LATE) counting backwards from
+ * the most recent past session. EXCUSED does not break or increment the streak.
+ * ABSENT resets it. Sessions with no attendance record are skipped (not penalised).
+ */
+export async function computeAttendanceStreak(
+  studentUserId: number,
+  seasonId: number,
+): Promise<number> {
+  const sessions = await db.session.findMany({
+    where: { seasonId, startsAt: { lte: new Date() } },
+    orderBy: { startsAt: "desc" },
+    select: {
+      attendance: {
+        where: { studentUserId },
+        select: { status: true },
+      },
+    },
+  });
+
+  let streak = 0;
+  for (const session of sessions) {
+    const record = session.attendance[0];
+    if (!record) continue; // no record — skip, don't break
+    if (record.status === "ABSENT") break; // breaks streak
+    if (record.status === "PRESENT" || record.status === "LATE") streak++;
+    // EXCUSED: don't increment, don't break
+  }
+  return streak;
+}
