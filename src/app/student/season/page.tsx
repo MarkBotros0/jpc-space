@@ -5,8 +5,6 @@ import { Users } from "lucide-react";
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
-import { PageHeader } from "@/components/layout/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -19,14 +17,16 @@ export default async function StudentSeasonPage() {
 
   if (!user.activeSeasonId) {
     return (
-      <>
-        <PageHeader title="Current season" description="You aren't enrolled in an active season." />
+      <div className="flex flex-col gap-3 md:gap-4">
+        <h1 className="text-2xl font-black text-brand-navy-900">
+          Current season
+        </h1>
         <EmptyState
           icon={Users}
           title="No active season"
           description="An admin will enroll you when you're ready."
         />
-      </>
+      </div>
     );
   }
 
@@ -42,11 +42,13 @@ export default async function StudentSeasonPage() {
       endDate: true,
     },
   });
+
   if (!season) {
     return (
-      <>
-        <PageHeader title="Current season" description="Season not found." />
-      </>
+      <div className="flex flex-col gap-3 md:gap-4">
+        <h1 className="text-2xl font-black text-brand-navy-900">Current season</h1>
+        <p className="text-sm text-neutral-500">Season not found.</p>
+      </div>
     );
   }
 
@@ -90,52 +92,67 @@ export default async function StudentSeasonPage() {
         )}
       </div>
 
+      {/* Description */}
       {season.description && (
-        <Card className="mb-4">
-          <CardContent className="pt-6 text-sm">{season.description}</CardContent>
-        </Card>
+        <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+            About this season
+          </p>
+          <p className="text-sm text-neutral-700">{season.description}</p>
+        </div>
       )}
 
+      {/* Group card */}
       {membership?.group && (
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle className="text-base">Your group: {membership.group.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            {membership.group.description && (
-              <p className="text-sm text-muted-foreground">{membership.group.description}</p>
-            )}
+        <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+            Your group — {membership.group.name}
+          </p>
+          {membership.group.description && (
+            <p className="mb-3 text-sm text-neutral-600">
+              {membership.group.description}
+            </p>
+          )}
+          <div className="flex flex-col gap-3">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Leaders
-              </p>
-              <ul className="mt-1 flex flex-col gap-0.5 text-sm">
+              <p className="mb-1 text-xs font-bold text-neutral-400">Leaders</p>
+              <ul className="flex flex-col gap-0.5 text-sm text-brand-navy-900">
                 {membership.group.leaders.map((l, i) => (
                   <li key={i}>{l.user.name ?? l.user.email}</li>
                 ))}
                 {membership.group.leaders.length === 0 && (
-                  <li className="italic text-muted-foreground">No leaders assigned yet.</li>
+                  <li className="italic text-neutral-400">
+                    No leaders assigned yet.
+                  </li>
                 )}
               </ul>
             </div>
             <div>
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Group members ({membership.group.students.length})
+              <p className="mb-1 text-xs font-bold text-neutral-400">
+                Members ({membership.group.students.length})
               </p>
-              <ul className="mt-1 grid grid-cols-1 gap-1 text-sm md:grid-cols-2">
+              <ul className="grid grid-cols-2 gap-1 text-sm text-brand-navy-900">
                 {membership.group.students.map((s) => (
                   <li key={s.studentUser.id}>{s.studentUser.name ?? "—"}</li>
                 ))}
               </ul>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Upcoming sessions</CardTitle>
-          <Button variant="ghost" size="sm" render={<Link href="/student/calendar" />}>
+      {/* Upcoming sessions */}
+      <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+            Upcoming sessions
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            render={<Link href="/student/calendar" />}
+            className="text-xs text-brand-teal-700"
+          >
             See calendar
           </Button>
         </CardHeader>
@@ -151,12 +168,16 @@ export default async function StudentSeasonPage() {
                     {format(s.startsAt, "EEE, MMM d · h:mm a")}
                     {s.location && ` · ${s.location}`}
                   </p>
-                </li>
-              ))}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
-    </>
+                  <p className="text-xs text-neutral-500">
+                    {format(s.startsAt, "EEE, MMM d · h:mm a")}
+                    {s.location && ` · ${s.location}`}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }

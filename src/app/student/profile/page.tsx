@@ -78,8 +78,38 @@ export default async function StudentProfilePage() {
               activeSeasonId: userRow.studentProfile.activeSeasonId,
             }}
           />
-        </CardContent>
-      </Card>
-    </>
+          <StatCard
+            label="Streak"
+            value={streak > 0 ? `🔥 ${streak}` : streak}
+          />
+        </div>
+      )}
+
+      {/* Profile form */}
+      <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+        <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+          Your details
+        </p>
+        <StudentForm
+          mode="edit"
+          studentUserId={user.userId}
+          isSelf
+          seasons={[]}
+          redirectTo="/student/profile"
+          defaultValues={{
+            name: userRow.name ?? "",
+            email: userRow.email,
+            university: userRow.studentProfile.university,
+            year: userRow.studentProfile.year,
+            phone: userRow.studentProfile.phone,
+            dateOfBirth: userRow.studentProfile.dateOfBirth,
+            spiritualBackground: userRow.studentProfile.spiritualBackground,
+            gifts: userRow.studentProfile.gifts,
+            notes: null,
+            activeSeasonId: userRow.studentProfile.activeSeasonId,
+          }}
+        />
+      </div>
+    </div>
   );
 }

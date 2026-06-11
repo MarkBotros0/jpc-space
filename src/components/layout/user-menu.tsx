@@ -20,6 +20,10 @@ const roleColor: Record<UserRole, RoleColor> = {
   STUDENT: "student",
 };
 
+const ROLE_PROFILE_HREF: Partial<Record<UserRole, string>> = {
+  STUDENT: "/student/profile",
+};
+
 interface UserMenuProps {
   role: UserRole;
   userId: number;
