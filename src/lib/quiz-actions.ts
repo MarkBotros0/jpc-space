@@ -5,8 +5,8 @@ import { z } from "zod";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
-import { requireRole } from "@/lib/auth/permissions";
-import { canEditSeason } from "@/lib/auth/permissions";
+import { requireRole, canEditSeason } from "@/lib/auth/permissions";
+import { isLeaderInSeason } from "@/lib/rbac";
 import { createNotification } from "@/lib/notifications";
 
 const createQuizSchema = z.object({
@@ -40,6 +40,8 @@ export async function createQuizAction(
   });
 
   revalidatePath(`/admin/season`);
+  revalidatePath(`/leader/sessions/${parsed.data.sessionId}`);
+  revalidatePath(`/leader/quizzes`);
   return {};
 }
 
@@ -75,21 +77,27 @@ export async function saveQuizGradesAction(
   });
   if (!quiz) return { error: "Quiz not found" };
 
+  if (user.role === "LEADER" && !(await isLeaderInSeason(user, quiz.seasonId))) {
+    return { error: "Unauthorized" };
+  }
+
   const parsed = z.array(gradeEntrySchema).safeParse(grades);
   if (!parsed.success) return { error: "Invalid grade data" };
 
   const now = new Date();
   const newlyGraded: number[] = [];
 
+  // Batch-fetch existing grades to avoid N+1 queries
+  const existingGrades = await db.quizGrade.findMany({
+    where: { quizId, studentUserId: { in: parsed.data.map((g) => g.studentUserId) } },
+    select: { studentUserId: true, gradedAt: true },
+  });
+  const existingMap = new Map(existingGrades.map((e) => [e.studentUserId, e]));
+
   for (const g of parsed.data) {
     if (g.score === null) continue;
 
-    const existing = await db.quizGrade.findUnique({
-      where: { quizId_studentUserId: { quizId, studentUserId: g.studentUserId } },
-      select: { gradedAt: true },
-    });
-
-    const wasUngraded = !existing?.gradedAt;
+    const wasUngraded = !existingMap.get(g.studentUserId)?.gradedAt;
 
     await db.quizGrade.upsert({
       where: { quizId_studentUserId: { quizId, studentUserId: g.studentUserId } },

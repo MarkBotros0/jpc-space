@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { saveQuizGradesAction } from "@/lib/quiz-actions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface GradeRow {
   studentUserId: number;
@@ -73,23 +74,25 @@ export function QuizGradeForm({ quizId, maxScore, initialGrades }: Props) {
               <tr key={g.studentUserId}>
                 <td className="px-4 py-3 font-medium text-brand-navy-900">{g.studentName}</td>
                 <td className="px-4 py-3">
-                  <input
+                  <Input
                     type="number"
+                    size="sm"
                     min={0}
                     max={maxScore}
                     value={g.score ?? ""}
                     onChange={(e) => setScore(g.studentUserId, e.target.value)}
                     placeholder="-"
-                    className="h-9 w-24 rounded-lg border border-neutral-200 px-3 text-sm outline-none transition-colors focus:border-brand-teal-500 focus:ring-2 focus:ring-brand-teal-100"
+                    className="w-24"
                   />
                 </td>
                 <td className="px-4 py-3">
-                  <input
+                  <Input
                     type="text"
+                    size="sm"
                     value={g.notes ?? ""}
                     onChange={(e) => setNotes(g.studentUserId, e.target.value)}
                     placeholder="Optional note..."
-                    className="h-9 w-full max-w-xs rounded-lg border border-neutral-200 px-3 text-sm outline-none transition-colors focus:border-brand-teal-500 focus:ring-2 focus:ring-brand-teal-100"
+                    className="max-w-xs"
                   />
                 </td>
               </tr>

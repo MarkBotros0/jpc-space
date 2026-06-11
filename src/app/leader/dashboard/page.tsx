@@ -109,7 +109,8 @@ export default async function LeaderDashboard() {
   });
 
   // Sort: lowest attendance first (needs attention)
-  studentRows.sort((a, b) => (a.attendancePct ?? 100) - (b.attendancePct ?? 100));
+  // null = no sessions yet; sort to end so they don't crowd out known low-attendance students
+  studentRows.sort((a, b) => (a.attendancePct ?? 101) - (b.attendancePct ?? 101));
 
   // ── Group summary stats ────────────────────────────────────────────────────
   const avgAttendance =
