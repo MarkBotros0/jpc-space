@@ -47,6 +47,7 @@ export default async function StudentDashboard() {
             title: true,
             startsAt: true,
             location: true,
+            youtubeUrl: true,
             durationMinutes: true,
           },
         }),
@@ -190,23 +191,38 @@ export default async function StudentDashboard() {
               Next session
             </p>
             {nextSession ? (
-              <div className="mt-2 flex items-start gap-3">
-                <span className="mt-1 size-2 shrink-0 rounded-full bg-brand-teal-500" />
-                <div>
-                  <p className="text-sm font-bold text-brand-navy-900">
-                    {nextSession.title}
-                  </p>
-                  <p className="text-xs text-neutral-500">
-                    {format(nextSession.startsAt, "EEE, MMM d · h:mm a")} ·{" "}
-                    {nextSession.durationMinutes} min
-                    {nextSession.location ? ` · ${nextSession.location}` : ""}
-                  </p>
-                  <Badge variant="teal" className="mt-1.5 text-[10px]">
-                    {formatDistanceToNowStrict(nextSession.startsAt, {
-                      addSuffix: true,
-                    })}
-                  </Badge>
+              <div className="mt-2 flex flex-col gap-2">
+                <div className="flex items-start gap-3">
+                  <span className="mt-1 size-2 shrink-0 rounded-full bg-brand-teal-500" />
+                  <div>
+                    <Link
+                      href={`/student/sessions/${nextSession.id}`}
+                      className="text-sm font-bold text-brand-navy-900 hover:underline"
+                    >
+                      {nextSession.title}
+                    </Link>
+                    <p className="text-xs text-neutral-500">
+                      {format(nextSession.startsAt, "EEE, MMM d · h:mm a")} ·{" "}
+                      {nextSession.durationMinutes} min
+                      {nextSession.location ? ` · ${nextSession.location}` : ""}
+                    </p>
+                    <Badge variant="teal" className="mt-1.5 text-[10px]">
+                      {formatDistanceToNowStrict(nextSession.startsAt, {
+                        addSuffix: true,
+                      })}
+                    </Badge>
+                  </div>
                 </div>
+                {nextSession.youtubeUrl && (
+                  <a
+                    href={nextSession.youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 rounded-lg bg-brand-teal-600 px-3 py-2 text-xs font-bold text-white transition-colors hover:bg-brand-teal-700"
+                  >
+                    {isPast(nextSession.startsAt) ? "Watch recording" : "Join session"}
+                  </a>
+                )}
               </div>
             ) : (
               <p className="mt-2 text-sm italic text-neutral-400">
