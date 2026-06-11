@@ -20,6 +20,7 @@ const PREF_FIELD: Record<NotificationType, string> = {
   SESSION_RESCHEDULED: "sessionRescheduled",
   LOW_ATTENDANCE_FLAG: "lowAttendanceFlag",
   MENTOR_FOLLOWUP: "mentorFollowup",
+  QUIZ_GRADED: "quizGraded",
 };
 
 async function userAllowsType(userId: number, type: NotificationType): Promise<boolean> {

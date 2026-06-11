@@ -15,7 +15,6 @@ import {
   closeCheckInAction,
   regenerateCheckInTokenAction,
 } from "@/lib/session-actions";
-import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -81,34 +80,34 @@ export default async function SessionDetailPage({ params }: PageProps) {
   }));
 
   return (
-    <>
-      <PageHeader
-        title={session.title}
-        description={`${format(session.startsAt, "EEE, MMM d, yyyy · h:mm a")} · ${session.durationMinutes} min`}
-        actions={
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              render={
-                <Link
-                  href={`/admin/season/${season.code}/sessions/${session.id}/edit`}
-                />
-              }
-            >
-              Edit
-            </Button>
-            <Button
-              render={
-                <Link
-                  href={`/admin/season/${season.code}/sessions/${session.id}/attendance`}
-                />
-              }
-            >
-              Mark attendance
-            </Button>
-          </div>
-        }
-      />
+    <div className="flex flex-col gap-4">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-black text-brand-navy-900">{session.title}</h1>
+          <p className="mt-1 text-sm text-neutral-500">{`${format(session.startsAt, "EEE, MMM d, yyyy · h:mm a")} · ${session.durationMinutes} min`}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            render={
+              <Link
+                href={`/admin/season/${season.code}/sessions/${session.id}/edit`}
+              />
+            }
+          >
+            Edit
+          </Button>
+          <Button
+            render={
+              <Link
+                href={`/admin/season/${season.code}/sessions/${session.id}/attendance`}
+              />
+            }
+          >
+            Mark attendance
+          </Button>
+        </div>
+      </div>
 
       <Card>
         <CardContent className="flex flex-col gap-3 pt-6">
@@ -119,7 +118,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
           )}
           {session.location && (
             <p className="inline-flex items-center gap-1.5 text-sm">
-              <MapPin className="size-4 text-muted-foreground" />
+              <MapPin className="size-4 text-neutral-500" />
               {session.location}
             </p>
           )}
@@ -176,7 +175,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           {checkInOpen && checkInExpiresAt && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-500">
               Closes at {format(checkInExpiresAt, "h:mm a")}
             </p>
           )}
@@ -190,6 +189,6 @@ export default async function SessionDetailPage({ params }: PageProps) {
           />
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

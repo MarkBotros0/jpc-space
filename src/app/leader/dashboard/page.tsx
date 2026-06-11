@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, ClipboardList } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
@@ -13,7 +13,6 @@ export default async function LeaderDashboard() {
   const user = await getCurrentUserOrRedirect();
   requireRole(user, ["LEADER"]);
 
-  // Resolve the season for this leader's groups
   const groups = user.groupLeaderIds.length
     ? await db.group.findMany({
         where: { id: { in: user.groupLeaderIds } },
@@ -26,19 +25,63 @@ export default async function LeaderDashboard() {
       })
     : [];
 
-  // Pick the first active season found across leader's groups
   const seasonId = groups[0]?.seasonId ?? null;
   const studentIds = groups.flatMap((g) => g.students.map((s) => s.studentUserId));
 
-  const atRisk = seasonId && studentIds.length
-    ? await computeAtRiskStudents(seasonId, studentIds)
-    : [];
+  const [atRisk, submissions] = await Promise.all([
+    seasonId && studentIds.length
+      ? computeAtRiskStudents(seasonId, studentIds)
+      : Promise.resolve([]),
+    seasonId && studentIds.length
+      ? db.submission.findMany({
+          where: {
+            studentUserId: { in: studentIds },
+            assignment: { seasonId, deletedAt: null },
+          },
+          select: { status: true },
+        })
+      : Promise.resolve([]),
+  ]);
+
+  const pendingReview = submissions.filter((s) => s.status === "SUBMITTED").length;
+  const reviewed = submissions.filter(
+    (s) => s.status === "REVIEWED" || s.status === "RETURNED",
+  ).length;
+  const drafts = submissions.filter((s) => s.status === "DRAFT").length;
 
   return (
     <div className="flex flex-col gap-4">
       <div>
         <h1 className="text-2xl font-black text-brand-navy-900">Dashboard</h1>
         <p className="mt-1 text-sm text-neutral-500">Your groups overview</p>
+      </div>
+
+      {/* Assignment status */}
+      <div className="rounded-xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+        <div className="flex items-center gap-2 border-b border-neutral-100 px-4 py-3">
+          <ClipboardList className="size-4 text-brand-teal-600" />
+          <p className="text-sm font-bold text-brand-navy-900">Assignments</p>
+          <Link
+            href="/leader/submissions"
+            className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline"
+          >
+            View all
+          </Link>
+        </div>
+        <div className="grid grid-cols-3 divide-x divide-neutral-100">
+          {[
+            { label: "Pending review", value: pendingReview, accent: pendingReview > 0 ? "text-warning-700" : "text-brand-navy-900" },
+            { label: "Reviewed", value: reviewed, accent: "text-success-700" },
+            { label: "Drafts", value: drafts, accent: "text-neutral-500" },
+          ].map(({ label, value, accent }) => (
+            <div key={label} className="px-4 py-3 text-center">
+              <p className={`text-2xl font-black ${accent}`}>{value}</p>
+              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
+                {label}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* At-risk students */}

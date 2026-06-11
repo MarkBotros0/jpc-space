@@ -7,7 +7,6 @@ import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { isLeaderInSeason } from "@/lib/rbac";
 import { loadSessionById } from "@/lib/sessions-query";
-import { PageHeader } from "@/components/layout/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckInAttendanceList } from "@/components/sessions/check-in-attendance-list";
@@ -65,11 +64,11 @@ export default async function LeaderSessionPage({ params }: PageProps) {
   }));
 
   return (
-    <>
-      <PageHeader
-        title={session.title}
-        description={format(session.startsAt, "EEE, MMM d · h:mm a")}
-      />
+    <div className="flex flex-col gap-4">
+      <div>
+        <h1 className="text-2xl font-black text-brand-navy-900">{session.title}</h1>
+        <p className="mt-1 text-sm text-neutral-500">{format(session.startsAt, "EEE, MMM d · h:mm a")}</p>
+      </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -92,6 +91,6 @@ export default async function LeaderSessionPage({ params }: PageProps) {
           />
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }
