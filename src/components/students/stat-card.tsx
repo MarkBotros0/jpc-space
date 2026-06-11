@@ -19,14 +19,14 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const cls = cn(
-    "rounded-xl p-4",
+    "rounded-2xl p-4",
     href && "transition-opacity hover:opacity-80",
     variant === "white" &&
-      "bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60",
+      "border border-border bg-card shadow-[var(--shadow-soft)]",
     variant === "navy" &&
-      "bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 shadow-[0_4px_20px_rgba(31,50,96,0.25)]",
+      "bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10",
     variant === "teal" &&
-      "bg-brand-teal-100 ring-1 ring-brand-teal-200",
+      "bg-brand-teal-100 ring-1 ring-brand-teal-200 dark:bg-brand-teal-950 dark:ring-brand-teal-900",
     className,
   );
   const inner = (
@@ -34,9 +34,9 @@ export function StatCard({
       <p
         className={cn(
           "text-[10px] font-bold uppercase tracking-widest",
-          variant === "white" && "text-neutral-400",
+          variant === "white" && "text-muted-foreground/70",
           variant === "navy" && "text-brand-teal-300",
-          variant === "teal" && "text-brand-teal-700",
+          variant === "teal" && "text-brand-teal-700 dark:text-brand-teal-300",
         )}
       >
         {label}
@@ -44,9 +44,9 @@ export function StatCard({
       <p
         className={cn(
           "mt-1 text-3xl font-black",
-          variant === "white" && "text-brand-navy-900",
+          variant === "white" && "text-brand-navy-900 dark:text-foreground",
           variant === "navy" && "text-white",
-          variant === "teal" && "text-brand-teal-900",
+          variant === "teal" && "text-brand-teal-900 dark:text-brand-teal-100",
         )}
       >
         {value}
@@ -55,9 +55,9 @@ export function StatCard({
         <p
           className={cn(
             "mt-0.5 text-[10px]",
-            variant === "white" && "text-neutral-400",
+            variant === "white" && "text-muted-foreground/70",
             variant === "navy" && "text-white/40",
-            variant === "teal" && "text-brand-teal-600",
+            variant === "teal" && "text-brand-teal-600 dark:text-brand-teal-400",
           )}
         >
           {sublabel}

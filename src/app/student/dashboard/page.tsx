@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { format, formatDistanceToNowStrict, isPast } from "date-fns";
-import { Sparkles } from "lucide-react";
+import { AlertTriangle, Flame, Sparkles } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
@@ -36,7 +36,7 @@ export default async function StudentDashboard() {
   const seasonId = user.activeSeasonId;
   const season = profile?.studentProfile?.activeSeason ?? null;
 
-  const [engagement, nextSession, assignments, budget, streak, allSubmissions] = seasonId
+  const [engagement, nextSession, assignments, budget, streak, allSubmissions, weeksTotal, weeksCompleted] = seasonId
     ? await Promise.all([
         computeEngagementForStudent(user.userId, seasonId),
         db.session.findFirst({
@@ -66,8 +66,12 @@ export default async function StudentDashboard() {
             assignment: { select: { dueAt: true } },
           },
         }),
+        db.session.count({ where: { seasonId } }),
+        db.session.count({
+          where: { seasonId, startsAt: { lte: new Date() } },
+        }),
       ])
-    : ([null, null, [], null, 0, []] as const);
+    : ([null, null, [], null, 0, [], 0, 0] as const);
 
   const pending = assignments.filter(
     (a) => a.status === "PENDING" || a.status === "DRAFT",
@@ -75,15 +79,6 @@ export default async function StudentDashboard() {
   const lateCount = allSubmissions.filter(
     (s) => s.submittedAt != null && s.assignment.dueAt != null && s.submittedAt > s.assignment.dueAt!,
   ).length;
-
-  let weeksCompleted = 0;
-  let weeksTotal = 0;
-  if (seasonId) {
-    weeksTotal = await db.session.count({ where: { seasonId } });
-    weeksCompleted = await db.session.count({
-      where: { seasonId, startsAt: { lte: new Date() } },
-    });
-  }
 
   const progressPct =
     weeksTotal > 0 ? Math.round((weeksCompleted / weeksTotal) * 100) : 0;
@@ -96,7 +91,7 @@ export default async function StudentDashboard() {
     <StaggerReveal className="flex flex-col gap-3 md:gap-4">
       {/* Greeting */}
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">
           Hi, {firstName} 👋
         </h1>
         {season ? (
@@ -104,7 +99,7 @@ export default async function StudentDashboard() {
             {season.title}
           </Badge>
         ) : (
-          <p className="mt-1 text-sm text-neutral-500">Welcome to JPC Space</p>
+          <p className="mt-1 text-sm text-muted-foreground">Welcome to JPC Space</p>
         )}
       </div>
 
@@ -116,13 +111,13 @@ export default async function StudentDashboard() {
             title="Not enrolled yet"
             description="Contact your leader or admin to be enrolled in a season."
           />
-          <div className="rounded-xl bg-brand-teal-100 p-4 ring-1 ring-brand-teal-200">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700">
+          <div className="rounded-2xl bg-brand-teal-100 p-4 ring-1 ring-brand-teal-200 dark:bg-brand-teal-950 dark:ring-brand-teal-900">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700 dark:text-brand-teal-300">
               While you wait
             </p>
             <Link
               href="/student/profile"
-              className="mt-1 block text-sm font-bold text-brand-teal-900 hover:underline"
+              className="mt-1 block text-sm font-bold text-brand-teal-900 hover:underline dark:text-brand-teal-100"
             >
               Complete your profile →
             </Link>
@@ -134,7 +129,7 @@ export default async function StudentDashboard() {
       {season && (
         <>
           {/* Hero progress card */}
-          <div className="rounded-xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)]">
+          <div className="rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
             <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-300">
               Season progress
             </p>
@@ -160,7 +155,16 @@ export default async function StudentDashboard() {
             />
             <StatCard
               label="Streak"
-              value={streak > 0 ? `🔥 ${streak}` : streak}
+              value={
+                streak > 0 ? (
+                  <span className="flex items-center gap-1">
+                    <Flame className="size-6 text-warning-500" aria-hidden />
+                    {streak}
+                  </span>
+                ) : (
+                  streak
+                )
+              }
             />
             <StatCard
               label="Assignments"
@@ -171,16 +175,17 @@ export default async function StudentDashboard() {
             />
           </div>
           {lateCount > 0 && (
-            <div className="rounded-xl bg-warning-50 p-3 ring-1 ring-warning-200">
-              <p className="text-xs font-bold text-warning-800">
-                ⚠ {lateCount} assignment{lateCount !== 1 ? "s" : ""} submitted late this season
+            <div className="rounded-2xl bg-warning-50 p-3 ring-1 ring-warning-200 dark:bg-warning-950 dark:ring-warning-900">
+              <p className="flex items-center gap-1.5 text-xs font-bold text-warning-800 dark:text-warning-200">
+                <AlertTriangle className="size-3.5 shrink-0" aria-hidden />
+                {lateCount} assignment{lateCount !== 1 ? "s" : ""} submitted late this season
               </p>
             </div>
           )}
 
           {/* Next session */}
-          <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
               Next session
             </p>
             {nextSession ? (
@@ -190,11 +195,11 @@ export default async function StudentDashboard() {
                   <div>
                     <Link
                       href={`/student/sessions/${nextSession.id}`}
-                      className="text-sm font-bold text-brand-navy-900 hover:underline"
+                      className="text-sm font-bold text-brand-navy-900 hover:underline dark:text-foreground"
                     >
                       {nextSession.title}
                     </Link>
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-xs text-muted-foreground">
                       {format(nextSession.startsAt, "EEE, MMM d · h:mm a")} ·{" "}
                       {nextSession.durationMinutes} min
                       {nextSession.location ? ` · ${nextSession.location}` : ""}
@@ -218,7 +223,7 @@ export default async function StudentDashboard() {
                 )}
               </div>
             ) : (
-              <p className="mt-2 text-sm italic text-neutral-400">
+              <p className="mt-2 text-sm italic text-muted-foreground">
                 No upcoming sessions.
               </p>
             )}
@@ -226,19 +231,19 @@ export default async function StudentDashboard() {
 
           {/* Due soon */}
           {pending.length > 0 && (
-            <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+            <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
                   Due soon
                 </p>
                 <Link
                   href="/student/assignments"
-                  className="text-xs font-semibold text-brand-teal-700 hover:underline"
+                  className="text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
                 >
                   See all
                 </Link>
               </div>
-              <ul className="mt-2 flex flex-col divide-y divide-neutral-100">
+              <ul className="mt-2 flex flex-col divide-y divide-border">
                 {pending.slice(0, 3).map((a) => (
                   <li
                     key={a.id}
@@ -246,7 +251,7 @@ export default async function StudentDashboard() {
                   >
                     <Link
                       href={`/student/assignments/${a.id}`}
-                      className="flex-1 truncate text-sm font-semibold text-brand-navy-900 hover:underline"
+                      className="flex-1 truncate text-sm font-semibold text-brand-navy-900 hover:underline dark:text-foreground"
                     >
                       {a.title}
                     </Link>

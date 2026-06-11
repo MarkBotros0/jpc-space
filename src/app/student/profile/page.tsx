@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Flame } from "lucide-react";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
@@ -49,25 +50,22 @@ export default async function StudentProfilePage() {
   const avatarUrl = userRow.avatarPath ? await storage.url(userRow.avatarPath) : null;
   const initials = initialsFor(userRow.name, userRow.email);
 
-  const [engagement, budget] = userRow.studentProfile.activeSeasonId
+  const [engagement, budget, streak] = userRow.studentProfile.activeSeasonId
     ? await Promise.all([
         computeEngagementForStudent(user.userId, userRow.studentProfile.activeSeasonId),
         computeAttendanceBudget(user.userId, userRow.studentProfile.activeSeasonId),
+        computeAttendanceStreak(user.userId, userRow.studentProfile.activeSeasonId),
       ])
-    : ([null, null] as const);
+    : ([null, null, 0] as const);
 
   const attendancePct = budget
     ? Math.max(0, Math.round(100 - budget.budgetPct))
     : null;
 
-  const streak = userRow.studentProfile.activeSeasonId
-    ? await computeAttendanceStreak(user.userId, userRow.studentProfile.activeSeasonId)
-    : 0;
-
   return (
     <div className="flex flex-col gap-3 md:gap-4">
       {/* Navy hero card */}
-      <div className="rounded-xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)]">
+      <div className="rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
         <div className="flex items-center gap-4">
           <div className="shrink-0">
             <AvatarUpload currentAvatarUrl={avatarUrl} initials={initials} />
@@ -97,14 +95,23 @@ export default async function StudentProfilePage() {
           />
           <StatCard
             label="Streak"
-            value={streak > 0 ? `🔥 ${streak}` : streak}
+            value={
+              streak > 0 ? (
+                <span className="flex items-center gap-1">
+                  <Flame className="size-6 text-warning-500" aria-hidden />
+                  {streak}
+                </span>
+              ) : (
+                streak
+              )
+            }
           />
         </div>
       )}
 
       {/* Profile form */}
-      <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-        <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+        <p className="mb-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
           Your details
         </p>
         <StudentForm

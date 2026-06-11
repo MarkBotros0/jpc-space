@@ -48,7 +48,7 @@ export default async function StudentHistoryPage() {
   if (enrollments.length === 0) {
     return (
       <div className="flex flex-col gap-3 md:gap-4">
-        <h1 className="text-2xl font-black text-brand-navy-900">History</h1>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">History</h1>
         <EmptyState
           icon={Sparkles}
           title="No past seasons"
@@ -59,36 +59,44 @@ export default async function StudentHistoryPage() {
   }
 
   // Compute attendance % per past season — NO submission data fetched here.
+  // Curriculum (session titles + dates only). NO materials, NO notes content.
   const seasonIds = enrollments.map((e) => e.seasonId);
-  const attendanceByseason = new Map<number, { total: number; present: number }>();
-  for (const sid of seasonIds) {
-    const total = await db.session.count({ where: { seasonId: sid } });
-    const present = await db.attendance.count({
+  const [allSessions, presentRecords] = await Promise.all([
+    db.session.findMany({
+      where: { seasonId: { in: seasonIds } },
+      orderBy: { startsAt: "asc" },
+      select: { id: true, title: true, startsAt: true, seasonId: true },
+    }),
+    db.attendance.findMany({
       where: {
         studentUserId: user.userId,
-        session: { seasonId: sid },
+        session: { seasonId: { in: seasonIds } },
         status: { in: ["PRESENT", "LATE"] },
       },
-    });
-    attendanceByseason.set(sid, { total, present });
-  }
+      select: { session: { select: { seasonId: true } } },
+    }),
+  ]);
 
-  // Curriculum (session titles + dates only). NO materials, NO notes content.
+  const attendanceByseason = new Map<number, { total: number; present: number }>();
   const curriculaBySeason = new Map<number, { id: number; title: string; startsAt: Date }[]>();
-  for (const sid of seasonIds) {
-    const sessions = await db.session.findMany({
-      where: { seasonId: sid },
-      orderBy: { startsAt: "asc" },
-      select: { id: true, title: true, startsAt: true },
-    });
-    curriculaBySeason.set(sid, sessions);
+  for (const s of allSessions) {
+    const entry = attendanceByseason.get(s.seasonId) ?? { total: 0, present: 0 };
+    entry.total += 1;
+    attendanceByseason.set(s.seasonId, entry);
+    const curriculum = curriculaBySeason.get(s.seasonId) ?? [];
+    curriculum.push({ id: s.id, title: s.title, startsAt: s.startsAt });
+    curriculaBySeason.set(s.seasonId, curriculum);
+  }
+  for (const r of presentRecords) {
+    const entry = attendanceByseason.get(r.session.seasonId);
+    if (entry) entry.present += 1;
   }
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">History</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">History</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Seasons you&apos;ve participated in
         </p>
       </div>
@@ -105,14 +113,14 @@ export default async function StudentHistoryPage() {
 
           return (
             <li key={e.seasonId}>
-              <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
+              <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
                 {/* Season title row */}
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="text-base font-bold text-brand-navy-900">
+                    <p className="text-base font-bold text-brand-navy-900 dark:text-foreground">
                       {e.season.title}
                     </p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="text-xs text-muted-foreground">
                       {format(e.season.startDate, "MMM d, yyyy")} –{" "}
                       {format(e.season.endDate, "MMM d, yyyy")}
                       {e.group?.name && ` · ${e.group.name}`}
@@ -127,14 +135,14 @@ export default async function StudentHistoryPage() {
                 {/* Curriculum accordion */}
                 {sessions.length > 0 && (
                   <details className="mt-3 text-sm">
-                    <summary className="cursor-pointer font-semibold text-brand-navy-700">
+                    <summary className="cursor-pointer font-semibold text-brand-navy-700 dark:text-brand-navy-200">
                       Curriculum ({sessions.length} sessions)
                     </summary>
-                    <ol className="mt-2 flex flex-col gap-1 text-neutral-500">
+                    <ol className="mt-2 flex flex-col gap-1 text-muted-foreground">
                       {sessions.map((s) => (
                         <li
                           key={s.id}
-                          className="flex justify-between gap-3 border-t border-neutral-100 pt-1 first:border-0 first:pt-0"
+                          className="flex justify-between gap-3 border-t border-border pt-1 first:border-0 first:pt-0"
                         >
                           <span>{s.title}</span>
                           <span className="shrink-0 text-xs tabular-nums">
