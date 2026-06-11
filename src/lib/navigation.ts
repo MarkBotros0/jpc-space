@@ -99,13 +99,14 @@ const STUDENT: RoleNav = {
     { href: "/student/quizzes", label: "Quizzes", icon: "quizzes" },
     { href: "/student/history", label: "History", icon: "history" },
     { href: "/student/profile", label: "Profile", icon: "profile" },
+    { href: "/student/settings", label: "Settings", icon: "settings" },
   ],
   tabs: [
     { href: "/student/dashboard", label: "Home", icon: "home" },
     { href: "/student/calendar", label: "Calendar", icon: "calendar" },
     { href: "/student/assignments", label: "Assignments", icon: "assignments" },
-    { href: "/student/quizzes", label: "Quizzes", icon: "quizzes" },
-    { href: "/student/profile", label: "Profile", icon: "profile" },
+    { href: "/student/season", label: "Season", icon: "season" },
+    { href: "/student/more", label: "More", icon: "more" },
   ],
 };
 
