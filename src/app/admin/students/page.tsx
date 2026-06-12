@@ -31,8 +31,8 @@ export default async function AdminStudentsPage({
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">Students</h1>
-          <p className="mt-1 text-sm text-neutral-500">{`${rowsWithAvatars.length} student${rowsWithAvatars.length === 1 ? "" : "s"} in your seasons`}</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Students</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{`${rowsWithAvatars.length} student${rowsWithAvatars.length === 1 ? "" : "s"} in your seasons`}</p>
         </div>
         <Button render={<Link href="/super/students/new" />}>New student</Button>
       </div>

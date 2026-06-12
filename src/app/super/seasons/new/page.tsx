@@ -14,8 +14,8 @@ export default async function NewSeasonPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">New season</h1>
-        <p className="mt-1 text-sm text-neutral-500">Set up a new program season.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">New season</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Set up a new program season.</p>
       </div>
       <Card>
         <CardContent className="pt-6">

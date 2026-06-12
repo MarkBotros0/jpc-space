@@ -87,8 +87,8 @@ export default async function SessionDetailPage({ params }: PageProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">{session.title}</h1>
-          <p className="mt-1 text-sm text-neutral-500">{`${format(session.startsAt, "EEE, MMM d, yyyy · h:mm a")} · ${session.durationMinutes} min`}</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{session.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{`${format(session.startsAt, "EEE, MMM d, yyyy · h:mm a")} · ${session.durationMinutes} min`}</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -122,7 +122,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
           )}
           {session.location && (
             <p className="inline-flex items-center gap-1.5 text-sm">
-              <MapPin className="size-4 text-neutral-500" />
+              <MapPin className="size-4 text-muted-foreground" />
               {session.location}
             </p>
           )}
@@ -142,14 +142,14 @@ export default async function SessionDetailPage({ params }: PageProps) {
         </CardHeader>
         <CardContent>
           {quizzes.length === 0 ? (
-            <p className="text-sm text-neutral-500">No quizzes for this session yet.</p>
+            <p className="text-sm text-muted-foreground">No quizzes for this session yet.</p>
           ) : (
-            <ul className="flex flex-col divide-y divide-neutral-100">
+            <ul className="flex flex-col divide-y divide-border">
               {quizzes.map((q) => (
                 <li key={q.id} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
                   <div>
-                    <p className="text-sm font-semibold text-brand-navy-900">{q.title}</p>
-                    <p className="text-xs text-neutral-500">Max score: {q.maxScore} · {q.gradedCount} graded</p>
+                    <p className="text-sm font-semibold text-brand-navy-900 dark:text-foreground">{q.title}</p>
+                    <p className="text-xs text-muted-foreground">Max score: {q.maxScore} · {q.gradedCount} graded</p>
                   </div>
                 </li>
               ))}
@@ -203,7 +203,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           {checkInOpen && checkInExpiresAt && (
-            <p className="text-xs text-neutral-500">
+            <p className="text-xs text-muted-foreground">
               Closes at {format(checkInExpiresAt, "h:mm a")}
             </p>
           )}

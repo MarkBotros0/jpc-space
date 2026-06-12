@@ -29,8 +29,8 @@ export default async function SessionAttendancePage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">{`Attendance — ${session.title}`}</h1>
-        <p className="mt-1 text-sm text-neutral-500">{format(session.startsAt, "EEE, MMM d, yyyy · h:mm a")}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{`Attendance — ${session.title}`}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{format(session.startsAt, "EEE, MMM d, yyyy · h:mm a")}</p>
       </div>
       <AttendanceForm
         sessionId={session.id}

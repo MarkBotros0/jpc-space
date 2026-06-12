@@ -27,8 +27,8 @@ export default async function SuperCalendarPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">Calendar</h1>
-        <p className="mt-1 text-sm text-neutral-500">All active seasons across JPC.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Calendar</h1>
+        <p className="mt-1 text-sm text-muted-foreground">All active seasons across JPC.</p>
       </div>
       <SeasonCalendar
         sessions={sessions}

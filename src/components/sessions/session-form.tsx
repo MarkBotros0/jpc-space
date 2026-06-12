@@ -206,8 +206,8 @@ export function SessionForm({
                   onClick={() => field.onChange(type)}
                   className={`flex-1 rounded-lg border px-3 py-2 text-sm font-semibold transition-colors ${
                     field.value === type
-                      ? "border-brand-teal-500 bg-brand-teal-50 text-brand-teal-800"
-                      : "border-neutral-200 bg-white text-neutral-500 hover:border-neutral-300"
+                      ? "border-brand-teal-500 bg-brand-teal-50 text-brand-teal-800 dark:bg-brand-teal-950 dark:text-brand-teal-200"
+                      : "border-border bg-card text-muted-foreground hover:border-brand-teal-300"
                   }`}
                 >
                   {type === "inperson" ? "In-person" : "Online"}

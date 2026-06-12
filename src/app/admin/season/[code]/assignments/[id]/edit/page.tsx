@@ -41,8 +41,8 @@ export default async function EditAssignmentPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">Edit assignment</h1>
-        <p className="mt-1 text-sm text-neutral-500">{assignment.title}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Edit assignment</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{assignment.title}</p>
       </div>
       <Card>
         <CardContent className="pt-6">

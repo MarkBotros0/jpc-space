@@ -11,8 +11,8 @@ export default async function NewUserPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">New user</h1>
-        <p className="mt-1 text-sm text-neutral-500">Create a user account.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">New user</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Create a user account.</p>
       </div>
       <Card>
         <CardContent className="pt-6">

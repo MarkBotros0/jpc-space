@@ -32,8 +32,8 @@ export default async function NewGroupPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">New group</h1>
-        <p className="mt-1 text-sm text-neutral-500">{`Add a group to ${season.title}.`}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">New group</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{`Add a group to ${season.title}.`}</p>
       </div>
       <Card>
         <CardContent className="pt-6">
