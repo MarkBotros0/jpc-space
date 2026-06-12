@@ -153,7 +153,7 @@ export function AttendanceForm({ sessionId, roster, returnHref }: AttendanceForm
         <p className="rounded-md border border-error-200 bg-error-50 px-3 py-2 text-sm text-error-800 dark:border-error-900 dark:bg-error-950 dark:text-error-200">{error}</p>
       )}
 
-      <div className="sticky bottom-20 z-10 flex flex-col-reverse gap-2 rounded-lg border border-border bg-card p-3 shadow-sm sm:flex-row sm:justify-end md:bottom-0">
+      <div className="sticky bottom-24 z-10 flex flex-col-reverse gap-2 rounded-lg border border-border bg-card p-3 shadow-sm sm:flex-row sm:justify-end md:bottom-0">
         <Button type="button" variant="outline" onClick={() => router.back()} disabled={pending}>
           Cancel
         </Button>
