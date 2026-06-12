@@ -19,7 +19,7 @@ export function StatCard({
   className,
 }: StatCardProps) {
   const cls = cn(
-    "rounded-2xl p-4",
+    "flex h-full flex-col items-center justify-center gap-1 rounded-2xl p-4 text-center",
     href && "transition-opacity hover:opacity-80",
     variant === "white" &&
       "border border-border bg-card shadow-[var(--shadow-soft)]",
@@ -33,6 +33,16 @@ export function StatCard({
     <>
       <p
         className={cn(
+          "flex items-center justify-center gap-1 text-3xl font-black leading-none",
+          variant === "white" && "text-brand-navy-900 dark:text-foreground",
+          variant === "navy" && "text-white",
+          variant === "teal" && "text-brand-teal-900 dark:text-brand-teal-100",
+        )}
+      >
+        {value}
+      </p>
+      <p
+        className={cn(
           "text-[10px] font-bold uppercase tracking-widest",
           variant === "white" && "text-muted-foreground/70",
           variant === "navy" && "text-brand-teal-300",
@@ -41,20 +51,10 @@ export function StatCard({
       >
         {label}
       </p>
-      <p
-        className={cn(
-          "mt-1 text-3xl font-black",
-          variant === "white" && "text-brand-navy-900 dark:text-foreground",
-          variant === "navy" && "text-white",
-          variant === "teal" && "text-brand-teal-900 dark:text-brand-teal-100",
-        )}
-      >
-        {value}
-      </p>
       {sublabel && (
         <p
           className={cn(
-            "mt-0.5 text-[10px]",
+            "text-[10px]",
             variant === "white" && "text-muted-foreground/70",
             variant === "navy" && "text-white/40",
             variant === "teal" && "text-brand-teal-600 dark:text-brand-teal-400",
@@ -66,7 +66,11 @@ export function StatCard({
     </>
   );
   if (href) {
-    return <Link href={href} className={cls}>{inner}</Link>;
+    return (
+      <Link href={href} className={cls}>
+        {inner}
+      </Link>
+    );
   }
   return <div className={cls}>{inner}</div>;
 }

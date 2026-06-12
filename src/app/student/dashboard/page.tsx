@@ -93,13 +93,13 @@ export default async function StudentDashboard() {
         <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">
           Hi, {firstName} 👋
         </h1>
-        {season ? (
-          <Badge variant="teal" className="mt-1.5">
-            {season.title}
-          </Badge>
-        ) : (
-          <p className="mt-1 text-sm text-muted-foreground">Welcome to JPC Space</p>
-        )}
+        <p className="mt-1 text-sm text-muted-foreground">
+          {season
+            ? pending.length > 0
+              ? `${pending.length} ${pending.length === 1 ? "assignment needs" : "assignments need"} your attention.`
+              : "You're all caught up this week."
+            : "Welcome to JPC Space"}
+        </p>
       </div>
 
       {/* ── Not enrolled ── */}
@@ -140,15 +140,16 @@ export default async function StudentDashboard() {
               </ProgressRing>
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700 dark:text-brand-teal-300">
-                  Season progress
+                  Current season
                 </p>
-                <p className="mt-1 text-lg font-black text-brand-navy-900 dark:text-foreground">
-                  Week {weeksCompleted} of {weeksTotal}
+                <p className="mt-1 truncate text-lg font-black text-brand-navy-900 dark:text-foreground">
+                  {season.title}
                 </p>
                 <p className="text-xs text-muted-foreground">
+                  Week {weeksCompleted} of {weeksTotal}
                   {progressPct >= 100
-                    ? "Season complete — well done."
-                    : `${weeksTotal - weeksCompleted} ${
+                    ? " · complete"
+                    : ` · ${weeksTotal - weeksCompleted} ${
                         weeksTotal - weeksCompleted === 1 ? "week" : "weeks"
                       } to go`}
                 </p>
