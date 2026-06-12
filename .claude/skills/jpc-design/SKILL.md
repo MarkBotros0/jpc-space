@@ -1,6 +1,6 @@
 ---
 name: jpc-design
-description: JPC Space design system rules. Use whenever creating, modifying, or reviewing any UI component, page, route, layout, or visual element in the JPC Space project (d:/Projects/jpc-space). Covers brand identity (navy + teal anchored on the logo), Geist Sans-only typography, mobile-first patterns, light/dark theming via next-themes (semantic-token rule), framer-motion presets, the Base UI primitive library, the persistent AppShell architecture (one shell per role layout — never per page), and the self-audit checklist that must run before any screen is reported done. Apply this skill proactively any time a file under `src/app/`, `src/components/`, or `src/lib/navigation.ts` is touched, any time the user mentions UI, styling, components, animation, theming, or visual polish, and any time a new page or layout is being authored.
+description: JPC Space design system rules. Use whenever creating, modifying, or reviewing any UI component, page, route, layout, or visual element in the JPC Space project (d:/Projects/jpc-space). Covers brand identity (navy + teal anchored on the logo), Geist Sans-only typography, mobile-first patterns, light/dark theming via a custom class-based theme provider (semantic-token rule), theme-adaptive hero surfaces, framer-motion presets, the Base UI primitive library, the persistent AppShell architecture (one shell per role layout — never per page), and the self-audit checklist that must run before any screen is reported done. Apply this skill proactively any time a file under `src/app/`, `src/components/`, or `src/lib/navigation.ts` is touched, any time the user mentions UI, styling, components, animation, theming, or visual polish, and any time a new page or layout is being authored.
 ---
 
 # JPC Space Design System
@@ -74,11 +74,11 @@ Prefer the semantic alias tokens (`bg-background`, `text-foreground`, `bg-card`,
 
 ## Light & dark mode
 
-Theming runs through **`next-themes`** with `attribute="class"` on `<html>`. Both modes are first-class — no screen is "light-mode only".
+Theming runs through a **custom `ThemeProvider`** ([src/components/providers/theme-provider.tsx](src/components/providers/theme-provider.tsx)) that toggles a `.dark` class on `<html>`, paired with a synchronous `themeInitScript` in the root layout that applies the saved theme **before** hydration (no FOUC). This project does **not** use `next-themes`. Both modes are first-class — no screen is "light-mode only".
 
 - All tokens have light and dark values defined in `:root` / `.dark` blocks in `globals.css`. When you add a new design token, define both values.
 - Use semantic alias tokens in components — they switch with the class. Raw scales (e.g., `bg-brand-navy-900`) lock to that color in both modes; use them deliberately for surfaces like the sidebar that should look the same regardless of theme, or pair them with a dark variant (`dark:bg-brand-navy-950`).
-- The theme toggle lives in the top bar (icon button, Sun/Moon cross-fade). Mobile users also get the toggle inside the user-menu dropdown.
+- The theme toggle is **not** in the top bar. On desktop it lives in the **user-menu dropdown** (the avatar menu, a "Light/Dark mode" item); on mobile it's the **Appearance** row on the **More** page. The shared control is `<ThemeToggle>` (Sun/Moon cross-fade), which reads `useTheme()` from the custom provider behind a `useSyncExternalStore` hydration guard.
 - `<html suppressHydrationWarning>` is required to silence the unavoidable first-paint mismatch.
 
 ### The semantic-token rule (do not forget this)
@@ -123,6 +123,18 @@ Auth pages (`/login`, `/forgot-password`, `/reset-password`, `/forbidden`) use t
 
 ---
 
+## Hero surfaces
+
+The top card on a content screen (dashboard, season, profile, attendance, quizzes, and session/assignment detail) is a **theme-adaptive `bg-card` surface**: `rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]`.
+
+Do **not** use a saturated navy gradient block as a hero in light mode — it reads as a dark island on the light canvas (this was a real complaint, and those navy-gradient heroes were removed). The brand colour in a hero comes from a **teal accent**, not a dark background fill: a `<ProgressRing>` (teal stroke), a teal kicker label (`text-brand-teal-700 dark:text-brand-teal-300`), or a teal `<Badge>`.
+
+- **`<ProgressRing>`** (`src/components/ui/progress-ring.tsx`) is the signature hero element for anything with a percentage — season progress, absence budget, quiz average. Teal stroke over a `--border` track, the number in the centre, fully theme-adaptive (it's a Server-Component-safe pure SVG). Pass `indicatorClassName` to recolour by status (e.g. warning/error when a budget is over-spent).
+- **Fold identity into the hero** rather than floating a standalone chip beside the greeting — e.g. the season name belongs as the hero card's title, not as a `<Badge>` under "Hi, {name}". Let a greeting line carry a useful status ("3 assignments need your attention."), not a duplicate label.
+- **KPI tiles** (e.g. `StatCard`) under a hero are centred (`items-center text-center`) and equal-height so their values align across the row.
+
+---
+
 ## Spacing, radii, elevation
 
 - **Card padding:** `p-4 md:p-6`.
@@ -155,7 +167,7 @@ Canonical presets:
 
 - `fadeUp` — opacity 0→1, y 8→0, 240ms, ease-out-soft. List/card entries.
 - `staggerChildren` — 60ms stagger, used on parent containers wrapping list items.
-- `pageTransition` — opacity + 4px translate, 180ms. Used by `src/app/template.tsx`.
+- `pageTransition` — opacity + 4px translate, 180ms. Used by the per-role `app/<role>/template.tsx` (there is no root `app/template.tsx` — see Layout shell).
 - `springSoft` — `{ type: "spring", stiffness: 280, damping: 28 }`. Sidebar width changes, shared-layout pills.
 - `tap` — `{ scale: 0.97 }`. Buttons, interactive cards, nav links.
 - `hover` — `{ y: -2 }`. Interactive cards.
@@ -184,7 +196,7 @@ Don't animate everything just because you can — under-motion is more elegant t
 
 - Post-action confirmations use **Sonner** via `<Toaster richColors closeButton position="top-right" />` mounted once in `app/layout.tsx`. Call `toast.success(...)` / `toast.error(...)` from server-action result handlers.
 - **Inline form errors stay inline** — they're contextual to the field. Don't replace inline validation with toasts.
-- Loading states on action buttons: render a spinner inside the button via the `Button`'s built-in `loading` prop; never leave the button visually unchanged during a pending action.
+- Loading states on action buttons: the `Button` primitive has **no** built-in `loading`/spinner prop. Disable it for the pending transition (`disabled={pending}`) and swap the label to present-progressive copy ("Saving…", "Updating…"). Never leave the button visually unchanged during a pending action.
 
 ---
 
@@ -214,8 +226,8 @@ The `<AppShell>` ([src/components/layout/app-shell.tsx](src/components/layout/ap
 Inside the shell:
 
 - **Sidebar** (`md+`) — collapsible (width animates between `w-60` and `w-16` via `springSoft`); collapsed state persisted to `localStorage` via `sidebar-context.tsx`. Header shows `<Logo size="md" showWordmark />`. Active nav item has a shared-layout pill (`layoutId="nav-sidebar-active"`).
-- **Top bar** — glassmorphic: `jpc-glass border-b border-border/60`. Contains a page title derived from `usePathname()` (last meaningful segment, title-cased — pages no longer pass a `title` prop), theme toggle, notifications bell, user menu. On mobile the title and a small logo replace the sidebar.
-- **Bottom nav** (`<md`) — 5 items max from `tabs` in `src/lib/navigation.ts`. Active indicator slides with `springSoft`.
+- **Top bar** — glassmorphic: `jpc-glass border-b border-border/60`. The left side shows the **brand wordmark** (`<Logo size="sm" showWordmark />`) on every breakpoint — **not** a page title. (The old page-title-from-`usePathname()` was removed as poor UX; the sidebar and the active bottom-tab already convey location.) The right side has the desktop search, the role badge, the notifications bell, and the user menu. The theme toggle is **inside the user menu**, not a standalone top-bar button.
+- **Bottom nav** (`<md`) — 5 items max from `tabs` in `src/lib/navigation.ts`. Active indicator slides with `springSoft`. The **More** page (`more-menu.tsx`) auto-derives its list as `sidebar − tabs`: any item that's in `sidebar` but not in `tabs` shows up under More, so editing `tabs` silently changes the More menu.
 - **Navigation source of truth** — `src/lib/navigation.ts`. Never hardcode nav items in a layout file. To change nav, edit `navByRole`.
 
 ---
@@ -228,7 +240,7 @@ UI primitives live in `src/components/ui/`; layout primitives in `src/components
 
 Existing primitives (do not duplicate):
 
-`button`, `card`, `modal` (responsive bottom-sheet on mobile), `select`, `tabs`, `label`, `field`, `input`, `textarea`, `badge` (with role variants), `avatar`, `progress`, `separator`, `skeleton`, `date-picker`, `time-picker`, `combobox`, `multi-select`, `chip-input`, `file-upload`, `rich-text-editor`, `rich-text-view`, `data-table`, `confirm-dialog`, `empty-state`, `logo`, `theme-toggle`, `toaster`.
+`button`, `card`, `modal` (responsive bottom-sheet on mobile), `select`, `switch` (Base UI toggle, `data-checked` state), `tabs`, `label`, `field`, `input`, `textarea`, `badge` (with role variants), `avatar`, `progress`, `progress-ring` (theme-adaptive circular progress — the hero signature), `separator`, `skeleton`, `date-picker`, `time-picker`, `combobox`, `multi-select`, `chip-input`, `file-upload`, `rich-text-editor`, `rich-text-view`, `data-table`, `confirm-dialog`, `empty-state`, `logo`, `theme-toggle`, `toaster`.
 
 Layout: `app-shell`, `top-bar`, `nav-link`, `user-menu`, `notification-bell`, `page-header`, `sidebar-context`.
 
@@ -245,8 +257,8 @@ Motion wrappers: `src/components/motion/page-transition.tsx`.
 ## Logo
 
 - Asset: `public/jpc-logo.jpg` (copied from Money Manager — same brand mark).
-- Component: `<Logo size="sm | md | lg" showWordmark />` from `src/components/ui/logo.tsx`. Renders the image via `next/image`. With `showWordmark`, appends "JPC Space" in Fraunces.
-- Used in: sidebar header, mobile top bar, auth pages.
+- Component: `<Logo size="sm | md | lg" showWordmark />` from `src/components/ui/logo.tsx`. Renders the image via `next/image`. With `showWordmark`, appends "JPC Space" in **Geist Sans** (`font-sans font-semibold`) — there is no decorative serif wordmark.
+- Used in: sidebar header, the top bar (wordmark, all breakpoints), auth pages.
 - Don't render the logo as a raw `<img>` — always go through the component so sizing and the wordmark font stay consistent.
 
 ---
@@ -257,7 +269,7 @@ Every screen ships with all of these or it's incomplete:
 
 - **Empty state** — Every list view has an `<EmptyState>` with an icon in a tinted circle, a warm headline, supportive subcopy, and a CTA when an action exists.
 - **Skeleton** — Every async boundary has a `<Skeleton>` layout that matches the loaded view. Use the shimmer skeleton, not the static pulse, and not a spinner.
-- **Loading on actions** — Every action button shows a spinner during pending server actions. The button's label stays in place; opacity drops.
+- **Loading on actions** — Every action button shows a pending state during server actions: disable it and swap the label to present-progressive copy ("Saving…"). The `Button` has no built-in spinner, so don't reach for a `loading` prop.
 - **Inline errors** — Every form field shows inline validation errors via the established `<Field>` error pattern.
 - **Error boundary** — Every route segment has an `error.tsx`.
 
@@ -265,11 +277,12 @@ Every screen ships with all of these or it's incomplete:
 
 ## Required dependencies
 
-These three deps are foundational. If they're missing, install them before continuing:
+These deps are foundational. If they're missing, install them before continuing:
 
 - **`framer-motion`** — orchestrated motion.
 - **`sonner`** — toasts.
-- **`next-themes`** — light/dark toggle.
+
+Light/dark theming is **not** `next-themes` — it's a custom `ThemeProvider` ([src/components/providers/theme-provider.tsx](src/components/providers/theme-provider.tsx)) plus the root-layout init script. Do **not** add `next-themes`.
 
 `tw-animate-css` is already imported in `globals.css` for utility CSS animations; don't add a second utility-animation library.
 
@@ -292,7 +305,7 @@ These three deps are foundational. If they're missing, install them before conti
 Run this checklist and report the results in your response. Don't skip it — the audit is the contract.
 
 1. **Token audit** — grep the changed files for off-system color and raw scales that break dark mode: `bg-blue|bg-red|bg-gray|bg-slate|bg-zinc|text-gray|text-slate|bg-white\b|bg-neutral-\d|text-neutral-\d|border-neutral-\d|#[0-9a-fA-F]{3,6}`. Should return zero hits in feature code. (Tokens in `globals.css` and the sanctioned `chart-colors.ts` / `swatches.ts` are the only allowed source of hex / raw neutral scales.) Bare `bg-white` is especially dangerous — it stays white in dark mode and creates a light island on a dark page.
-2. **Font audit** — confirm no element renders in a serif fallback that wasn't supposed to (Fraunces is the only sanctioned serif, and only on headings/logo). If you see Times-style serif on body text, the font isn't loading — fix it.
+2. **Font audit** — Geist Sans / Geist Mono are the only families; there is **no** sanctioned serif. A Times-style serif anywhere means the font failed to load — fix it. Also confirm no `font-heading` / Fraunces leftovers crept back in.
 3. **Component audit** — list every UI primitive used. Each must come from `src/components/ui/` or `src/components/layout/`. No raw `<input>`/`<button>`/`<table>`/etc.
 4. **Mobile audit** — confirm the screen was checked at 375px. No horizontal scroll, no cut-off text, no unreachable buttons. Touch targets ≥ 44px.
 5. **Theme audit** — open the screen in both light and dark. Tokens used so nothing is locked to a single mode by accident.
