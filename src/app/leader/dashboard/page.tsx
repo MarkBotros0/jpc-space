@@ -7,6 +7,8 @@ import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ProgressRing } from "@/components/ui/progress-ring";
+import { StatCard } from "@/components/students/stat-card";
 
 export const metadata = { title: "Dashboard" };
 
@@ -132,36 +134,66 @@ export default async function LeaderDashboard() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Hero */}
-      <div className="rounded-xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)]">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-300">
-          {season?.title ?? "No active season"}
-          {groupName ? ` · ${groupName}` : ""}
-        </p>
-        <p className="mt-2 text-3xl font-black text-white">
-          {avgAttendance !== null ? `${avgAttendance}%` : "—"}
-        </p>
-        <p className="text-xs text-white/50">Group avg. attendance</p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          {[
-            { label: "Students", value: studentIds.length },
-            { label: `Week ${weeksCompleted}/${weeksTotal}`, value: `${weeksTotal > 0 ? Math.round((weeksCompleted / weeksTotal) * 100) : 0}%` },
-            {
-              label: "Quizzes",
-              value: quizzes.length > 0 ? `${quizzesPending} pending` : "None",
-            },
-          ].map(({ label, value }) => (
-            <div key={label} className="rounded-lg bg-white/10 px-2 py-1.5 text-center">
-              <p className="text-sm font-black text-white">{value}</p>
-              <p className="text-[10px] text-white/50">{label}</p>
-            </div>
-          ))}
+      {/* Hero: group attendance ring */}
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+        <div className="flex items-center gap-5">
+          <ProgressRing
+            value={avgAttendance ?? 0}
+            label={
+              avgAttendance !== null
+                ? `Group average attendance ${avgAttendance}%`
+                : "No attendance yet"
+            }
+            indicatorClassName={
+              avgAttendance !== null && avgAttendance < 70
+                ? "stroke-[var(--color-error-500)]"
+                : avgAttendance !== null && avgAttendance < 85
+                  ? "stroke-[var(--color-warning-500)]"
+                  : undefined
+            }
+          >
+            <span className="text-2xl font-black text-brand-navy-900 dark:text-foreground">
+              {avgAttendance !== null ? `${avgAttendance}%` : "—"}
+            </span>
+            <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+              attendance
+            </span>
+          </ProgressRing>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700 dark:text-brand-teal-300">
+              {season?.title ?? "No active season"}
+            </p>
+            <p className="mt-1 truncate text-lg font-black text-brand-navy-900 dark:text-foreground">
+              {groupName ?? "Your group"}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {studentIds.length} {studentIds.length === 1 ? "student" : "students"}
+              {weeksTotal > 0 ? ` · Week ${weeksCompleted} of ${weeksTotal}` : ""}
+            </p>
+          </div>
         </div>
       </div>
 
+      {/* Stat row */}
+      <div className="grid grid-cols-3 gap-3">
+        <StatCard label="Students" value={studentIds.length} href="/leader/groups" />
+        <StatCard
+          label="Progress"
+          value={`${weeksTotal > 0 ? Math.round((weeksCompleted / weeksTotal) * 100) : 0}%`}
+          sublabel={`Week ${weeksCompleted}/${weeksTotal}`}
+        />
+        <StatCard
+          label="Quizzes"
+          value={quizzes.length > 0 ? quizzesPending : 0}
+          sublabel="pending"
+          href="/leader/quizzes"
+          variant={quizzes.length > 0 && quizzesPending > 0 ? "teal" : "white"}
+        />
+      </div>
+
       {/* Next session */}
-      <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
           Next session
         </p>
         {nextSession ? (
@@ -171,11 +203,11 @@ export default async function LeaderDashboard() {
               <div>
                 <Link
                   href={`/leader/sessions/${nextSession.id}`}
-                  className="text-sm font-bold text-brand-navy-900 hover:underline"
+                  className="text-sm font-bold text-brand-navy-900 hover:underline dark:text-foreground"
                 >
                   {nextSession.title}
                 </Link>
-                <p className="text-xs text-neutral-500">
+                <p className="text-xs text-muted-foreground">
                   {format(nextSession.startsAt, "EEE, MMM d · h:mm a")} ·{" "}
                   {nextSession.durationMinutes} min
                   {nextSession.location ? ` · ${nextSession.location}` : ""}
@@ -197,18 +229,18 @@ export default async function LeaderDashboard() {
             )}
           </div>
         ) : (
-          <p className="mt-2 text-sm italic text-neutral-400">No upcoming sessions.</p>
+          <p className="mt-2 text-sm italic text-muted-foreground">No upcoming sessions.</p>
         )}
       </div>
 
       {/* Students */}
-      <div className="rounded-xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-        <div className="flex items-center gap-2 border-b border-neutral-100 px-4 py-3">
+      <div className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <Users className="size-4 text-brand-teal-600" />
-          <p className="text-sm font-bold text-brand-navy-900">Your students</p>
+          <p className="text-sm font-bold text-brand-navy-900 dark:text-foreground">Your students</p>
           <Link
-            href="/leader/students"
-            className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline"
+            href="/leader/groups"
+            className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
           >
             View all
           </Link>
@@ -223,19 +255,19 @@ export default async function LeaderDashboard() {
           </div>
         ) : (
           <>
-          <div className="grid grid-cols-[1fr_auto_auto] gap-3 border-b border-neutral-100 px-4 py-2">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Student</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Attendance</p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">Assignments</p>
+          <div className="grid grid-cols-[1fr_auto_auto] gap-3 border-b border-border px-4 py-2">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Student</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Attendance</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Assignments</p>
           </div>
-          <ul className="divide-y divide-neutral-100">
+          <ul className="divide-y divide-border">
             {studentRows.map((s) => (
               <li key={s.id}>
                 <Link
                   href={`/leader/students/${s.id}`}
-                  className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-neutral-50"
+                  className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/40"
                 >
-                  <p className="flex-1 truncate text-sm font-semibold text-brand-navy-900">
+                  <p className="flex-1 truncate text-sm font-semibold text-brand-navy-900 dark:text-foreground">
                     {s.name}
                   </p>
                   <div className="flex shrink-0 items-center gap-2">
@@ -243,10 +275,10 @@ export default async function LeaderDashboard() {
                       <span
                         className={`text-xs font-bold ${
                           s.attendancePct < 70
-                            ? "text-error-600"
+                            ? "text-error-600 dark:text-error-400"
                             : s.attendancePct < 85
-                              ? "text-warning-700"
-                              : "text-success-700"
+                              ? "text-warning-700 dark:text-warning-300"
+                              : "text-success-700 dark:text-success-300"
                         }`}
                       >
                         {s.attendancePct}%
@@ -267,29 +299,29 @@ export default async function LeaderDashboard() {
       </div>
 
       {/* Assignment overview */}
-      <div className="rounded-xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-        <div className="flex items-center gap-2 border-b border-neutral-100 px-4 py-3">
+      <div className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
           <ClipboardList className="size-4 text-brand-teal-600" />
-          <p className="text-sm font-bold text-brand-navy-900">Assignments</p>
+          <p className="text-sm font-bold text-brand-navy-900 dark:text-foreground">Assignments</p>
           <Link
             href="/leader/submissions"
-            className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline"
+            className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
           >
             View all
           </Link>
         </div>
-        <div className="grid grid-cols-2 divide-x divide-neutral-100">
+        <div className="grid grid-cols-2 divide-x divide-border">
           {[
             {
               label: "Pending review",
               value: pendingReview,
-              accent: pendingReview > 0 ? "text-warning-700" : "text-brand-navy-900",
+              accent: pendingReview > 0 ? "text-warning-700 dark:text-warning-300" : "text-brand-navy-900 dark:text-foreground",
             },
-            { label: "Reviewed", value: reviewed, accent: "text-success-700" },
+            { label: "Reviewed", value: reviewed, accent: "text-success-700 dark:text-success-300" },
           ].map(({ label, value, accent }) => (
             <div key={label} className="px-4 py-3 text-center">
               <p className={`text-2xl font-black ${accent}`}>{value}</p>
-              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
+              <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
                 {label}
               </p>
             </div>
@@ -299,33 +331,33 @@ export default async function LeaderDashboard() {
 
       {/* Quiz corrections */}
       {quizzes.length > 0 && (
-        <div className="rounded-xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-          <div className="flex items-center gap-2 border-b border-neutral-100 px-4 py-3">
+        <div className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">
+          <div className="flex items-center gap-2 border-b border-border px-4 py-3">
             <PenLine className="size-4 text-brand-teal-600" />
-            <p className="text-sm font-bold text-brand-navy-900">Quiz corrections</p>
+            <p className="text-sm font-bold text-brand-navy-900 dark:text-foreground">Quiz corrections</p>
             <Link
               href="/leader/quizzes"
-              className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline"
+              className="ml-auto text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
             >
               View all
             </Link>
           </div>
-          <div className="grid grid-cols-2 divide-x divide-neutral-100">
+          <div className="grid grid-cols-2 divide-x divide-border">
             {[
               {
                 label: "Pending",
                 value: quizzesPending,
-                accent: quizzesPending > 0 ? "text-warning-700" : "text-brand-navy-900",
+                accent: quizzesPending > 0 ? "text-warning-700 dark:text-warning-300" : "text-brand-navy-900 dark:text-foreground",
               },
               {
                 label: "Fully graded",
                 value: quizzes.length - quizzesPending,
-                accent: "text-success-700",
+                accent: "text-success-700 dark:text-success-300",
               },
             ].map(({ label, value, accent }) => (
               <div key={label} className="px-4 py-3 text-center">
                 <p className={`text-2xl font-black ${accent}`}>{value}</p>
-                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-neutral-400">
+                <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
                   {label}
                 </p>
               </div>
@@ -336,11 +368,11 @@ export default async function LeaderDashboard() {
 
       {/* At-risk callout (if any low-attendance students) */}
       {studentRows.some((s) => s.attendancePct !== null && s.attendancePct < 70) && (
-        <div className="flex items-start gap-3 rounded-xl bg-error-50 p-4 ring-1 ring-error-200">
+        <div className="flex items-start gap-3 rounded-2xl bg-error-50 p-4 ring-1 ring-error-200 dark:bg-error-950 dark:ring-error-900">
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-error-500" />
           <div>
-            <p className="text-xs font-bold text-error-800">Students below 70% attendance</p>
-            <p className="mt-0.5 text-xs text-error-600">
+            <p className="text-xs font-bold text-error-800 dark:text-error-200">Students below 70% attendance</p>
+            <p className="mt-0.5 text-xs text-error-600 dark:text-error-300">
               {studentRows
                 .filter((s) => s.attendancePct !== null && s.attendancePct < 70)
                 .map((s) => s.name)

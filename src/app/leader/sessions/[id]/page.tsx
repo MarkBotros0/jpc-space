@@ -70,8 +70,8 @@ export default async function LeaderSessionPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">{session.title}</h1>
-        <p className="mt-1 text-sm text-neutral-500">{format(session.startsAt, "EEE, MMM d · h:mm a")}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{session.title}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{format(session.startsAt, "EEE, MMM d · h:mm a")}</p>
       </div>
 
       {quizzes.length > 0 && (
@@ -83,12 +83,12 @@ export default async function LeaderSessionPage({ params }: PageProps) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ul className="flex flex-col divide-y divide-neutral-100">
+            <ul className="flex flex-col divide-y divide-border">
               {quizzes.map((q) => (
                 <li key={q.id} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
                   <div>
-                    <p className="text-sm font-semibold text-brand-navy-900">{q.title}</p>
-                    <p className="text-xs text-neutral-500">Max score: {q.maxScore}</p>
+                    <p className="text-sm font-semibold text-brand-navy-900 dark:text-foreground">{q.title}</p>
+                    <p className="text-xs text-muted-foreground">Max score: {q.maxScore}</p>
                   </div>
                   <Link
                     href={`/leader/sessions/${session.id}/quiz/${q.id}`}

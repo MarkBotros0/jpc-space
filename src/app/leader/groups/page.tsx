@@ -17,8 +17,8 @@ export default async function LeaderGroupsPage() {
     return (
       <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">My groups</h1>
-          <p className="mt-1 text-sm text-neutral-500">You don&apos;t lead any groups yet.</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">My groups</h1>
+          <p className="mt-1 text-sm text-muted-foreground">You don&apos;t lead any groups yet.</p>
         </div>
         <EmptyState
           icon={Users}
@@ -49,8 +49,8 @@ export default async function LeaderGroupsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">My groups</h1>
-        <p className="mt-1 text-sm text-neutral-500">{`${groups.length} group${groups.length === 1 ? "" : "s"}`}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">My groups</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{`${groups.length} group${groups.length === 1 ? "" : "s"}`}</p>
       </div>
       <div className="flex flex-col gap-4">
         {groups.map((g) => (
@@ -58,7 +58,7 @@ export default async function LeaderGroupsPage() {
             <CardHeader className="flex flex-row items-start justify-between gap-3">
               <div>
                 <CardTitle className="text-base">{g.name}</CardTitle>
-                <p className="text-sm text-neutral-500">{g.season.title}</p>
+                <p className="text-sm text-muted-foreground">{g.season.title}</p>
               </div>
               <Link
                 href="/leader/calendar"
@@ -69,7 +69,7 @@ export default async function LeaderGroupsPage() {
             </CardHeader>
             <CardContent>
               {g.students.length === 0 ? (
-                <p className="text-sm italic text-neutral-500">No students yet.</p>
+                <p className="text-sm italic text-muted-foreground">No students yet.</p>
               ) : (
                 <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
                   {g.students.map((s) => (

@@ -38,8 +38,8 @@ export default async function LeaderSubmissionDetailPage({ params }: PageProps) 
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">{submission.assignmentTitle}</h1>
-        <p className="mt-1 text-sm text-neutral-500">{`${submission.studentName ?? submission.studentEmail}${submission.groupName ? ` · ${submission.groupName}` : ""}`}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{submission.assignmentTitle}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{`${submission.studentName ?? submission.studentEmail}${submission.groupName ? ` · ${submission.groupName}` : ""}`}</p>
       </div>
 
       <div className="mb-4 flex flex-wrap gap-2">
@@ -81,18 +81,18 @@ export default async function LeaderSubmissionDetailPage({ params }: PageProps) 
               {submission.files.map((f) => (
                 <div
                   key={f.id}
-                  className="flex items-center justify-between gap-2 rounded-md border border-neutral-100 bg-neutral-50/40 px-3 py-2 text-sm"
+                  className="flex items-center justify-between gap-2 rounded-md border border-border bg-muted/40 px-3 py-2 text-sm"
                 >
                   <span className="inline-flex items-center gap-2 truncate">
-                    <FileIcon className="size-4 shrink-0 text-neutral-500" />
+                    <FileIcon className="size-4 shrink-0 text-muted-foreground" />
                     <span className="truncate">{f.originalName}</span>
                   </span>
-                  <span className="shrink-0 text-xs tabular-nums text-neutral-500">
+                  <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
                     {(f.sizeBytes / 1024).toFixed(1)} KB
                   </span>
                 </div>
               ))}
-              <p className="text-xs italic text-neutral-500">
+              <p className="text-xs italic text-muted-foreground">
                 File download isn&apos;t wired up in the demo build — see TODO.md.
               </p>
             </div>

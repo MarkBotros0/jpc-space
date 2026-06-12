@@ -50,8 +50,8 @@ export default async function LeaderQuizGradePage({ params }: PageProps) {
           <ArrowLeft className="size-3" />
           Back to session
         </Link>
-        <h1 className="text-2xl font-black text-brand-navy-900">{data.title}</h1>
-        <p className="mt-1 text-sm text-neutral-500">
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{data.title}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           {data.sessionTitle ? `${data.sessionTitle} · ` : ""}Max score: {data.maxScore}
         </p>
       </div>
