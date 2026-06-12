@@ -105,7 +105,7 @@ const STUDENT: RoleNav = {
     { href: "/student/dashboard", label: "Home", icon: "home" },
     { href: "/student/calendar", label: "Calendar", icon: "calendar" },
     { href: "/student/assignments", label: "Assignments", icon: "assignments" },
-    { href: "/student/season", label: "Season", icon: "season" },
+    { href: "/student/quizzes", label: "Quizzes", icon: "quizzes" },
     { href: "/student/more", label: "More", icon: "more" },
   ],
 };

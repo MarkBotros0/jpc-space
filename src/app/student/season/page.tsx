@@ -131,58 +131,6 @@ export default async function StudentSeasonPage() {
         )}
       </div>
 
-      {/* Upcoming sessions */}
-      <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] md:p-5">
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
-            Upcoming sessions
-          </p>
-          <Button
-            variant="ghost"
-            size="sm"
-            render={<Link href="/student/calendar" />}
-            className="text-xs text-brand-teal-700 dark:text-brand-teal-300"
-          >
-            See calendar
-          </Button>
-        </div>
-        {upcomingSessions.length === 0 ? (
-          <p className="text-sm italic text-muted-foreground">No upcoming sessions.</p>
-        ) : (
-          <ul className="flex flex-col gap-3">
-            {upcomingSessions.map((s) => (
-              <li key={s.id} className="flex items-center gap-3">
-                <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-brand-teal-100 text-brand-teal-800 dark:bg-brand-teal-950 dark:text-brand-teal-200">
-                  <span className="text-[9px] font-bold uppercase leading-none">
-                    {format(s.startsAt, "MMM")}
-                  </span>
-                  <span className="text-base font-black leading-tight">
-                    {format(s.startsAt, "d")}
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <Link
-                    href={`/student/sessions/${s.id}`}
-                    className="truncate text-sm font-semibold text-brand-navy-900 hover:underline dark:text-foreground"
-                  >
-                    {s.title}
-                  </Link>
-                  <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
-                    <span>{format(s.startsAt, "EEE · h:mm a")}</span>
-                    {s.location && (
-                      <span className="inline-flex items-center gap-1">
-                        <MapPin className="size-3 shrink-0" />
-                        {s.location}
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
       {/* Your group */}
       {group && (
         <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] md:p-5">
@@ -276,6 +224,58 @@ export default async function StudentSeasonPage() {
           <p className="text-sm text-foreground/90">{season.description}</p>
         </div>
       )}
+
+      {/* Upcoming sessions */}
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] md:p-5">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+            Upcoming sessions
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            render={<Link href="/student/calendar" />}
+            className="text-xs text-brand-teal-700 dark:text-brand-teal-300"
+          >
+            See calendar
+          </Button>
+        </div>
+        {upcomingSessions.length === 0 ? (
+          <p className="text-sm italic text-muted-foreground">No upcoming sessions.</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {upcomingSessions.map((s) => (
+              <li key={s.id} className="flex items-center gap-3">
+                <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-lg bg-brand-teal-100 text-brand-teal-800 dark:bg-brand-teal-950 dark:text-brand-teal-200">
+                  <span className="text-[9px] font-bold uppercase leading-none">
+                    {format(s.startsAt, "MMM")}
+                  </span>
+                  <span className="text-base font-black leading-tight">
+                    {format(s.startsAt, "d")}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/student/sessions/${s.id}`}
+                    className="truncate text-sm font-semibold text-brand-navy-900 hover:underline dark:text-foreground"
+                  >
+                    {s.title}
+                  </Link>
+                  <p className="flex flex-wrap items-center gap-x-2 text-xs text-muted-foreground">
+                    <span>{format(s.startsAt, "EEE · h:mm a")}</span>
+                    {s.location && (
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="size-3 shrink-0" />
+                        {s.location}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }

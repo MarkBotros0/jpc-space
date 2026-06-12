@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 
 import { signOut } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { navFor, type NavIconName, type NavItem } from "@/lib/navigation";
 import type { SessionUser } from "@/lib/rbac";
 import { Badge } from "@/components/ui/badge";
@@ -70,8 +71,17 @@ interface MoreMenuProps {
   user: SessionUser;
 }
 
-function MoreMenu({ user }: MoreMenuProps) {
+async function MoreMenu({ user }: MoreMenuProps) {
   const items = extraItemsFor(user);
+  const row = await db.user.findUnique({
+    where: { id: user.userId },
+    select: { name: true },
+  });
+  const name = row?.name?.trim() || null;
+  const parts = name?.split(/\s+/) ?? [];
+  const initials = name
+    ? ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase()
+    : user.role.charAt(0).toUpperCase();
 
   return (
     <div className="flex flex-col gap-6">
@@ -79,10 +89,10 @@ function MoreMenu({ user }: MoreMenuProps) {
 
       <section className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)] md:p-6">
         <div className="flex size-12 items-center justify-center rounded-full bg-muted text-base font-semibold text-foreground">
-          {user.role.charAt(0).toUpperCase()}
+          {initials}
         </div>
         <div className="flex flex-1 flex-col gap-1">
-          <span className="text-sm text-muted-foreground">User #{user.userId}</span>
+          {name && <span className="text-sm font-semibold text-foreground">{name}</span>}
           <Badge role={roleColor[user.role]} className="w-fit">
             {user.role}
           </Badge>

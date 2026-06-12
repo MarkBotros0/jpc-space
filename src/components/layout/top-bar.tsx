@@ -26,7 +26,7 @@ const roleColor: Record<UserRole, RoleColor> = {
 
 interface TopBarProps {
   role: UserRole;
-  userId: number;
+  userName: string | null;
   initials: string;
   avatarUrl?: string | null;
   signOutAction: () => Promise<void>;
@@ -39,7 +39,7 @@ interface TopBarProps {
 
 export function TopBar({
   role,
-  userId,
+  userName,
   initials,
   avatarUrl,
   signOutAction,
@@ -92,7 +92,7 @@ export function TopBar({
         <div className="mx-1 hidden h-6 w-px bg-border md:block" />
         <UserMenu
           role={role}
-          userId={userId}
+          userName={userName}
           initials={initials}
           avatarUrl={avatarUrl}
           signOutAction={signOutAction}
