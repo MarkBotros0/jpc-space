@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth/permissions";
 import { listQuizResultsForStudent } from "@/lib/quiz-query";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { ProgressRing } from "@/components/ui/progress-ring";
 
 export const metadata = { title: "Quizzes" };
 
@@ -37,17 +38,31 @@ export default async function StudentQuizzesPage() {
   return (
     <div className="flex flex-col gap-3 md:gap-4">
       {/* Hero */}
-      <div className="rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-300">
-          This season
-        </p>
-        <p className="mt-2 text-4xl font-black text-white">
-          {avgScore !== null ? `${avgScore}%` : "—"}
-        </p>
-        <p className="mt-1 text-sm text-white/60">Average quiz score</p>
-        <p className="mt-3 text-xs text-white/40">
-          {gradedQuizzes.length} graded · {totalQuizzes - gradedQuizzes.length} pending
-        </p>
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+        <div className="flex items-center gap-5">
+          <ProgressRing
+            value={avgScore ?? 0}
+            label={avgScore !== null ? `Average quiz score ${avgScore}%` : "No graded quizzes yet"}
+          >
+            <span className="text-2xl font-black text-brand-navy-900 dark:text-foreground">
+              {avgScore !== null ? `${avgScore}%` : "—"}
+            </span>
+            <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+              avg
+            </span>
+          </ProgressRing>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700 dark:text-brand-teal-300">
+              Quiz performance
+            </p>
+            <p className="mt-1 text-lg font-black text-brand-navy-900 dark:text-foreground">
+              Average score
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {gradedQuizzes.length} graded · {totalQuizzes - gradedQuizzes.length} pending
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Quiz list */}

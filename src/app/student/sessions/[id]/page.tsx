@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { loadSessionById } from "@/lib/sessions-query";
+import { Badge } from "@/components/ui/badge";
 import { StudentCheckinButton } from "@/components/sessions/student-checkin-button";
 
 interface PageProps {
@@ -50,15 +51,15 @@ export default async function StudentSessionPage({ params }: PageProps) {
         >
           ← Calendar
         </Link>
-        {/* Navy hero card */}
-        <div className="mt-2 rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
+        {/* Hero card */}
+        <div className="mt-2 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
           <div className="mb-2 flex items-center gap-2">
-            <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white/80">
+            <Badge variant={isOnline ? "teal" : "outline"}>
               {isOnline ? "Online" : "In-person"}
-            </span>
+            </Badge>
           </div>
-          <h1 className="text-xl font-black text-white">{session.title}</h1>
-          <p className="mt-1 text-sm text-white/60">
+          <h1 className="text-xl font-black text-brand-navy-900 dark:text-foreground">{session.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {format(session.startsAt, "EEEE, MMMM d, yyyy")}
           </p>
         </div>

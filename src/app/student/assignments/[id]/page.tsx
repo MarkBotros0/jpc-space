@@ -61,9 +61,9 @@ export default async function StudentAssignmentPage({ params }: PageProps) {
         >
           ← Assignments
         </Link>
-        {/* Navy hero card */}
-        <div className="mt-2 rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
-          <h1 className="text-xl font-black text-white">
+        {/* Hero card */}
+        <div className="mt-2 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+          <h1 className="text-xl font-black text-brand-navy-900 dark:text-foreground">
             {assignment.title}
           </h1>
           <div className="mt-2 flex flex-wrap gap-1.5">
@@ -76,9 +76,7 @@ export default async function StudentAssignmentPage({ params }: PageProps) {
                   : `Due in ${formatDistanceToNowStrict(assignment.dueAt)}`}
               </Badge>
             )}
-            {!assignment.dueAt && (
-              <Badge className="border-white/20 bg-white/10 text-white">No due date</Badge>
-            )}
+            {!assignment.dueAt && <Badge variant="outline">No due date</Badge>}
           </div>
         </div>
       </div>

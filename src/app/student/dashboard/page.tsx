@@ -9,7 +9,7 @@ import { computeAttendanceBudget, computeAttendanceStreak } from "@/lib/engageme
 import { listAssignmentsForStudent } from "@/lib/assignments-query";
 import { StaggerReveal } from "@/components/motion/stagger-reveal";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { ProgressRing } from "@/components/ui/progress-ring";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatCard } from "@/components/students/stat-card";
 
@@ -127,21 +127,33 @@ export default async function StudentDashboard() {
       {/* ── Active season ── */}
       {season && (
         <>
-          {/* Hero progress card */}
-          <div className="rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-300">
-              Season progress
-            </p>
-            <div className="mt-2">
-              <p className="text-3xl font-black text-white">{progressPct}%</p>
-              <p className="text-xs text-white/50">
-                Week {weeksCompleted} of {weeksTotal}
-              </p>
+          {/* Hero: season progress ring */}
+          <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+            <div className="flex items-center gap-5">
+              <ProgressRing value={progressPct} label={`Season ${progressPct}% complete`}>
+                <span className="text-2xl font-black text-brand-navy-900 dark:text-foreground">
+                  {progressPct}%
+                </span>
+                <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+                  done
+                </span>
+              </ProgressRing>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700 dark:text-brand-teal-300">
+                  Season progress
+                </p>
+                <p className="mt-1 text-lg font-black text-brand-navy-900 dark:text-foreground">
+                  Week {weeksCompleted} of {weeksTotal}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {progressPct >= 100
+                    ? "Season complete — well done."
+                    : `${weeksTotal - weeksCompleted} ${
+                        weeksTotal - weeksCompleted === 1 ? "week" : "weeks"
+                      } to go`}
+                </p>
+              </div>
             </div>
-            <Progress
-              value={progressPct}
-              className="mt-3 h-1.5 bg-white/10 [&>div]:bg-gradient-to-r [&>div]:from-brand-teal-400 [&>div]:to-brand-teal-300"
-            />
           </div>
 
           {/* Stat row */}

@@ -64,17 +64,17 @@ export default async function StudentProfilePage() {
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      {/* Navy hero card */}
-      <div className="rounded-2xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)] dark:from-brand-navy-800 dark:to-brand-navy-600 dark:ring-1 dark:ring-white/10">
+      {/* Identity hero */}
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
         <div className="flex items-center gap-4">
           <div className="shrink-0">
             <AvatarUpload currentAvatarUrl={avatarUrl} initials={initials} />
           </div>
-          <div>
-            <p className="text-xl font-black text-white">
+          <div className="min-w-0">
+            <p className="truncate text-xl font-black text-brand-navy-900 dark:text-foreground">
               {userRow.name ?? userRow.email}
             </p>
-            <p className="text-xs text-white/50">JPC Space Student</p>
+            <p className="truncate text-xs text-muted-foreground">{userRow.email}</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               <Badge variant="teal">Student</Badge>
             </div>

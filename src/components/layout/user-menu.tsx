@@ -1,15 +1,18 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
-import { Camera, LogOut } from "lucide-react";
+import { Camera, LogOut, Moon, Sun } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { updateAvatarAction } from "@/lib/user-actions";
+import { useTheme } from "@/components/providers/theme-provider";
 import type { UserRole } from "@/generated/prisma/enums";
+
+const subscribeNever = () => () => {};
 
 type RoleColor = "super" | "admin" | "leader" | "mentor" | "student";
 const roleColor: Record<UserRole, RoleColor> = {
@@ -37,6 +40,9 @@ function UserMenu({ role, userId, initials, avatarUrl, signOutAction }: UserMenu
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(avatarUrl ?? null);
   const [uploading, setUploading] = useState(false);
+  const { resolvedTheme, setTheme } = useTheme();
+  const mounted = useSyncExternalStore(subscribeNever, () => true, () => false);
+  const isDark = mounted && resolvedTheme === "dark";
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -104,6 +110,21 @@ function UserMenu({ role, userId, initials, avatarUrl, signOutAction }: UserMenu
             >
               <Camera className="size-4" />
               Change photo
+            </MenuPrimitive.Item>
+            <MenuPrimitive.Item
+              closeOnClick={false}
+              render={
+                <button
+                  type="button"
+                  className={cn(
+                    "flex w-full cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none data-[highlighted]:bg-accent data-[highlighted]:text-accent-foreground"
+                  )}
+                  onClick={() => setTheme(isDark ? "light" : "dark")}
+                />
+              }
+            >
+              {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+              {isDark ? "Light mode" : "Dark mode"}
             </MenuPrimitive.Item>
             <MenuPrimitive.Separator className="my-1 h-px bg-border" />
             <form action={signOutAction}>
