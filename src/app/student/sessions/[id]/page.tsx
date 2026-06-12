@@ -70,7 +70,7 @@ export default async function StudentSessionPage({ params }: PageProps) {
           href={session.youtubeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-xl bg-brand-teal-600 px-4 py-3 text-sm font-bold text-white shadow-[0_2px_8px_rgba(93,185,188,0.35)] transition-colors hover:bg-brand-teal-700"
+          className="flex items-center justify-center gap-2 rounded-lg bg-brand-teal-600 px-4 py-3 text-sm font-bold text-white shadow-[0_2px_8px_rgba(93,185,188,0.35)] transition-colors hover:bg-brand-teal-700"
         >
           <Video className="size-4 shrink-0" />
           Watch recording
