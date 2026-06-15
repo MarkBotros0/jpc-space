@@ -30,8 +30,8 @@ export default async function SuperStudentEditPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">Edit {student.name ?? student.email}</h1>
-        <p className="mt-1 text-sm text-neutral-500">Update profile, contact, and enrollment.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Edit {student.name ?? student.email}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Update profile, contact, and enrollment.</p>
       </div>
       <Card>
         <CardContent className="pt-6">

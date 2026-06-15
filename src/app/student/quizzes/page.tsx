@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth/permissions";
 import { listQuizResultsForStudent } from "@/lib/quiz-query";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { ProgressRing } from "@/components/ui/progress-ring";
 
 export const metadata = { title: "Quizzes" };
 
@@ -35,19 +36,33 @@ export default async function StudentQuizzesPage() {
       : null;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-3 md:gap-4">
       {/* Hero */}
-      <div className="rounded-xl bg-gradient-to-br from-brand-navy-800 to-brand-navy-900 p-5 text-white shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
-        <p className="text-xs font-bold uppercase tracking-widest text-brand-teal-300">
-          This season
-        </p>
-        <p className="mt-2 text-4xl font-black">
-          {avgScore !== null ? `${avgScore}%` : "—"}
-        </p>
-        <p className="mt-1 text-sm text-brand-navy-200">Average quiz score</p>
-        <p className="mt-3 text-xs text-brand-navy-300">
-          {gradedQuizzes.length} graded · {totalQuizzes - gradedQuizzes.length} pending
-        </p>
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+        <div className="flex items-center gap-5">
+          <ProgressRing
+            value={avgScore ?? 0}
+            label={avgScore !== null ? `Average quiz score ${avgScore}%` : "No graded quizzes yet"}
+          >
+            <span className="text-2xl font-black text-brand-navy-900 dark:text-foreground">
+              {avgScore !== null ? `${avgScore}%` : "—"}
+            </span>
+            <span className="mt-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+              avg
+            </span>
+          </ProgressRing>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-brand-teal-700 dark:text-brand-teal-300">
+              Quiz performance
+            </p>
+            <p className="mt-1 text-lg font-black text-brand-navy-900 dark:text-foreground">
+              Average score
+            </p>
+            <p className="text-xs text-muted-foreground">
+              {gradedQuizzes.length} graded · {totalQuizzes - gradedQuizzes.length} pending
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Quiz list */}
@@ -64,13 +79,13 @@ export default async function StudentQuizzesPage() {
             return (
               <div
                 key={r.quizId}
-                className="rounded-xl bg-white px-4 py-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60"
+                className="rounded-2xl border border-border bg-card px-4 py-4 shadow-[var(--shadow-soft)]"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-brand-navy-900">{r.title}</p>
+                    <p className="text-sm font-bold text-brand-navy-900 dark:text-foreground">{r.title}</p>
                     {r.sessionTitle && (
-                      <p className="mt-0.5 text-xs text-neutral-500">
+                      <p className="mt-0.5 text-xs text-muted-foreground">
                         {r.sessionTitle}
                         {r.sessionDate ? ` · ${format(r.sessionDate, "MMM d, yyyy")}` : ""}
                       </p>
@@ -79,11 +94,11 @@ export default async function StudentQuizzesPage() {
                   <div className="shrink-0 text-right">
                     {r.score !== null ? (
                       <>
-                        <p className="text-lg font-black text-brand-navy-900">
+                        <p className="text-lg font-black text-brand-navy-900 dark:text-foreground">
                           {r.score}
-                          <span className="text-sm font-normal text-neutral-400">/{r.maxScore}</span>
+                          <span className="text-sm font-normal text-muted-foreground">/{r.maxScore}</span>
                         </p>
-                        <p className="text-xs text-neutral-500">{pct}%</p>
+                        <p className="text-xs text-muted-foreground">{pct}%</p>
                       </>
                     ) : (
                       <Badge variant="outline">Pending</Badge>
@@ -91,12 +106,12 @@ export default async function StudentQuizzesPage() {
                   </div>
                 </div>
                 {r.notes && (
-                  <p className="mt-2 rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-600">
+                  <p className="mt-2 rounded-lg bg-muted/40 px-3 py-2 text-xs text-muted-foreground">
                     {r.notes}
                   </p>
                 )}
                 {r.gradedAt && (
-                  <p className="mt-2 text-[10px] text-neutral-400">
+                  <p className="mt-2 text-[10px] text-muted-foreground/70">
                     Graded {format(r.gradedAt, "MMM d, yyyy")}
                   </p>
                 )}

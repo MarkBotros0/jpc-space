@@ -19,7 +19,7 @@ function statusDot(status: RowStatus, dueAt: Date | null): string {
   if (status === "SUBMITTED") return "bg-brand-teal-500";
   if (status === "DRAFT") return "bg-warning-500";
   if (dueAt && isPast(dueAt)) return "bg-error-500";
-  return "bg-neutral-300";
+  return "bg-muted-foreground/30";
 }
 
 function StatusBadge({
@@ -57,8 +57,8 @@ export default async function StudentAssignmentsPage() {
   return (
     <div className="flex flex-col gap-3 md:gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">Assignments</h1>
-        <p className="mt-1 text-sm text-neutral-500">Your current season</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Assignments</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Your current season</p>
       </div>
 
       {rows.length === 0 ? (
@@ -79,8 +79,8 @@ export default async function StudentAssignmentsPage() {
             <StatCard label="Reviewed" value={reviewed} />
           </div>
 
-          <div className="rounded-xl bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-            <ul className="divide-y divide-neutral-100">
+          <div className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">
+            <ul className="divide-y divide-border">
               {rows.map((r) => (
                 <li
                   key={r.id}
@@ -92,12 +92,12 @@ export default async function StudentAssignmentsPage() {
                   <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                     <Link
                       href={`/student/assignments/${r.id}`}
-                      className="truncate text-sm font-semibold text-brand-navy-900 hover:underline"
+                      className="truncate text-sm font-semibold text-brand-navy-900 hover:underline dark:text-foreground"
                     >
                       {r.title}
                     </Link>
                     {r.dueAt && (
-                      <p className="text-xs text-neutral-500">
+                      <p className="text-xs text-muted-foreground">
                         Due {format(r.dueAt, "MMM d, yyyy")}
                         {!isPast(r.dueAt) &&
                           ` · in ${formatDistanceToNowStrict(r.dueAt)}`}

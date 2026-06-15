@@ -65,7 +65,7 @@ export function AvatarUpload({ currentAvatarUrl, initials }: AvatarUploadProps) 
         disabled={pending}
       >
         <Camera className="size-4 mr-1.5" />
-        Upload photo
+        {preview ? "Change photo" : "Add photo"}
       </Button>
 
       <input

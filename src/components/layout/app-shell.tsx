@@ -16,8 +16,15 @@ async function signOutAction() {
   await signOut({ redirectTo: "/login" });
 }
 
-function initialsFor(user: SessionUser): string {
-  return user.role.charAt(0).toUpperCase();
+function initialsFor(name: string | null, role: SessionUser["role"]): string {
+  if (name?.trim()) {
+    const parts = name.trim().split(/\s+/);
+    return (
+      ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() ||
+      role.charAt(0).toUpperCase()
+    );
+  }
+  return role.charAt(0).toUpperCase();
 }
 
 function notificationsHrefFor(user: SessionUser): string {
@@ -53,13 +60,17 @@ async function AppShell({ user, children }: AppShellProps) {
           orderBy: [{ role: "asc" }, { email: "asc" }],
         })
       : Promise.resolve([]),
-    db.user.findUnique({ where: { id: user.userId }, select: { avatarPath: true } }),
+    db.user.findUnique({
+      where: { id: user.userId },
+      select: { avatarPath: true, name: true },
+    }),
   ]);
 
   const storage = getStorage();
   const avatarUrl = currentUser?.avatarPath
     ? await storage.url(currentUser.avatarPath)
     : null;
+  const userName = currentUser?.name ?? null;
 
   return (
     <ShellFrame
@@ -68,8 +79,8 @@ async function AppShell({ user, children }: AppShellProps) {
       topBar={
         <TopBar
           role={user.role}
-          userId={user.userId}
-          initials={initialsFor(user)}
+          userName={userName}
+          initials={initialsFor(userName, user.role)}
           avatarUrl={avatarUrl}
           signOutAction={signOutAction}
           notifications={notifications}

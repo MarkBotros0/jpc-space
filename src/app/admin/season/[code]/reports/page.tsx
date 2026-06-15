@@ -28,8 +28,8 @@ export default async function AdminSeasonReportsPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">Reports</h1>
-        <p className="mt-1 text-sm text-neutral-500">{`Scoped to ${season.title}.`}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Reports</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{`Scoped to ${season.title}.`}</p>
       </div>
       <ReportsView
         data={data}

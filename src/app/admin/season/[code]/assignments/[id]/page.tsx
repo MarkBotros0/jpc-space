@@ -39,8 +39,8 @@ export default async function AdminAssignmentDetailPage({ params }: PageProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">{assignment.title}</h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{assignment.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {assignment.dueAt
               ? `Due ${format(assignment.dueAt, "EEE, MMM d, yyyy · h:mm a")}`
               : "No due date"}

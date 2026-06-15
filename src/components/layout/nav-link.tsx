@@ -53,9 +53,11 @@ interface NavLinkProps {
   icon: NavIconName;
   variant: "sidebar" | "tab";
   compact?: boolean;
+  /** Tab variant only — renders a prominent teal center button (the Home tab). */
+  featured?: boolean;
 }
 
-function NavLink({ href, label, icon, variant, compact = false }: NavLinkProps) {
+function NavLink({ href, label, icon, variant, compact = false, featured = false }: NavLinkProps) {
   const pathname = usePathname();
   const isActive = pathname === href || pathname.startsWith(`${href}/`);
   const Icon = iconMap[icon];
@@ -64,23 +66,42 @@ function NavLink({ href, label, icon, variant, compact = false }: NavLinkProps) 
     return (
       <Link
         href={href}
+        aria-label={label}
         aria-current={isActive ? "page" : undefined}
-        className={cn(
-          "relative flex min-h-[56px] flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-2 py-1 text-xs font-medium transition-colors",
-          isActive
-            ? "text-foreground"
-            : "text-muted-foreground hover:text-foreground",
-        )}
+        className="relative flex flex-1 flex-col items-center justify-center gap-1 self-stretch px-1"
       >
-        {isActive ? (
-          <motion.span
-            layoutId="nav-tab-active"
-            transition={springSoft}
-            className="absolute inset-x-3 top-1 h-[3px] rounded-full bg-brand-teal-500"
+        <span
+          className={cn(
+            "relative flex size-9 items-center justify-center rounded-full",
+            featured && "bg-brand-teal-500 text-brand-navy-950 shadow-[var(--shadow-soft)]",
+          )}
+        >
+          {!featured && isActive ? (
+            <motion.span
+              layoutId="nav-tab-active"
+              transition={springSoft}
+              className="absolute inset-0 rounded-full bg-white/15"
+            />
+          ) : null}
+          <Icon
+            className={cn(
+              "relative size-5 transition-colors",
+              featured
+                ? "text-brand-navy-950"
+                : isActive
+                  ? "text-white"
+                  : "text-white/55",
+            )}
           />
-        ) : null}
-        <Icon className="size-5" />
-        <span className="truncate">{label}</span>
+        </span>
+        <span
+          className={cn(
+            "max-w-full truncate text-[10px] font-medium leading-none transition-colors",
+            isActive ? "text-white" : featured ? "text-white/80" : "text-white/55",
+          )}
+        >
+          {label}
+        </span>
       </Link>
     );
   }

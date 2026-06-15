@@ -108,10 +108,10 @@ function ShellFrameInner({
 
         <nav
           aria-label="Primary"
-          className="jpc-glass fixed inset-x-0 bottom-0 z-30 flex border-t border-border px-2 py-1 md:hidden"
+          className="fixed inset-x-4 bottom-[max(1rem,env(safe-area-inset-bottom))] z-30 mx-auto flex h-16 max-w-md items-center rounded-full bg-sidebar/75 px-2 text-sidebar-foreground shadow-[var(--shadow-lift)] ring-1 ring-white/10 backdrop-blur-xl backdrop-saturate-150 md:hidden"
         >
           {tabItems.slice(0, 5).map((item) => (
-            <NavLink key={item.href} {...item} variant="tab" />
+            <NavLink key={item.href} {...item} variant="tab" featured={item.icon === "home"} />
           ))}
         </nav>
       </div>

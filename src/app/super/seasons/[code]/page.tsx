@@ -23,8 +23,8 @@ export default async function SuperSeasonDetailPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">{season.title}</h1>
-        <p className="mt-1 text-sm text-neutral-500">Code: {season.code}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{season.title}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Code: {season.code}</p>
       </div>
       <SeasonDetail
         season={season}

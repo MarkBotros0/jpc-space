@@ -28,8 +28,8 @@ export default async function AdminStudentDetailPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">{student.name ?? student.email}</h1>
-        <p className="mt-1 text-sm text-neutral-500">{student.email}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{student.name ?? student.email}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{student.email}</p>
       </div>
       <StudentDetail
         student={student}

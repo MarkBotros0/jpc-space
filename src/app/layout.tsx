@@ -56,10 +56,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
       <body className="min-h-full flex flex-col font-sans">
+        {/* Applies the saved theme class before hydration to prevent a flash.
+            Uses dangerouslySetInnerHTML (not children) so React 19 doesn't warn. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         <ThemeProvider>
           {children}
           <Toaster />

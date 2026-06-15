@@ -6,6 +6,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/providers/theme-provider";
 
+// Hydration guard: false on the server snapshot, true on the client, no
+// post-mount setState needed.
+const subscribeNever = () => () => {};
+
 export function ThemeToggle({
   className,
   size = "icon-sm",
@@ -14,8 +18,11 @@ export function ThemeToggle({
   size?: "icon" | "icon-sm";
 }) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false,
+  );
 
   const isDark = mounted && resolvedTheme === "dark";
 

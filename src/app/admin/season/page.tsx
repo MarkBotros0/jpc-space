@@ -16,8 +16,8 @@ export default async function AdminSeasonsPage() {
     return (
       <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">My Season</h1>
-          <p className="mt-1 text-sm text-neutral-500">You aren&apos;t assigned to a season yet. Contact a super-admin to be added.</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">My Season</h1>
+          <p className="mt-1 text-sm text-muted-foreground">You aren&apos;t assigned to a season yet. Contact a super-admin to be added.</p>
         </div>
       </div>
     );
@@ -52,8 +52,8 @@ export default async function AdminSeasonsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">My Season</h1>
-        <p className="mt-1 text-sm text-neutral-500">Seasons you administer.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">My Season</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Seasons you administer.</p>
       </div>
       <SeasonsList rows={rows} basePath="/admin/season" />
     </div>

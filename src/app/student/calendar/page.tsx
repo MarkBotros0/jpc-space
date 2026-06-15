@@ -16,7 +16,7 @@ export default async function StudentCalendarPage() {
   if (!user.activeSeasonId) {
     return (
       <div className="flex flex-col gap-3 md:gap-4">
-        <h1 className="text-2xl font-black text-brand-navy-900">Calendar</h1>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Calendar</h1>
         <EmptyState
           icon={Calendar}
           title="No active season"
@@ -33,7 +33,7 @@ export default async function StudentCalendarPage() {
 
   return (
     <div className="flex flex-col gap-3 md:gap-4">
-      <h1 className="text-2xl font-black text-brand-navy-900">Calendar</h1>
+      <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Calendar</h1>
       <SeasonCalendar
         sessions={sessions}
         jpcEvents={jpcEvents}

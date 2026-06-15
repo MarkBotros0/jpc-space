@@ -43,9 +43,9 @@ const SUPER: RoleNav = {
     { href: "/super/settings", label: "Settings", icon: "settings" },
   ],
   tabs: [
-    { href: "/super/dashboard", label: "Home", icon: "home" },
     { href: "/super/seasons", label: "Seasons", icon: "season" },
     { href: "/super/calendar", label: "Calendar", icon: "calendar" },
+    { href: "/super/dashboard", label: "Home", icon: "home" },
     { href: "/super/students", label: "Students", icon: "students" },
     { href: "/super/more", label: "More", icon: "more" },
   ],
@@ -64,9 +64,9 @@ const ADMIN: RoleNav = {
     { href: "/admin/settings", label: "Settings", icon: "settings" },
   ],
   tabs: [
-    { href: "/admin/dashboard", label: "Home", icon: "home" },
     { href: "/admin/calendar", label: "Calendar", icon: "calendar" },
     { href: "/admin/groups", label: "Groups", icon: "groups" },
+    { href: "/admin/dashboard", label: "Home", icon: "home" },
     { href: "/admin/students", label: "Students", icon: "students" },
     { href: "/admin/more", label: "More", icon: "more" },
   ],
@@ -82,9 +82,9 @@ const LEADER: RoleNav = {
     { href: "/leader/settings", label: "Settings", icon: "settings" },
   ],
   tabs: [
-    { href: "/leader/dashboard", label: "Home", icon: "home" },
     { href: "/leader/groups", label: "My Group", icon: "groups" },
     { href: "/leader/calendar", label: "Calendar", icon: "calendar" },
+    { href: "/leader/dashboard", label: "Home", icon: "home" },
     { href: "/leader/submissions", label: "Submissions", icon: "submissions" },
     { href: "/leader/more", label: "More", icon: "more" },
   ],
@@ -99,13 +99,14 @@ const STUDENT: RoleNav = {
     { href: "/student/quizzes", label: "Quizzes", icon: "quizzes" },
     { href: "/student/history", label: "History", icon: "history" },
     { href: "/student/profile", label: "Profile", icon: "profile" },
+    { href: "/student/settings", label: "Settings", icon: "settings" },
   ],
   tabs: [
-    { href: "/student/dashboard", label: "Home", icon: "home" },
     { href: "/student/calendar", label: "Calendar", icon: "calendar" },
     { href: "/student/assignments", label: "Assignments", icon: "assignments" },
+    { href: "/student/dashboard", label: "Home", icon: "home" },
     { href: "/student/quizzes", label: "Quizzes", icon: "quizzes" },
-    { href: "/student/profile", label: "Profile", icon: "profile" },
+    { href: "/student/more", label: "More", icon: "more" },
   ],
 };
 
@@ -117,9 +118,9 @@ const MENTOR: RoleNav = {
     { href: "/mentor/settings", label: "Settings", icon: "settings" },
   ],
   tabs: [
-    { href: "/mentor/dashboard", label: "Home", icon: "home" },
     { href: "/mentor/students", label: "Students", icon: "students" },
     { href: "/mentor/reports", label: "Reports", icon: "reports" },
+    { href: "/mentor/dashboard", label: "Home", icon: "home" },
     { href: "/mentor/notes", label: "Notes", icon: "notes" },
     { href: "/mentor/profile", label: "Profile", icon: "profile" },
   ],

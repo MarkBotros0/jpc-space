@@ -32,8 +32,8 @@ export default async function AdminGroupsPage({ params }: PageProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">Groups</h1>
-          <p className="mt-1 text-sm text-neutral-500">{`${groups.length} group${groups.length === 1 ? "" : "s"} in ${season.title}`}</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Groups</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{`${groups.length} group${groups.length === 1 ? "" : "s"} in ${season.title}`}</p>
         </div>
         <Button render={<Link href={createHref} />}>New group</Button>
       </div>

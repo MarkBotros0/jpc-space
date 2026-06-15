@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bento Bold — Student Portal Screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #0f1117;
+  color: #f3f4f6;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+h1 { font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: .4rem; }
+.subtitle { text-align: center; color: #6b7280; font-size: .875rem; margin-bottom: 0.5rem; max-width: 620px; margin-left: auto; margin-right: auto; }
+.badge { display: inline-block; background: rgba(31,50,96,.35); color: #8294BF; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 99px; margin-bottom: 2.5rem; }
+.badge-wrap { text-align: center; }
+
+/* ── Screen wrapper ──────────────────────────── */
+.screen-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto 3rem;
+}
+
+.screen-block {}
+.screen-label {
+  font-size: .75rem; font-weight: 700; color: #4B5563;
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: .6rem;
+}
+
+.screen-frame {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,.5);
+  border: 1.5px solid #1f2937;
+  background: #EFF2F7;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.screen-frame:hover { transform: translateY(-4px); box-shadow: 0 16px 56px rgba(0,0,0,.6); }
+.screen-frame.selected { border-color: #7DCED1; box-shadow: 0 0 0 3px rgba(125,206,209,.22), 0 16px 56px rgba(0,0,0,.5); }
+
+.screen-desc {
+  font-size: .78rem; color: #6b7280; line-height: 1.5;
+  margin-top: .6rem;
+}
+
+/* ── Shared Bento primitives ──────────────────── */
+.B-topbar {
+  background: #1F3260;
+  padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.B-logo { font-size: 9px; font-weight: 800; color: #7DCED1; letter-spacing: .1em; text-transform: uppercase; }
+.B-nav-pills { display: flex; gap: 4px; }
+.B-pill {
+  font-size: 7px; font-weight: 600; color: rgba(255,255,255,.5);
+  padding: 3px 7px; border-radius: 99px;
+}
+.B-pill.active { background: rgba(125,206,209,.18); color: #7DCED1; }
+.B-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: linear-gradient(135deg, #7DCED1, #5DB9BC);
+  border: 1.5px solid rgba(125,206,209,.5);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #1F3260;
+  flex-shrink: 0;
+}
+
+.B-page { background: #EFF2F7; display: flex; flex-direction: column; }
+
+.B-inner { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+
+.B-heading { font-size: 17px; font-weight: 900; color: #1F3260; line-height: 1.15; }
+.B-sub { font-size: 8px; color: #6B7280; margin-top: 2px; }
+.B-chip {
+  display: inline-flex; align-items: center;
+  background: #DAF0F1; color: #2E7679;
+  font-size: 7px; font-weight: 700;
+  padding: 2.5px 8px; border-radius: 99px; margin-top: 4px;
+}
+
+/* Cards */
+.B-card {
+  background: white; border-radius: 12px; padding: 10px 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04);
+}
+.B-card.navy { background: linear-gradient(135deg, #1F3260, #2A3A63); }
+.B-card.teal { background: linear-gradient(135deg, #1E5254, #2E7679); }
+.B-card.light { background: #DAF0F1; }
+
+.B-card-label {
+  font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: #9CA3AF; margin-bottom: 5px;
+}
+.B-card.navy .B-card-label { color: rgba(125,206,209,.65); }
+.B-card.teal .B-card-label { color: rgba(125,206,209,.75); }
+.B-card.light .B-card-label { color: #2E7679; }
+
+.B-big { font-size: 26px; font-weight: 900; color: #1F3260; line-height: 1; }
+.B-card.navy .B-big, .B-card.teal .B-big { color: white; }
+
+.B-meta { font-size: 7.5px; color: #9CA3AF; margin-top: 2px; }
+.B-card.navy .B-meta { color: rgba(255,255,255,.45); }
+.B-card.teal .B-meta { color: rgba(255,255,255,.55); }
+
+.B-bar-track { height: 5px; background: rgba(255,255,255,.15); border-radius: 3px; overflow: hidden; margin: 7px 0 3px; }
+.B-bar-fill { height: 100%; background: linear-gradient(90deg, #7DCED1, #ABD5E8); border-radius: 3px; }
+.B-bar-track.light { background: #DAF0F1; }
+.B-bar-fill.navy { background: linear-gradient(90deg, #1F3260, #7DCED1); }
+
+.B-row { display: flex; gap: 8px; }
+.B-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.B-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+
+.B-tag {
+  display: inline-flex;
+  font-size: 6.5px; font-weight: 700;
+  padding: 2px 6px; border-radius: 99px; margin-top: 5px;
+}
+.B-tag.teal { background: #DAF0F1; color: #2E7679; }
+.B-tag.orange { background: #FEF3C7; color: #D97706; }
+.B-tag.red { background: #FEE2E2; color: #DC2626; }
+.B-tag.green { background: #D1FAE5; color: #059669; }
+.B-tag.navy { background: rgba(31,50,96,.1); color: #1F3260; }
+
+/* Quick links bar */
+.B-qrow { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+.B-qitem {
+  background: white; border-radius: 10px; padding: 8px 3px; text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.B-qico { width: 16px; height: 16px; background: linear-gradient(135deg, #1F3260, #344676); border-radius: 5px; }
+.B-qlbl { font-size: 6.5px; color: #374151; font-weight: 600; }
+
+/* List items */
+.B-list { display: flex; flex-direction: column; gap: 0; }
+.B-list-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 7px 0; border-bottom: 1px solid #F3F4F6;
+  gap: 8px;
+}
+.B-list-item:last-child { border-bottom: none; padding-bottom: 0; }
+.B-list-item:first-child { padding-top: 0; }
+.B-list-title { font-size: 8.5px; font-weight: 600; color: #1F3260; }
+.B-list-sub { font-size: 7px; color: #9CA3AF; margin-top: 1px; }
+
+/* Progress ring (SVG) */
+.B-ring-wrap { display: flex; align-items: center; justify-content: center; }
+
+/* Divider */
+.B-divider { height: 1px; background: #E5E7EB; }
+
+/* Avatar row */
+.B-avatar-lg {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, #7DCED1, #5DB9BC);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; color: #1F3260;
+  border: 2px solid rgba(125,206,209,.4);
+  flex-shrink: 0;
+}
+
+.B-session-dot { width: 6px; height: 6px; border-radius: 50%; background: #7DCED1; flex-shrink: 0; }
+
+/* Calendar grid */
+.B-cal-grid {
+  display: grid; grid-template-columns: repeat(7,1fr); gap: 2px;
+}
+.B-cal-day {
+  aspect-ratio: 1; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 6.5px; font-weight: 600; color: #6B7280;
+}
+.B-cal-day.has-event { background: rgba(31,50,96,.08); color: #1F3260; }
+.B-cal-day.today { background: #1F3260; color: white; }
+.B-cal-day.session { background: #DAF0F1; color: #2E7679; }
+.B-cal-hdr { font-size: 5.5px; font-weight: 700; color: #9CA3AF; text-align: center; text-transform: uppercase; }
+
+/* Horizontal scroll hint */
+.hint { text-align: center; color: #374151; font-size: .75rem; margin-top: 1rem; }
+
+/* Section heading */
+.section-heading {
+  font-size: .85rem; font-weight: 800; color: #f9fafb;
+  margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.section-heading::before {
+  content: '';
+  display: inline-block; width: 3px; height: 14px;
+  background: #7DCED1; border-radius: 2px;
+}
+
+/* Submission status */
+.B-status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+
+<h1>Bento Bold — Student Portal</h1>
+<p class="subtitle">See how the Bento Bold direction plays out across the key student screens. All screens use the JPC brand palette.</p>
+<div class="badge-wrap"><span class="badge">B — Bento Bold Selected</span></div>
+
+<!-- ═══════════════════════════════════════════════════
+     ROW 1: Dashboard variants
+═══════════════════════════════════════════════════ -->
+<div class="section-heading">Dashboard</div>
+<div class="screen-row">
+
+  <!-- Dashboard — Full layout -->
+  <div class="screen-block">
+    <div class="screen-label">Dashboard · Active season</div>
+    <div class="screen-frame">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div class="B-nav-pills">
+            <span class="B-pill active">Dashboard</span>
+            <span class="B-pill">Tasks</span>
+            <span class="B-pill">Calendar</span>
+          </div>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner">
+          <div>
+            <div class="B-heading">Hi, Alex 👋</div>
+            <div class="B-chip">Season 2025 — Spring Cohort</div>
+          </div>
+
+          <!-- Hero progress card (span full) -->
+          <div class="B-card navy">
+            <div class="B-card-label">Season progress</div>
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;">
+              <div>
+                <div class="B-big">65%</div>
+                <div class="B-meta">Week 6 of 10 complete</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:19px;font-weight:900;color:white;line-height:1;">5<span style="font-size:10px;color:rgba(255,255,255,.4);font-weight:600;">/8</span></div>
+                <div class="B-meta">assignments</div>
+              </div>
+            </div>
+            <div class="B-bar-track"><div class="B-bar-fill" style="width:65%"></div></div>
+          </div>
+
+          <!-- 3-stat row -->
+          <div class="B-grid3">
+            <div class="B-card" style="text-align:center;">
+              <div class="B-card-label">Attendance</div>
+              <div class="B-big" style="font-size:20px;">92%</div>
+            </div>
+            <div class="B-card" style="text-align:center;">
+              <div class="B-card-label">Streak</div>
+              <div class="B-big" style="font-size:20px;">🔥 4</div>
+            </div>
+            <div class="B-card light" style="text-align:center;">
+              <div class="B-card-label" style="color:#2E7679;">Pending</div>
+              <div class="B-big" style="font-size:20px;color:#1E5254;">2</div>
+            </div>
+          </div>
+
+          <!-- Next session -->
+          <div class="B-card">
+            <div class="B-card-label">Next session</div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="B-session-dot"></div>
+              <div style="flex:1;">
+                <div style="font-size:9px;font-weight:700;color:#1F3260;">Portfolio Review</div>
+                <div style="font-size:7.5px;color:#9CA3AF;margin-top:1px;">Tomorrow · 10:00 AM · 90 min · Room 204</div>
+              </div>
+              <span class="B-tag teal">In 18h</span>
+            </div>
+          </div>
+
+          <!-- Quick nav -->
+          <div class="B-qrow">
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Calendar</div></div>
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Tasks</div></div>
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">History</div></div>
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">Full dashboard with hero progress card (navy), 3-stat bento row, next session, and quick-nav strip.</div>
+  </div>
+
+  <!-- Dashboard — No season enrolled -->
+  <div class="screen-block">
+    <div class="screen-label">Dashboard · Not enrolled</div>
+    <div class="screen-frame">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div style="width:24px;"></div>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner">
+          <div>
+            <div class="B-heading">Hi, Alex 👋</div>
+            <div class="B-sub">Welcome to JPC Space</div>
+          </div>
+          <!-- Empty state card -->
+          <div class="B-card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px 16px;text-align:center;border:1.5px dashed #E5E7EB;">
+            <div style="width:36px;height:36px;border-radius:50%;background:#EFF2F7;display:flex;align-items:center;justify-content:center;">
+              <div style="width:18px;height:18px;background:linear-gradient(135deg,#1F3260,#7DCED1);border-radius:4px;"></div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:800;color:#1F3260;margin-bottom:3px;">Not enrolled yet</div>
+              <div style="font-size:7.5px;color:#9CA3AF;line-height:1.5;max-width:160px;">Contact your leader or admin to get enrolled in an active season.</div>
+            </div>
+          </div>
+          <!-- Profile nudge -->
+          <div class="B-card light">
+            <div class="B-card-label">While you wait</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-size:9px;font-weight:700;color:#1E5254;">Complete your profile</div>
+                <div style="font-size:7.5px;color:#2E7679;margin-top:1px;">Add photo, bio, and goals</div>
+              </div>
+              <div style="font-size:9px;font-weight:700;color:#2E7679;">→</div>
+            </div>
+            <div class="B-bar-track light" style="margin-top:8px;"><div class="B-bar-fill navy" style="width:30%;"></div></div>
+            <div style="font-size:7px;color:#2E7679;margin-top:3px;">30% complete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">Empty state when the student isn't enrolled — still shows a profile completion nudge.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ROW 2: Assignments
+═══════════════════════════════════════════════════ -->
+<div class="section-heading">Assignments</div>
+<div class="screen-row">
+
+  <!-- Assignments list -->
+  <div class="screen-block">
+    <div class="screen-label">Assignments · List view</div>
+    <div class="screen-frame">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div class="B-nav-pills">
+            <span class="B-pill active">Assignments</span>
+          </div>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+            <div>
+              <div class="B-heading">Assignments</div>
+              <div class="B-sub">Spring Cohort 2025</div>
+            </div>
+            <div style="display:flex;gap:5px;">
+              <span class="B-tag navy" style="margin:0;font-size:7px;padding:3px 7px;cursor:pointer;">All</span>
+              <span class="B-tag teal" style="margin:0;font-size:7px;padding:3px 7px;cursor:pointer;">Pending</span>
+            </div>
+          </div>
+
+          <!-- Stats strip -->
+          <div class="B-grid3">
+            <div class="B-card" style="text-align:center;padding:8px;">
+              <div class="B-card-label">Submitted</div>
+              <div class="B-big" style="font-size:18px;color:#059669;">5</div>
+            </div>
+            <div class="B-card light" style="text-align:center;padding:8px;">
+              <div class="B-card-label" style="color:#2E7679;">Pending</div>
+              <div class="B-big" style="font-size:18px;color:#1E5254;">2</div>
+            </div>
+            <div class="B-card" style="text-align:center;padding:8px;">
+              <div class="B-card-label">Reviewed</div>
+              <div class="B-big" style="font-size:18px;">3</div>
+            </div>
+          </div>
+
+          <!-- Assignment list -->
+          <div class="B-card" style="padding:10px 12px;">
+            <div class="B-list">
+              <div class="B-list-item">
+                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
+                  <div class="B-status-dot" style="background:#DC2626;"></div>
+                  <div style="min-width:0;">
+                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Project Proposal</div>
+                    <div class="B-list-sub">Due in 2 days</div>
+                  </div>
+                </div>
+                <span class="B-tag red" style="margin:0;flex-shrink:0;">Overdue</span>
+              </div>
+              <div class="B-list-item">
+                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
+                  <div class="B-status-dot" style="background:#F59E0B;"></div>
+                  <div style="min-width:0;">
+                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Weekly Reflection #6</div>
+                    <div class="B-list-sub">Due in 5 days</div>
+                  </div>
+                </div>
+                <span class="B-tag orange" style="margin:0;flex-shrink:0;">Draft</span>
+              </div>
+              <div class="B-list-item">
+                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
+                  <div class="B-status-dot" style="background:#10B981;"></div>
+                  <div style="min-width:0;">
+                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Portfolio Intro</div>
+                    <div class="B-list-sub">Reviewed · 4 stars</div>
+                  </div>
+                </div>
+                <span class="B-tag green" style="margin:0;flex-shrink:0;">Reviewed</span>
+              </div>
+              <div class="B-list-item">
+                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
+                  <div class="B-status-dot" style="background:#10B981;"></div>
+                  <div style="min-width:0;">
+                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Weekly Reflection #5</div>
+                    <div class="B-list-sub">Submitted · Pending review</div>
+                  </div>
+                </div>
+                <span class="B-tag teal" style="margin:0;flex-shrink:0;">Submitted</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">Assignment list with 3-stat strip, color-coded status dots, and inline tags per row.</div>
+  </div>
+
+  <!-- Assignment detail -->
+  <div class="screen-block">
+    <div class="screen-label">Assignment · Detail / submission</div>
+    <div class="screen-frame">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div class="B-nav-pills">
+            <span class="B-pill active">Assignments</span>
+          </div>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner">
+          <div>
+            <div style="font-size:7.5px;color:#7DCED1;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">← Assignments</div>
+            <div class="B-heading" style="font-size:14px;">Project Proposal</div>
+            <div style="display:flex;gap:5px;margin-top:5px;">
+              <span class="B-tag red" style="margin:0;">Due in 2 days</span>
+              <span class="B-tag orange" style="margin:0;">Draft</span>
+            </div>
+          </div>
+
+          <!-- Description card -->
+          <div class="B-card">
+            <div class="B-card-label">Brief</div>
+            <div style="font-size:8px;color:#374151;line-height:1.6;">Write a 1-page proposal for your capstone project. Include your problem statement, proposed solution, and timeline for completion.</div>
+          </div>
+
+          <!-- Submission text area mockup -->
+          <div class="B-card" style="flex:1;">
+            <div class="B-card-label">Your submission</div>
+            <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:8px;min-height:60px;">
+              <div style="font-size:7.5px;color:#6B7280;line-height:1.6;">I plan to build a community tool that helps young professionals…</div>
+            </div>
+          </div>
+
+          <!-- Submit button -->
+          <div style="background:#1F3260;border-radius:10px;padding:10px;text-align:center;">
+            <div style="font-size:9px;font-weight:800;color:white;">Submit Assignment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">Assignment detail with description card, submission text area, and full-width navy CTA.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ROW 3: Calendar + Profile
+═══════════════════════════════════════════════════ -->
+<div class="section-heading">Calendar + Profile</div>
+<div class="screen-row">
+
+  <!-- Calendar -->
+  <div class="screen-block">
+    <div class="screen-label">Calendar · Month view</div>
+    <div class="screen-frame">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div class="B-nav-pills">
+            <span class="B-pill active">Calendar</span>
+          </div>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
+            <div class="B-heading" style="font-size:15px;">June 2025</div>
+            <div style="display:flex;gap:4px;">
+              <div style="font-size:9px;color:#9CA3AF;font-weight:500;cursor:pointer;">‹</div>
+              <div style="font-size:9px;color:#9CA3AF;font-weight:500;cursor:pointer;">›</div>
+            </div>
+          </div>
+
+          <!-- Calendar grid -->
+          <div class="B-card" style="padding:10px;">
+            <div class="B-cal-grid" style="margin-bottom:4px;">
+              <div class="B-cal-hdr">M</div><div class="B-cal-hdr">T</div><div class="B-cal-hdr">W</div>
+              <div class="B-cal-hdr">T</div><div class="B-cal-hdr">F</div><div class="B-cal-hdr">S</div><div class="B-cal-hdr">S</div>
+            </div>
+            <div class="B-cal-grid">
+              <div class="B-cal-day"></div><div class="B-cal-day"></div><div class="B-cal-day"></div>
+              <div class="B-cal-day"></div><div class="B-cal-day">1</div><div class="B-cal-day">2</div><div class="B-cal-day">3</div>
+              <div class="B-cal-day">4</div><div class="B-cal-day session">5</div><div class="B-cal-day">6</div>
+              <div class="B-cal-day">7</div><div class="B-cal-day">8</div><div class="B-cal-day">9</div><div class="B-cal-day">10</div>
+              <div class="B-cal-day today">11</div><div class="B-cal-day">12</div><div class="B-cal-day session">13</div>
+              <div class="B-cal-day">14</div><div class="B-cal-day">15</div><div class="B-cal-day">16</div><div class="B-cal-day">17</div>
+              <div class="B-cal-day">18</div><div class="B-cal-day session">19</div><div class="B-cal-day">20</div>
+              <div class="B-cal-day">21</div><div class="B-cal-day">22</div><div class="B-cal-day">23</div><div class="B-cal-day">24</div>
+              <div class="B-cal-day">25</div><div class="B-cal-day session">26</div><div class="B-cal-day">27</div>
+              <div class="B-cal-day">28</div><div class="B-cal-day">29</div><div class="B-cal-day">30</div><div class="B-cal-day"></div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <div style="display:flex;align-items:center;gap:3px;"><div style="width:7px;height:7px;background:#1F3260;border-radius:50%;"></div><span style="font-size:6.5px;color:#6B7280;">Today</span></div>
+              <div style="display:flex;align-items:center;gap:3px;"><div style="width:7px;height:7px;background:#DAF0F1;border-radius:50%;border:1px solid #7DCED1;"></div><span style="font-size:6.5px;color:#6B7280;">Session</span></div>
+            </div>
+          </div>
+
+          <!-- Upcoming sessions -->
+          <div class="B-card">
+            <div class="B-card-label">Upcoming</div>
+            <div class="B-list">
+              <div class="B-list-item">
+                <div style="display:flex;align-items:center;gap:7px;flex:1;">
+                  <div class="B-session-dot"></div>
+                  <div>
+                    <div class="B-list-title">Portfolio Review</div>
+                    <div class="B-list-sub">Jun 13 · 10:00 AM · 90 min</div>
+                  </div>
+                </div>
+                <span class="B-tag teal" style="margin:0;flex-shrink:0;">Tomorrow</span>
+              </div>
+              <div class="B-list-item">
+                <div style="display:flex;align-items:center;gap:7px;flex:1;">
+                  <div class="B-session-dot" style="background:#D1D5DB;"></div>
+                  <div>
+                    <div class="B-list-title">Group Workshop</div>
+                    <div class="B-list-sub">Jun 19 · 2:00 PM · 60 min</div>
+                  </div>
+                </div>
+                <span class="B-tag navy" style="margin:0;flex-shrink:0;">Jun 19</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">Calendar with navy today-dot, teal session dots, and an upcoming sessions card below.</div>
+  </div>
+
+  <!-- Profile -->
+  <div class="screen-block">
+    <div class="screen-label">Profile page</div>
+    <div class="screen-frame">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div class="B-nav-pills">
+            <span class="B-pill active">Profile</span>
+          </div>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner">
+
+          <!-- Profile hero card -->
+          <div class="B-card navy" style="padding:14px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="B-avatar-lg">AJ</div>
+              <div>
+                <div style="font-size:13px;font-weight:900;color:white;">Alex Johnson</div>
+                <div style="font-size:7.5px;color:rgba(255,255,255,.5);margin-top:2px;">Spring Cohort 2025</div>
+                <div style="display:flex;gap:5px;margin-top:5px;">
+                  <span class="B-tag teal" style="margin:0;">Student</span>
+                  <span class="B-tag" style="margin:0;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);">Group A</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Season stats -->
+          <div class="B-grid3">
+            <div class="B-card" style="text-align:center;padding:8px;">
+              <div class="B-card-label">Attendance</div>
+              <div class="B-big" style="font-size:18px;">92%</div>
+            </div>
+            <div class="B-card" style="text-align:center;padding:8px;">
+              <div class="B-card-label">Assignments</div>
+              <div class="B-big" style="font-size:18px;">5/8</div>
+            </div>
+            <div class="B-card light" style="text-align:center;padding:8px;">
+              <div class="B-card-label" style="color:#2E7679;">Streak</div>
+              <div class="B-big" style="font-size:18px;color:#1E5254;">🔥4</div>
+            </div>
+          </div>
+
+          <!-- Info fields -->
+          <div class="B-card">
+            <div class="B-card-label">About</div>
+            <div class="B-list">
+              <div class="B-list-item">
+                <div>
+                  <div class="B-list-title">Email</div>
+                  <div class="B-list-sub">alex.johnson@email.com</div>
+                </div>
+              </div>
+              <div class="B-list-item">
+                <div>
+                  <div class="B-list-title">Leader</div>
+                  <div class="B-list-sub">Maria Santos · Group A</div>
+                </div>
+              </div>
+              <div class="B-list-item">
+                <div>
+                  <div class="B-list-title">Member since</div>
+                  <div class="B-list-sub">January 2025</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">Profile hero with navy card, avatar, role chip. Below: 3-stat bento row + info list.</div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ROW 4: Mobile 375px preview
+═══════════════════════════════════════════════════ -->
+<div class="section-heading">Mobile (375px) — Dashboard</div>
+<div style="max-width:400px;margin:0 auto 3rem;">
+  <div class="screen-block">
+    <div class="screen-label">375px — Stacked bento grid</div>
+    <div class="screen-frame" style="max-width:375px;margin:0 auto;">
+      <div class="B-page">
+        <div class="B-topbar">
+          <span class="B-logo">JPC Space</span>
+          <div class="B-avatar">AJ</div>
+        </div>
+        <div class="B-inner" style="padding:12px;gap:8px;">
+          <div>
+            <div class="B-heading" style="font-size:15px;">Hi, Alex 👋</div>
+            <div class="B-chip">Season 2025</div>
+          </div>
+          <div class="B-card navy">
+            <div class="B-card-label">Season progress</div>
+            <div style="display:flex;justify-content:space-between;">
+              <div><div class="B-big" style="font-size:22px;">65%</div><div class="B-meta">Week 6 of 10</div></div>
+              <div style="text-align:right;"><div style="font-size:17px;font-weight:900;color:white;">5<span style="font-size:9px;color:rgba(255,255,255,.4)">/8</span></div><div class="B-meta">assignments</div></div>
+            </div>
+            <div class="B-bar-track"><div class="B-bar-fill" style="width:65%"></div></div>
+          </div>
+          <div class="B-row">
+            <div class="B-card" style="flex:1;text-align:center;">
+              <div class="B-card-label">Attendance</div>
+              <div class="B-big" style="font-size:18px;">92%</div>
+            </div>
+            <div class="B-card light" style="flex:1;text-align:center;">
+              <div class="B-card-label" style="color:#2E7679;">Pending</div>
+              <div class="B-big" style="font-size:18px;color:#1E5254;">2</div>
+            </div>
+          </div>
+          <div class="B-card">
+            <div class="B-card-label">Next session</div>
+            <div style="display:flex;align-items:center;gap:7px;">
+              <div class="B-session-dot"></div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:#1F3260;">Portfolio Review</div>
+                <div style="font-size:7.5px;color:#9CA3AF;">Tomorrow · 10:00 AM</div>
+              </div>
+            </div>
+          </div>
+          <div class="B-qrow">
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Cal</div></div>
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Tasks</div></div>
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">History</div></div>
+            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Profile</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-desc">On mobile the 3-col stat row collapses to 2-col. Everything stacks vertically, no horizontal scroll.</div>
+  </div>
+</div>
+
+<p class="hint">These are all in Bento Bold. Let me know if you want any screen adjusted before we write the spec.</p>
+
+</body>
+</html>

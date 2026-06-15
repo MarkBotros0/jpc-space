@@ -17,8 +17,8 @@ export default async function LeaderCalendarPage() {
     return (
       <div className="flex flex-col gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">Calendar</h1>
-          <p className="mt-1 text-sm text-neutral-500">You don&apos;t lead any groups yet.</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Calendar</h1>
+          <p className="mt-1 text-sm text-muted-foreground">You don&apos;t lead any groups yet.</p>
         </div>
         <EmptyState
           icon={Calendar}
@@ -45,8 +45,8 @@ export default async function LeaderCalendarPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">Calendar</h1>
-        <p className="mt-1 text-sm text-neutral-500">{`${allSessions.length} session${allSessions.length === 1 ? "" : "s"}`}</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Calendar</h1>
+        <p className="mt-1 text-sm text-muted-foreground">{`${allSessions.length} session${allSessions.length === 1 ? "" : "s"}`}</p>
       </div>
       <SeasonCalendar
         sessions={allSessions}

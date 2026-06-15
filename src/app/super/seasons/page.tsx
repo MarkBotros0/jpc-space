@@ -43,8 +43,8 @@ export default async function SuperSeasonsPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">Seasons</h1>
-          <p className="mt-1 text-sm text-neutral-500">Create and manage program seasons.</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Seasons</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Create and manage program seasons.</p>
         </div>
         <SeasonCreateButton />
       </div>

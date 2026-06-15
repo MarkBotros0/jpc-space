@@ -21,8 +21,8 @@ export default async function NewStudentPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">New student</h1>
-        <p className="mt-1 text-sm text-neutral-500">Create the user, profile, and enrollment.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">New student</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Create the user, profile, and enrollment.</p>
       </div>
       <Card>
         <CardContent className="pt-6">

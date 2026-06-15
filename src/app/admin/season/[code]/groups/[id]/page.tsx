@@ -32,8 +32,8 @@ export default async function GroupDetailPage({ params }: PageProps) {
     <div className="flex flex-col gap-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-brand-navy-900">{group.name}</h1>
-          <p className="mt-1 text-sm text-neutral-500">{group.description ?? `Group in ${season.title}.`}</p>
+          <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{group.name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{group.description ?? `Group in ${season.title}.`}</p>
         </div>
         <Button
           variant="outline"
@@ -54,13 +54,13 @@ export default async function GroupDetailPage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             {group.leaders.length === 0 ? (
-              <p className="text-sm italic text-neutral-500">No leaders assigned.</p>
+              <p className="text-sm italic text-muted-foreground">No leaders assigned.</p>
             ) : (
-              <ul className="flex flex-col divide-y divide-neutral-100">
+              <ul className="flex flex-col divide-y divide-border">
                 {group.leaders.map((l) => (
                   <li key={l.id} className="flex flex-col py-2 first:pt-0 last:pb-0">
                     <span className="font-medium">{l.name ?? l.email}</span>
-                    <span className="text-xs text-neutral-500">{l.email}</span>
+                    <span className="text-xs text-muted-foreground">{l.email}</span>
                   </li>
                 ))}
               </ul>
@@ -76,13 +76,13 @@ export default async function GroupDetailPage({ params }: PageProps) {
           </CardHeader>
           <CardContent>
             {group.students.length === 0 ? (
-              <p className="text-sm italic text-neutral-500">No students enrolled.</p>
+              <p className="text-sm italic text-muted-foreground">No students enrolled.</p>
             ) : (
-              <ul className="flex flex-col divide-y divide-neutral-100">
+              <ul className="flex flex-col divide-y divide-border">
                 {group.students.map((s) => (
                   <li key={s.id} className="flex flex-col py-2 first:pt-0 last:pb-0">
                     <span className="font-medium">{s.name ?? s.email}</span>
-                    <span className="text-xs text-neutral-500">{s.email}</span>
+                    <span className="text-xs text-muted-foreground">{s.email}</span>
                   </li>
                 ))}
               </ul>

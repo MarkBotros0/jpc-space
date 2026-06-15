@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { loadSessionById } from "@/lib/sessions-query";
+import { Badge } from "@/components/ui/badge";
 import { StudentCheckinButton } from "@/components/sessions/student-checkin-button";
 
 interface PageProps {
@@ -46,19 +47,19 @@ export default async function StudentSessionPage({ params }: PageProps) {
       <div>
         <Link
           href="/student/calendar"
-          className="text-xs font-semibold text-brand-teal-700 hover:underline"
+          className="text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
         >
           ← Calendar
         </Link>
-        {/* Navy hero card */}
-        <div className="mt-2 rounded-xl bg-gradient-to-br from-brand-navy-900 to-brand-navy-700 p-4 shadow-[0_4px_20px_rgba(31,50,96,0.25)]">
+        {/* Hero card */}
+        <div className="mt-2 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
           <div className="mb-2 flex items-center gap-2">
-            <span className="rounded-full bg-white/15 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white/80">
+            <Badge variant={isOnline ? "teal" : "outline"}>
               {isOnline ? "Online" : "In-person"}
-            </span>
+            </Badge>
           </div>
-          <h1 className="text-xl font-black text-white">{session.title}</h1>
-          <p className="mt-1 text-sm text-white/60">
+          <h1 className="text-xl font-black text-brand-navy-900 dark:text-foreground">{session.title}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             {format(session.startsAt, "EEEE, MMMM d, yyyy")}
           </p>
         </div>
@@ -70,7 +71,7 @@ export default async function StudentSessionPage({ params }: PageProps) {
           href={session.youtubeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-xl bg-brand-teal-600 px-4 py-3 text-sm font-bold text-white shadow-[0_2px_8px_rgba(93,185,188,0.35)] transition-colors hover:bg-brand-teal-700"
+          className="flex items-center justify-center gap-2 rounded-lg bg-brand-teal-600 px-4 py-3 text-sm font-bold text-white shadow-[0_2px_8px_rgba(93,185,188,0.35)] transition-colors hover:bg-brand-teal-700"
         >
           <Video className="size-4 shrink-0" />
           Watch recording
@@ -78,12 +79,12 @@ export default async function StudentSessionPage({ params }: PageProps) {
       )}
 
       {/* Details card */}
-      <div className="rounded-xl bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_4px_12px_rgba(0,0,0,0.04)] ring-1 ring-neutral-200/60">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
           Details
         </p>
         <div className="mt-2 flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-sm text-neutral-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Clock className="size-4 shrink-0 text-brand-teal-600" />
             <span>
               {format(session.startsAt, "h:mm a")} –{" "}
@@ -91,7 +92,7 @@ export default async function StudentSessionPage({ params }: PageProps) {
             </span>
           </div>
           {session.location && (
-            <div className="flex items-center gap-2 text-sm text-neutral-600">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="size-4 shrink-0 text-brand-teal-600" />
               <span>{session.location}</span>
             </div>

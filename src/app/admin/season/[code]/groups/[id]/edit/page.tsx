@@ -35,8 +35,8 @@ export default async function EditGroupPage({ params }: PageProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-black text-brand-navy-900">{`Edit ${group.name}`}</h1>
-        <p className="mt-1 text-sm text-neutral-500">Update group details and membership.</p>
+        <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">{`Edit ${group.name}`}</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Update group details and membership.</p>
       </div>
       <Card>
         <CardContent className="pt-6">
