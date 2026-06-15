@@ -5,6 +5,7 @@ import { MissionSection } from "@/components/public/mission-section";
 import { ProgramsSection } from "@/components/public/programs-section";
 import { NewsSection } from "@/components/public/news-section";
 import { HowToJoinSection } from "@/components/public/how-to-join-section";
+import { MembersSection } from "@/components/public/members-section";
 import { NewsletterForm } from "@/components/public/newsletter-form";
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default async function HomePage() {
       <ProgramsSection />
       <NewsSection posts={posts} />
       <HowToJoinSection />
+      <MembersSection />
       <NewsletterForm />
     </>
   );
