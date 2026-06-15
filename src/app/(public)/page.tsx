@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { HeroSection } from "@/components/public/hero-section";
+import { ScriptureSection } from "@/components/public/scripture-section";
 import { MissionSection } from "@/components/public/mission-section";
 import { ProgramsSection } from "@/components/public/programs-section";
+import { CommunitySection } from "@/components/public/community-section";
+import { TestimonialsSection } from "@/components/public/testimonials-section";
 import { NewsSection } from "@/components/public/news-section";
 import { HowToJoinSection } from "@/components/public/how-to-join-section";
 import { MembersSection } from "@/components/public/members-section";
@@ -32,8 +35,11 @@ export default async function HomePage() {
   return (
     <>
       <HeroSection />
+      <ScriptureSection />
       <MissionSection />
       <ProgramsSection />
+      <CommunitySection />
+      <TestimonialsSection />
       <NewsSection posts={posts} />
       <HowToJoinSection />
       <MembersSection />
