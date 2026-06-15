@@ -60,7 +60,7 @@ const roleColor: Record<SessionUser["role"], RoleColor> = {
 
 async function signOutAction() {
   "use server";
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirectTo: "/" });
 }
 
 function extraItemsFor(user: SessionUser): NavItem[] {

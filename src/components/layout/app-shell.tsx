@@ -13,7 +13,7 @@ import { DevUserSwitcher } from "@/components/dev/dev-user-switcher";
 
 async function signOutAction() {
   "use server";
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirectTo: "/" });
 }
 
 function initialsFor(name: string | null, role: SessionUser["role"]): string {
