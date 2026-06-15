@@ -18,7 +18,8 @@ export type NavIconName =
   | "notes"
   | "quizzes"
   | "more"
-  | "settings";
+  | "settings"
+  | "applications";
 
 export interface NavItem {
   href: string;
@@ -60,6 +61,7 @@ const ADMIN: RoleNav = {
     { href: "/admin/students", label: "Students", icon: "students" },
     { href: "/admin/assignments", label: "Assignments", icon: "assignments" },
     { href: "/admin/quizzes", label: "Quizzes", icon: "quizzes" },
+    { href: "/admin/applications", label: "Applications", icon: "applications" },
     { href: "/admin/reports", label: "Reports", icon: "reports" },
     { href: "/admin/settings", label: "Settings", icon: "settings" },
   ],
