@@ -84,7 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.userId = Number(user.id);
         token.role = (user as { role: UserRole }).role;
       }
-      if (token.userId && (trigger === "signIn" || trigger === "update" || !("seasonAdminIds" in token))) {
+      if (token.userId) {
         const scopes = await loadScopes(token.userId as number);
         token.seasonAdminIds = scopes.seasonAdminIds;
         token.groupLeaderIds = scopes.groupLeaderIds;

@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "My Season" };
 
 export default async function AdminSeasonsPage() {
   const user = await getCurrentUserOrRedirect();
-  requireRole(user, ["ADMIN"]);
+  requireRole(user, ["ADMIN", "SUPER"]);
 
   if (user.seasonAdminIds.length === 0) {
     return (
