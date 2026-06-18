@@ -5,7 +5,23 @@
       "Skill(run:*)",
       "Bash(curl -s http://localhost:3000 -o /dev/null -w \"%{http_code}\")",
       "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
-      "Bash(curl -s http://localhost:3000/login -w \"\\\\nHTTP %{http_code}\")"
+      "Bash(curl -s http://localhost:3000/login -w \"\\\\nHTTP %{http_code}\")",
+      "Bash(pkill -f \"prisma migrate\")",
+      "Bash(mkdir -p /workspaces/jpc-space/src/app/api/newsletter/subscribe /workspaces/jpc-space/src/app/api/applications/\\\\[id\\\\]/approve /workspaces/jpc-space/src/app/api/applications/\\\\[id\\\\]/reject)",
+      "Bash(mkdir -p /workspaces/jpc-space/src/app/admin/applications/\\\\[id\\\\])",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"christian community discipleship landing page dark navy warm welcoming\" --design-system -p \"JPC Space Public Site\" -f markdown)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"landing page visual hierarchy dark mode\" --domain landing)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"glassmorphism dark navy immersive visual effects\" --domain style)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"christian discipleship community landing page dark elegant faith\" --design-system -p \"JPC Public Site\" -f markdown)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"testimonials social proof community story dark\" --domain landing -n 3)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"cinematic dark immersive storytelling\" --domain style -n 2)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"animation scroll reveal entrance\" --domain ux -n 2)",
+      "Bash(python3 /home/codespace/.claude/skills/ui-ux-pro-max/scripts/search.py \"nextjs image performance dark landing\" --stack nextjs)",
+      "WebFetch(domain:credologos.org)"
+    ],
+    "additionalDirectories": [
+      "/workspaces/jpc-space/src/app/api/applications/[id]",
+      "/workspaces/jpc-space/src/app/admin/applications"
     ]
   },
   "enabledPlugins": {

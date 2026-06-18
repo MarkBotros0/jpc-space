@@ -35,19 +35,37 @@ const icons = [BookOpen, Globe] as const;
 export function MissionSection() {
   const { lang } = useLang();
   const t = content[lang];
+  const dir = lang === "ar" ? "rtl" : "ltr";
 
   return (
     <section
       id="mission"
-      dir={lang === "ar" ? "rtl" : "ltr"}
-      className="bg-brand-navy-950 px-4 py-20 md:py-28"
+      dir={dir}
+      className="relative overflow-hidden bg-brand-navy-950 px-4 py-20 md:py-28"
     >
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-12 text-center">
-          <span className="mb-3 inline-block rounded-full border border-brand-teal-500/30 bg-brand-teal-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand-teal-400">
+      {/* Ghost word watermark */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-4 select-none text-center font-black leading-none tracking-[-0.06em] text-transparent"
+        style={{
+          fontSize: "clamp(4rem, 15vw, 12rem)",
+          WebkitTextStroke: "1px rgba(93,185,188,0.09)",
+        }}
+      >
+        {lang === "ar" ? "رسالة" : "MISSION"}
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-5xl">
+        <div className="mb-14 text-center">
+          <span className="mb-4 inline-block rounded-full border border-brand-teal-500/30 bg-brand-teal-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand-teal-400">
             {t.kicker}
           </span>
-          <h2 className="text-3xl font-bold text-white md:text-4xl">{t.heading}</h2>
+          <h2
+            className="font-black leading-[0.95] tracking-[-0.04em] text-white"
+            style={{ fontSize: "clamp(2.2rem, 5vw, 4rem)" }}
+          >
+            {t.heading}
+          </h2>
         </div>
 
         <div className="grid gap-5 md:grid-cols-2">
@@ -56,22 +74,26 @@ export function MissionSection() {
             return (
               <div
                 key={card.title}
-                className="group relative overflow-hidden rounded-2xl border border-white/10 border-s-brand-teal-500/60 bg-brand-navy-900/60 p-8 backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1 [border-inline-start-width:2px] md:p-10"
+                className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-teal-500/25 md:p-10"
               >
-                {/* Subtle glow behind card */}
+                {/* Teal border accent on start side */}
+                <div className="absolute inset-y-0 start-0 w-[2px] rounded-full bg-brand-teal-500/50" />
+
+                {/* Hover glow */}
                 <div
                   aria-hidden
-                  className="pointer-events-none absolute bottom-0 start-0 h-32 w-32 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  className="pointer-events-none absolute bottom-0 start-0 h-40 w-40 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   style={{
                     background:
                       "radial-gradient(circle at 0% 100%, rgba(93,185,188,0.12) 0%, transparent 60%)",
                   }}
                 />
-                <div className="mb-5 inline-flex size-11 items-center justify-center rounded-xl bg-brand-teal-500/15 text-brand-teal-400">
-                  <Icon className="size-5" />
+
+                <div className="mb-5 inline-flex size-12 items-center justify-center rounded-xl bg-brand-teal-500/15 text-brand-teal-400 transition-colors duration-200 group-hover:bg-brand-teal-500/25">
+                  <Icon className="size-6" />
                 </div>
-                <h3 className="mb-3 text-lg font-semibold text-brand-teal-400">{card.title}</h3>
-                <p className="leading-relaxed text-white/60">{card.body}</p>
+                <h3 className="mb-3 text-xl font-bold text-brand-teal-300">{card.title}</h3>
+                <p className="text-base leading-relaxed text-white/58">{card.body}</p>
               </div>
             );
           })}

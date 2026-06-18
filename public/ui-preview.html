@@ -1,714 +1,973 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bento Bold — Student Portal Screens</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JPC Public Site — UI Direction Preview</title>
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: #0f1117;
-  color: #f3f4f6;
-  padding: 2.5rem 1.5rem 4rem;
-}
+  :root {
+    --navy-950: #0d1a35;
+    --navy-900: #142048;
+    --navy-800: #1F3260;
+    --navy-700: #2A3A63;
+    --teal-300: #8FD8DA;
+    --teal-400: #5DB9BC;
+    --teal-500: #3DA5A8;
+    --teal-600: #2E8285;
+    --teal-700: #236163;
+    --gold:     #C9973C;
+    --gold-lt:  #E8B45A;
+    --cream:    #FAF7F2;
+  }
 
-h1 { font-size: 1.5rem; font-weight: 800; text-align: center; margin-bottom: .4rem; }
-.subtitle { text-align: center; color: #6b7280; font-size: .875rem; margin-bottom: 0.5rem; max-width: 620px; margin-left: auto; margin-right: auto; }
-.badge { display: inline-block; background: rgba(31,50,96,.35); color: #8294BF; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: .25rem .7rem; border-radius: 99px; margin-bottom: 2.5rem; }
-.badge-wrap { text-align: center; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #060a14;
+    color: #fff;
+    overflow-x: hidden;
+  }
 
-/* ── Screen wrapper ──────────────────────────── */
-.screen-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto 3rem;
-}
+  /* ─── STICKY NAV ─────────────────────────────────────── */
+  .picker-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,26,53,.96);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    padding: 0 24px;
+    display: flex; align-items: center; gap: 8px; height: 56px;
+    flex-wrap: wrap;
+  }
+  .picker-nav-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.3); letter-spacing: .12em; text-transform: uppercase; margin-right: 8px; }
+  .nav-btn {
+    padding: 6px 18px; border-radius: 99px;
+    background: transparent; border: 1px solid rgba(255,255,255,.12);
+    color: rgba(255,255,255,.5); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: all .2s; text-decoration: none; display: inline-block;
+  }
+  .nav-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .nav-btn.active { background: var(--teal-500); border-color: var(--teal-500); color: #fff; }
 
-.screen-block {}
-.screen-label {
-  font-size: .75rem; font-weight: 700; color: #4B5563;
-  text-transform: uppercase; letter-spacing: .1em;
-  margin-bottom: .6rem;
-}
+  /* ─── OPTION LABELS ──────────────────────────────────── */
+  .option-label {
+    text-align: center; padding: 20px 16px 6px;
+    font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--teal-400);
+  }
+  .option-desc {
+    text-align: center; font-size: 12px; color: rgba(255,255,255,.35);
+    padding: 0 16px 32px; max-width: 640px; margin: 0 auto;
+  }
 
-.screen-frame {
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 40px rgba(0,0,0,.5);
-  border: 1.5px solid #1f2937;
-  background: #EFF2F7;
-  cursor: pointer;
-  transition: transform .2s, box-shadow .2s, border-color .2s;
-}
-.screen-frame:hover { transform: translateY(-4px); box-shadow: 0 16px 56px rgba(0,0,0,.6); }
-.screen-frame.selected { border-color: #7DCED1; box-shadow: 0 0 0 3px rgba(125,206,209,.22), 0 16px 56px rgba(0,0,0,.5); }
+  /* ══════════════════════════════════════════════════════════
+     OPTION A — CINEMATIC ATLAS
+  ══════════════════════════════════════════════════════════ */
+  #option-a { background: var(--navy-950); }
 
-.screen-desc {
-  font-size: .78rem; color: #6b7280; line-height: 1.5;
-  margin-top: .6rem;
-}
+  .a-hero {
+    position: relative; min-height: 100vh;
+    background: var(--navy-900);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 80px 24px; overflow: hidden;
+  }
+  .a-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 55% at 50% 10%, rgba(61,165,168,.14) 0%, transparent 65%),
+      radial-gradient(circle 400px at 95% 95%, rgba(201,151,60,.07) 0%, transparent 60%);
+  }
 
-/* ── Shared Bento primitives ──────────────────── */
-.B-topbar {
-  background: #1F3260;
-  padding: 10px 16px;
-  display: flex; justify-content: space-between; align-items: center;
-  flex-shrink: 0;
-}
-.B-logo { font-size: 9px; font-weight: 800; color: #7DCED1; letter-spacing: .1em; text-transform: uppercase; }
-.B-nav-pills { display: flex; gap: 4px; }
-.B-pill {
-  font-size: 7px; font-weight: 600; color: rgba(255,255,255,.5);
-  padding: 3px 7px; border-radius: 99px;
-}
-.B-pill.active { background: rgba(125,206,209,.18); color: #7DCED1; }
-.B-avatar {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: linear-gradient(135deg, #7DCED1, #5DB9BC);
-  border: 1.5px solid rgba(125,206,209,.5);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 700; color: #1F3260;
-  flex-shrink: 0;
-}
+  .compass-rose {
+    position: absolute; inset: 0; margin: auto;
+    width: min(520px, 90vw); height: min(520px, 90vw); opacity: .045;
+    pointer-events: none;
+  }
 
-.B-page { background: #EFF2F7; display: flex; flex-direction: column; }
+  .a-kicker {
+    position: relative;
+    display: inline-block; border-radius: 99px;
+    border: 1px solid rgba(61,165,168,.35); background: rgba(61,165,168,.12);
+    padding: 7px 22px; font-size: 10px; font-weight: 700; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--teal-300); margin-bottom: 28px;
+  }
+  .a-h1 {
+    position: relative;
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    font-weight: 800; line-height: 1.06; letter-spacing: -.03em;
+    color: #fff; margin-bottom: 20px;
+  }
+  .a-h1 span { display: block; }
+  .a-sub {
+    position: relative;
+    font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,.48);
+    max-width: 480px; margin: 0 auto 40px;
+  }
+  .a-ctas { position: relative; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-teal {
+    padding: 14px 36px; border-radius: 12px;
+    background: var(--teal-500); color: #fff; font-weight: 700; font-size: .95rem;
+    border: none; cursor: pointer;
+    box-shadow: 0 0 32px rgba(61,165,168,.42); transition: all .2s;
+  }
+  .btn-teal:hover { background: var(--teal-400); transform: translateY(-2px); box-shadow: 0 0 48px rgba(61,165,168,.58); }
+  .btn-ghost {
+    padding: 14px 36px; border-radius: 12px;
+    background: transparent; color: rgba(255,255,255,.6);
+    border: 1px solid rgba(255,255,255,.18); font-weight: 600; font-size: .95rem;
+    cursor: pointer; transition: all .2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,.4); color: #fff; }
 
-.B-inner { padding: 14px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+  .a-stats {
+    position: relative; margin-top: 64px;
+    display: flex; justify-content: center;
+  }
+  .a-stat { padding: 0 36px; text-align: center; }
+  .a-stat + .a-stat { border-left: 1px solid rgba(255,255,255,.1); }
+  .a-stat-val { font-size: 2.5rem; font-weight: 800; color: #fff; letter-spacing: -.03em; }
+  .a-stat-lbl { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-top: 4px; }
 
-.B-heading { font-size: 17px; font-weight: 900; color: #1F3260; line-height: 1.15; }
-.B-sub { font-size: 8px; color: #6B7280; margin-top: 2px; }
-.B-chip {
-  display: inline-flex; align-items: center;
-  background: #DAF0F1; color: #2E7679;
-  font-size: 7px; font-weight: 700;
-  padding: 2.5px 8px; border-radius: 99px; margin-top: 4px;
-}
+  /* A — Scripture */
+  .a-scripture {
+    background: var(--navy-800);
+    padding: 100px 24px; text-align: center; position: relative; overflow: hidden;
+  }
+  .a-quote-bg {
+    position: absolute; top: -30px; left: 32px;
+    font-size: 260px; font-weight: 900; color: rgba(255,255,255,.025);
+    font-family: Georgia, serif; line-height: 1; user-select: none; pointer-events: none;
+  }
+  .a-cross-icon {
+    margin: 0 auto 20px; display: flex; justify-content: center;
+  }
+  .a-verse {
+    position: relative;
+    font-size: clamp(1.1rem, 2.2vw, 1.5rem);
+    font-style: italic; line-height: 1.72; color: rgba(255,255,255,.75);
+    max-width: 680px; margin: 0 auto 20px;
+  }
+  .a-ref {
+    font-size: 10px; font-weight: 700; letter-spacing: .25em;
+    text-transform: uppercase; color: var(--gold-lt);
+  }
+  .a-tagline { color: rgba(255,255,255,.28); font-size: .8rem; margin-top: 10px; }
 
-/* Cards */
-.B-card {
-  background: white; border-radius: 12px; padding: 10px 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.04);
-}
-.B-card.navy { background: linear-gradient(135deg, #1F3260, #2A3A63); }
-.B-card.teal { background: linear-gradient(135deg, #1E5254, #2E7679); }
-.B-card.light { background: #DAF0F1; }
+  /* A — Programs */
+  .a-programs { background: var(--navy-950); padding: 80px 24px; }
+  .section-center { text-align: center; margin-bottom: 48px; }
+  .section-kicker {
+    display: inline-block; border-radius: 99px;
+    border: 1px solid rgba(61,165,168,.3); background: rgba(61,165,168,.1);
+    padding: 5px 16px; font-size: 10px; font-weight: 700; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--teal-400); margin-bottom: 14px;
+  }
+  .section-h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; color: #fff; letter-spacing: -.02em; }
+  .section-sub { font-size: .9rem; color: rgba(255,255,255,.35); margin-top: 8px; }
 
-.B-card-label {
-  font-size: 7px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  color: #9CA3AF; margin-bottom: 5px;
-}
-.B-card.navy .B-card-label { color: rgba(125,206,209,.65); }
-.B-card.teal .B-card-label { color: rgba(125,206,209,.75); }
-.B-card.light .B-card-label { color: #2E7679; }
+  .a-prog-grid {
+    max-width: 900px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 20px;
+  }
+  .a-prog-card {
+    border: 1px solid rgba(255,255,255,.07);
+    border-top: 2px solid var(--teal-500);
+    background: rgba(255,255,255,.04);
+    border-radius: 16px; padding: 32px;
+    transition: transform .3s, border-color .3s;
+  }
+  .a-prog-card:hover { transform: translateY(-4px); border-color: var(--teal-400); }
+  .a-step { font-family: monospace; font-size: 10px; font-weight: 700; letter-spacing: .2em; color: var(--teal-400); margin-bottom: 12px; }
+  .a-prog-name { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .a-prog-desc { font-size: .875rem; line-height: 1.65; color: rgba(255,255,255,.48); }
 
-.B-big { font-size: 26px; font-weight: 900; color: #1F3260; line-height: 1; }
-.B-card.navy .B-big, .B-card.teal .B-big { color: white; }
+  /* A — Testimonials */
+  .a-testimonials { background: var(--navy-800); padding: 80px 24px; }
+  .a-testi-grid {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 16px;
+  }
+  .a-testi-card {
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 16px; padding: 28px; transition: all .3s;
+  }
+  .a-testi-card:hover { border-color: rgba(61,165,168,.25); transform: translateY(-3px); }
+  .a-quotemark { color: var(--teal-500); opacity: .45; font-size: 2.2rem; font-family: Georgia, serif; line-height: 1; margin-bottom: 12px; }
+  .a-testi-text { font-size: .875rem; line-height: 1.72; color: rgba(255,255,255,.62); margin-bottom: 20px; }
+  .a-testi-meta { display: flex; align-items: center; gap: 12px; }
+  .a-avatar {
+    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .av1 { background: linear-gradient(135deg, #2E8285, #154446); }
+  .av2 { background: linear-gradient(135deg, #1F3260, #0a1428); }
+  .av3 { background: linear-gradient(135deg, #236163, #1F3260); }
+  .a-testi-name { font-size: .875rem; font-weight: 600; color: #fff; }
+  .a-testi-role { font-size: .75rem; color: rgba(255,255,255,.35); }
 
-.B-meta { font-size: 7.5px; color: #9CA3AF; margin-top: 2px; }
-.B-card.navy .B-meta { color: rgba(255,255,255,.45); }
-.B-card.teal .B-meta { color: rgba(255,255,255,.55); }
+  /* diagonal band transition */
+  .diag-a { height: 56px; background: var(--navy-950); clip-path: polygon(0 0, 100% 56px, 100% 56px, 0 56px); }
+  .diag-b { height: 56px; background: var(--navy-800); clip-path: polygon(0 56px, 100% 0, 100% 56px, 0 56px); }
 
-.B-bar-track { height: 5px; background: rgba(255,255,255,.15); border-radius: 3px; overflow: hidden; margin: 7px 0 3px; }
-.B-bar-fill { height: 100%; background: linear-gradient(90deg, #7DCED1, #ABD5E8); border-radius: 3px; }
-.B-bar-track.light { background: #DAF0F1; }
-.B-bar-fill.navy { background: linear-gradient(90deg, #1F3260, #7DCED1); }
+  /* ══════════════════════════════════════════════════════════
+     OPTION B — BOLD EDITORIAL
+  ══════════════════════════════════════════════════════════ */
+  #option-b { background: #050810; }
 
-.B-row { display: flex; gap: 8px; }
-.B-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.B-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+  .b-hero {
+    min-height: 100vh; background: #050810;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 60px 48px; position: relative; overflow: hidden;
+  }
+  .b-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(61,165,168,.09) 0%, transparent 60%);
+  }
+  .b-watermark {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    font-size: clamp(7rem, 22vw, 18rem); font-weight: 900; letter-spacing: -.06em;
+    color: rgba(255,255,255,.02); white-space: nowrap; user-select: none; line-height: 1;
+    pointer-events: none;
+  }
+  .b-tag {
+    position: relative; font-size: 11px; font-weight: 700; letter-spacing: .25em;
+    text-transform: uppercase; color: var(--teal-400); margin-bottom: 20px;
+  }
+  .b-h1 {
+    position: relative;
+    font-size: clamp(3.8rem, 11vw, 8.5rem);
+    font-weight: 900; line-height: .93; letter-spacing: -.055em; color: #fff;
+  }
+  .b-h1 .teal { color: var(--teal-400); }
+  .b-bottom {
+    position: relative;
+    margin-top: 48px;
+    display: flex; align-items: center; gap: 40px;
+    border-top: 1px solid rgba(255,255,255,.07); padding-top: 32px;
+    flex-wrap: wrap;
+  }
+  .b-apply {
+    padding: 16px 52px; background: var(--teal-500); color: #fff;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; letter-spacing: .06em; text-transform: uppercase;
+    box-shadow: 0 0 32px rgba(61,165,168,.38); transition: all .2s;
+  }
+  .b-apply:hover { background: var(--teal-400); box-shadow: 0 0 50px rgba(61,165,168,.55); }
+  .b-meta { color: rgba(255,255,255,.35); font-size: .85rem; font-weight: 500; }
+  .b-nums { margin-left: auto; display: flex; gap: 52px; }
+  .b-num-val { font-size: 3.2rem; font-weight: 900; color: #fff; letter-spacing: -.04em; line-height: 1; }
+  .b-num-lbl { font-size: 9px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.28); margin-top: 3px; }
 
-.B-tag {
-  display: inline-flex;
-  font-size: 6.5px; font-weight: 700;
-  padding: 2px 6px; border-radius: 99px; margin-top: 5px;
-}
-.B-tag.teal { background: #DAF0F1; color: #2E7679; }
-.B-tag.orange { background: #FEF3C7; color: #D97706; }
-.B-tag.red { background: #FEE2E2; color: #DC2626; }
-.B-tag.green { background: #D1FAE5; color: #059669; }
-.B-tag.navy { background: rgba(31,50,96,.1); color: #1F3260; }
+  .b-band { padding: 80px 48px; }
+  .b-band-dark { background: #050810; }
+  .b-band-mid  { background: #0b1224; }
 
-/* Quick links bar */
-.B-qrow { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
-.B-qitem {
-  background: white; border-radius: 10px; padding: 8px 3px; text-align: center;
-  box-shadow: 0 1px 3px rgba(0,0,0,.05);
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-}
-.B-qico { width: 16px; height: 16px; background: linear-gradient(135deg, #1F3260, #344676); border-radius: 5px; }
-.B-qlbl { font-size: 6.5px; color: #374151; font-weight: 600; }
+  .b-giant {
+    font-size: clamp(4rem, 12vw, 10rem);
+    font-weight: 900; letter-spacing: -.05em; line-height: .9;
+    color: transparent; -webkit-text-stroke: 1px rgba(61,165,168,.25);
+    display: block; margin-bottom: 24px; user-select: none;
+  }
+  .b-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; max-width: 900px; align-items: start; }
+  .b-col-lbl { font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--teal-400); margin-bottom: 12px; }
+  .b-col-text { font-size: 1.05rem; line-height: 1.75; color: rgba(255,255,255,.55); }
 
-/* List items */
-.B-list { display: flex; flex-direction: column; gap: 0; }
-.B-list-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 7px 0; border-bottom: 1px solid #F3F4F6;
-  gap: 8px;
-}
-.B-list-item:last-child { border-bottom: none; padding-bottom: 0; }
-.B-list-item:first-child { padding-top: 0; }
-.B-list-title { font-size: 8.5px; font-weight: 600; color: #1F3260; }
-.B-list-sub { font-size: 7px; color: #9CA3AF; margin-top: 1px; }
+  .b-prog-list { max-width: 900px; margin: 0; }
+  .b-prog-row {
+    display: flex; align-items: center; gap: 32px;
+    padding: 28px 0; border-bottom: 1px solid rgba(255,255,255,.06);
+    transition: all .2s; cursor: default;
+  }
+  .b-prog-row:hover .b-prog-num { color: var(--teal-400); }
+  .b-prog-num {
+    font-size: 4.5rem; font-weight: 900; color: rgba(255,255,255,.05);
+    letter-spacing: -.04em; transition: color .3s; min-width: 90px; line-height: 1;
+  }
+  .b-prog-info { flex: 1; }
+  .b-prog-title { font-size: 2rem; font-weight: 800; color: #fff; letter-spacing: -.03em; }
+  .b-prog-sub { font-size: .85rem; color: rgba(255,255,255,.3); margin-top: 4px; }
+  .b-prog-arr { font-size: 1.8rem; color: var(--teal-500); opacity: 0; transition: opacity .2s; }
+  .b-prog-row:hover .b-prog-arr { opacity: 1; }
 
-/* Progress ring (SVG) */
-.B-ring-wrap { display: flex; align-items: center; justify-content: center; }
+  .b-testi-row {
+    max-width: 900px; display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 32px; margin-top: 48px;
+  }
+  .b-testi-item { border-left: 2px solid var(--teal-500); padding-left: 24px; }
+  .b-testi-q { font-size: .95rem; font-style: italic; line-height: 1.72; color: rgba(255,255,255,.58); margin-bottom: 16px; }
+  .b-testi-name { font-size: .8rem; font-weight: 700; color: #fff; letter-spacing: .08em; text-transform: uppercase; }
+  .b-testi-role { font-size: .75rem; color: rgba(255,255,255,.28); }
 
-/* Divider */
-.B-divider { height: 1px; background: #E5E7EB; }
+  /* ══════════════════════════════════════════════════════════
+     OPTION C — LIVING COMMUNITY
+  ══════════════════════════════════════════════════════════ */
+  #option-c { background: var(--navy-900); }
 
-/* Avatar row */
-.B-avatar-lg {
-  width: 48px; height: 48px; border-radius: 50%;
-  background: linear-gradient(135deg, #7DCED1, #5DB9BC);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 800; color: #1F3260;
-  border: 2px solid rgba(125,206,209,.4);
-  flex-shrink: 0;
-}
+  .c-hero {
+    min-height: 100vh; position: relative; overflow: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 80px 24px;
+  }
+  .c-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg,
+      #0d1f40 0%, #163a62 20%, #0f4c4e 45%, #0d3f63 70%, #0d1f40 100%);
+  }
+  .c-bg-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(13,26,64,.25) 0%, rgba(13,26,64,.88) 100%);
+  }
+  /* grain */
+  .c-grain {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
+    opacity: .7;
+  }
+  .c-content { position: relative; z-index: 2; max-width: 700px; }
+  .c-kicker {
+    display: inline-block; border-radius: 99px;
+    background: rgba(255,255,255,.14); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.22);
+    padding: 7px 22px; font-size: 10px; font-weight: 700; letter-spacing: .2em;
+    text-transform: uppercase; color: #fff; margin-bottom: 24px;
+  }
+  .c-h1 {
+    font-size: clamp(2.8rem, 7.5vw, 5.2rem);
+    font-weight: 800; line-height: 1.06; letter-spacing: -.03em;
+    color: #fff; margin-bottom: 20px;
+  }
+  .c-h1 span { display: block; }
+  .c-sub { font-size: 1.05rem; line-height: 1.72; color: rgba(255,255,255,.68); margin-bottom: 36px; max-width: 520px; margin-left: auto; margin-right: auto; }
+  .c-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .c-btn-primary {
+    padding: 14px 36px; background: var(--teal-500); color: #fff;
+    border-radius: 99px; border: none; font-weight: 700; font-size: .95rem;
+    cursor: pointer; box-shadow: 0 0 30px rgba(61,165,168,.42); transition: all .2s;
+  }
+  .c-btn-primary:hover { background: var(--teal-400); transform: translateY(-2px); }
+  .c-btn-glass {
+    padding: 14px 36px; background: rgba(255,255,255,.12);
+    backdrop-filter: blur(8px); color: #fff; border-radius: 99px;
+    border: 1px solid rgba(255,255,255,.22); font-weight: 600; font-size: .95rem;
+    cursor: pointer; transition: all .2s;
+  }
+  .c-btn-glass:hover { background: rgba(255,255,255,.2); }
+  .c-scroll-hint {
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    z-index: 2; text-align: center;
+  }
+  .c-scroll-lbl { font-size: 9px; font-weight: 700; letter-spacing: .18em; color: rgba(255,255,255,.28); text-transform: uppercase; margin-bottom: 8px; }
+  .c-scroll-bar { width: 3px; height: 22px; background: rgba(255,255,255,.15); border-radius: 99px; margin: 0 auto; position: relative; overflow: hidden; }
+  .c-scroll-bar::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 8px; background: rgba(255,255,255,.7); border-radius: 99px;
+    animation: scrollDot 1.6s ease-in-out infinite;
+  }
+  @keyframes scrollDot { 0%,100%{top:0} 50%{top:16px} }
 
-.B-session-dot { width: 6px; height: 6px; border-radius: 50%; background: #7DCED1; flex-shrink: 0; }
+  /* C — Bento */
+  .c-bento { background: var(--navy-900); padding: 80px 24px; }
+  .c-bento-grid {
+    max-width: 1000px; margin: 48px auto 0;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: 224px 224px;
+    gap: 12px;
+  }
+  .c-tile { border-radius: 20px; overflow: hidden; position: relative; cursor: default; }
+  .c-tile:first-child { grid-row: span 2; }
+  .c-tile-bg { position: absolute; inset: 0; transition: transform .5s ease; }
+  .c-tile:hover .c-tile-bg { transform: scale(1.06); }
+  .c-tile-grad { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(10,22,50,.82) 100%); }
+  .c-tile-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); opacity: .3; transition: opacity .3s; }
+  .c-tile:hover .c-tile-icon { opacity: .6; }
+  .c-tile-lbl { position: absolute; bottom: 16px; left: 16px; font-size: .85rem; font-weight: 700; color: #fff; }
+  .bg-g1 { background: linear-gradient(135deg, #1d5657 0%, #1a2f5a 100%); }
+  .bg-g2 { background: linear-gradient(135deg, #182a56 0%, #2a7a7c 100%); }
+  .bg-g3 { background: linear-gradient(135deg, #1e2e58 0%, #3b9da0 80%); }
+  .bg-g4 { background: linear-gradient(135deg, #11183a 0%, #1d5657 100%); }
+  .bg-g5 { background: linear-gradient(135deg, #1c2b52 0%, #2a7a7c 100%); }
 
-/* Calendar grid */
-.B-cal-grid {
-  display: grid; grid-template-columns: repeat(7,1fr); gap: 2px;
-}
-.B-cal-day {
-  aspect-ratio: 1; border-radius: 5px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 6.5px; font-weight: 600; color: #6B7280;
-}
-.B-cal-day.has-event { background: rgba(31,50,96,.08); color: #1F3260; }
-.B-cal-day.today { background: #1F3260; color: white; }
-.B-cal-day.session { background: #DAF0F1; color: #2E7679; }
-.B-cal-hdr { font-size: 5.5px; font-weight: 700; color: #9CA3AF; text-align: center; text-transform: uppercase; }
+  /* C — Testimonials */
+  .c-testimonials { background: var(--navy-800); padding: 80px 24px; }
+  .c-testi-grid {
+    max-width: 1000px; margin: 40px auto 0;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 16px;
+  }
+  .c-testi-card {
+    border-radius: 20px; overflow: hidden;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.07);
+    transition: all .3s;
+  }
+  .c-testi-card:hover { transform: translateY(-4px); border-color: rgba(61,165,168,.3); }
+  .c-photo { height: 124px; position: relative; }
+  .c-face {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: rgba(255,255,255,.2); border: 3px solid rgba(255,255,255,.3);
+    position: absolute; bottom: -20px; left: 20px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; color: rgba(255,255,255,.8);
+  }
+  .c-card-body { padding: 32px 24px 24px; }
+  .c-card-q { font-size: .875rem; font-style: italic; line-height: 1.72; color: rgba(255,255,255,.62); margin-bottom: 16px; }
+  .c-card-name { font-size: .875rem; font-weight: 700; color: #fff; }
+  .c-card-role { font-size: .75rem; color: rgba(255,255,255,.35); }
+  .c-ph1 { background: linear-gradient(135deg, #1a4a5a, #2E8285); }
+  .c-ph2 { background: linear-gradient(135deg, #1F3260, #3DA5A8); }
+  .c-ph3 { background: linear-gradient(135deg, #142048, #236163); }
 
-/* Horizontal scroll hint */
-.hint { text-align: center; color: #374151; font-size: .75rem; margin-top: 1rem; }
+  /* ══════════════════════════════════════════════════════════
+     OPTION D — RADIANT LIGHT
+  ══════════════════════════════════════════════════════════ */
+  #option-d { background: var(--cream); }
 
-/* Section heading */
-.section-heading {
-  font-size: .85rem; font-weight: 800; color: #f9fafb;
-  margin-bottom: 1rem;
-  display: flex; align-items: center; gap: .5rem;
-}
-.section-heading::before {
-  content: '';
-  display: inline-block; width: 3px; height: 14px;
-  background: #7DCED1; border-radius: 2px;
-}
+  .d-hero {
+    min-height: 100vh; background: var(--navy-950);
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 80px 24px; position: relative; overflow: hidden;
+  }
+  .d-rays {
+    position: absolute; top: -50%; left: -50%;
+    width: 200%; height: 200%; opacity: .04; pointer-events: none;
+  }
+  .d-glow {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 65% 50% at 50% 0%, rgba(201,151,60,.13) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 40% at 50% 8%, rgba(61,165,168,.1) 0%, transparent 55%);
+  }
+  .d-content { position: relative; z-index: 2; max-width: 680px; }
+  .d-kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    border-radius: 99px; border: 1px solid rgba(201,151,60,.38);
+    background: rgba(201,151,60,.1); padding: 7px 22px;
+    font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+    color: var(--gold-lt); margin-bottom: 28px;
+  }
+  .d-h1 {
+    font-size: clamp(2.8rem, 7vw, 5.2rem);
+    font-weight: 800; line-height: 1.06; letter-spacing: -.03em;
+    color: #fff; margin-bottom: 20px;
+  }
+  .d-h1 span { display: block; }
+  .d-sub { font-size: 1rem; line-height: 1.75; color: rgba(255,255,255,.46); max-width: 460px; margin: 0 auto 40px; }
+  .d-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-gold {
+    padding: 14px 40px; background: var(--gold); color: #fff; border-radius: 12px;
+    border: none; font-weight: 700; font-size: .95rem; cursor: pointer;
+    box-shadow: 0 0 30px rgba(201,151,60,.35); transition: all .2s;
+  }
+  .btn-gold:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 0 48px rgba(201,151,60,.5); }
+  .btn-outline {
+    padding: 14px 40px; background: transparent; color: rgba(255,255,255,.6);
+    border-radius: 12px; border: 1px solid rgba(255,255,255,.18);
+    font-weight: 600; font-size: .95rem; cursor: pointer; transition: all .2s;
+  }
+  .btn-outline:hover { border-color: rgba(255,255,255,.38); color: #fff; }
 
-/* Submission status */
-.B-status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  /* D — light mission */
+  .d-light { background: var(--cream); padding: 80px 24px; }
+  .d-light .section-kicker { border-color: rgba(61,165,168,.38); background: rgba(61,165,168,.08); color: var(--teal-600); }
+  .d-light .section-h2 { color: var(--navy-900); }
+  .d-light .section-sub { color: rgba(20,32,72,.45); }
 
+  .d-mission-grid { max-width: 900px; margin: 48px auto 0; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .d-mission-card {
+    background: #fff; border-radius: 20px; padding: 36px;
+    border: 1px solid rgba(61,165,168,.14);
+    box-shadow: 0 4px 24px rgba(20,32,72,.06); transition: all .3s;
+  }
+  .d-mission-card:hover { box-shadow: 0 8px 48px rgba(20,32,72,.12); transform: translateY(-2px); }
+  .d-ico { width: 48px; height: 48px; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(61,165,168,.14), rgba(61,165,168,.26));
+    display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+  .d-card-title { font-size: 1.1rem; font-weight: 700; color: var(--navy-900); margin-bottom: 10px; }
+  .d-card-body { font-size: .9rem; line-height: 1.72; color: rgba(20,32,72,.58); }
+
+  /* D — blue programs */
+  .d-programs { background: #eef2fc; padding: 80px 24px; }
+  .d-programs .section-kicker { border-color: rgba(61,165,168,.38); background: rgba(61,165,168,.08); color: var(--teal-600); }
+  .d-programs .section-h2 { color: var(--navy-900); }
+  .d-prog-cards { max-width: 900px; margin: 48px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 20px; }
+  .d-prog-card {
+    background: #fff; border-radius: 16px; padding: 28px;
+    border-top: 3px solid var(--teal-500);
+    box-shadow: 0 2px 16px rgba(20,32,72,.07); transition: all .3s;
+  }
+  .d-prog-card:hover { box-shadow: 0 8px 40px rgba(20,32,72,.12); transform: translateY(-3px); }
+  .d-step { font-family: monospace; font-size: 10px; font-weight: 700; letter-spacing: .2em; color: var(--teal-500); margin-bottom: 10px; }
+  .d-name { font-size: 1.1rem; font-weight: 700; color: var(--navy-900); margin-bottom: 8px; }
+  .d-desc { font-size: .875rem; line-height: 1.65; color: rgba(20,32,72,.55); }
+
+  /* D — dark CTA */
+  .d-cta {
+    background: var(--navy-950); padding: 100px 24px;
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .d-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 58% 48% at 50% 50%, rgba(201,151,60,.07) 0%, transparent 65%),
+      radial-gradient(ellipse 46% 36% at 50% 50%, rgba(61,165,168,.07) 0%, transparent 60%);
+  }
+  .d-cta-eyebrow { position: relative; font-size: 10px; font-weight: 700; letter-spacing: .25em; text-transform: uppercase; color: var(--gold-lt); margin-bottom: 16px; }
+  .d-cta-h2 { position: relative; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; color: #fff; margin-bottom: 16px; letter-spacing: -.03em; }
+  .d-cta-sub { position: relative; color: rgba(255,255,255,.42); margin-bottom: 40px; }
+
+  /* ─── FOOTER ─────────────────────────────────────────── */
+  .preview-footer {
+    background: #030508; text-align: center; padding: 64px 24px 80px;
+    border-top: 1px solid rgba(255,255,255,.05);
+  }
+  .preview-footer p { font-size: .875rem; color: rgba(255,255,255,.25); line-height: 1.8; }
+  .preview-footer strong { color: var(--teal-400); }
+
+  html { scroll-behavior: smooth; }
 </style>
 </head>
 <body>
 
-<h1>Bento Bold — Student Portal</h1>
-<p class="subtitle">See how the Bento Bold direction plays out across the key student screens. All screens use the JPC brand palette.</p>
-<div class="badge-wrap"><span class="badge">B — Bento Bold Selected</span></div>
+<!-- ─── NAV ─────────────────────────────────────────────── -->
+<nav class="picker-nav">
+  <span class="picker-nav-label">JPC · Choose a direction</span>
+  <a href="#option-a" class="nav-btn">A — Cinematic Atlas</a>
+  <a href="#option-b" class="nav-btn">B — Bold Editorial</a>
+  <a href="#option-c" class="nav-btn">C — Living Community</a>
+  <a href="#option-d" class="nav-btn">D — Radiant Light</a>
+</nav>
 
-<!-- ═══════════════════════════════════════════════════
-     ROW 1: Dashboard variants
-═══════════════════════════════════════════════════ -->
-<div class="section-heading">Dashboard</div>
-<div class="screen-row">
 
-  <!-- Dashboard — Full layout -->
-  <div class="screen-block">
-    <div class="screen-label">Dashboard · Active season</div>
-    <div class="screen-frame">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div class="B-nav-pills">
-            <span class="B-pill active">Dashboard</span>
-            <span class="B-pill">Tasks</span>
-            <span class="B-pill">Calendar</span>
-          </div>
-          <div class="B-avatar">AJ</div>
-        </div>
-        <div class="B-inner">
-          <div>
-            <div class="B-heading">Hi, Alex 👋</div>
-            <div class="B-chip">Season 2025 — Spring Cohort</div>
-          </div>
+<!-- ════════════════════════════════════════════════════════
+     OPTION A — CINEMATIC ATLAS
+     Dark, dramatic, compass-rose motif, diagonal dividers
+════════════════════════════════════════════════════════ -->
+<div id="option-a">
+  <p class="option-label">Option A — Cinematic Atlas</p>
+  <p class="option-desc">Dark navy throughout, compass-rose watermark, diagonal section dividers, gold accent on scripture, teal CTAs</p>
 
-          <!-- Hero progress card (span full) -->
-          <div class="B-card navy">
-            <div class="B-card-label">Season progress</div>
-            <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:8px;">
-              <div>
-                <div class="B-big">65%</div>
-                <div class="B-meta">Week 6 of 10 complete</div>
-              </div>
-              <div style="text-align:right;">
-                <div style="font-size:19px;font-weight:900;color:white;line-height:1;">5<span style="font-size:10px;color:rgba(255,255,255,.4);font-weight:600;">/8</span></div>
-                <div class="B-meta">assignments</div>
-              </div>
-            </div>
-            <div class="B-bar-track"><div class="B-bar-fill" style="width:65%"></div></div>
-          </div>
+  <!-- Hero -->
+  <section class="a-hero">
+    <svg class="compass-rose" viewBox="0 0 320 320" fill="none">
+      <circle cx="160" cy="160" r="150" stroke="white" stroke-width=".7"/>
+      <circle cx="160" cy="160" r="100" stroke="white" stroke-width=".45"/>
+      <circle cx="160" cy="160" r="55"  stroke="white" stroke-width=".45"/>
+      <!-- 24 radial lines -->
+      <line x1="160" y1="104" x2="160" y2="12"  stroke="white" stroke-width=".8"/>
+      <line x1="160" y1="216" x2="160" y2="308" stroke="white" stroke-width=".8"/>
+      <line x1="104" y1="160" x2="12"  y2="160" stroke="white" stroke-width=".8"/>
+      <line x1="216" y1="160" x2="308" y2="160" stroke="white" stroke-width=".8"/>
+      <line x1="121" y1="121" x2="53"  y2="53"  stroke="white" stroke-width=".45"/>
+      <line x1="199" y1="121" x2="267" y2="53"  stroke="white" stroke-width=".45"/>
+      <line x1="121" y1="199" x2="53"  y2="267" stroke="white" stroke-width=".45"/>
+      <line x1="199" y1="199" x2="267" y2="267" stroke="white" stroke-width=".45"/>
+      <line x1="136" y1="109" x2="104" y2="30"  stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="184" y1="109" x2="216" y2="30"  stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="109" y1="136" x2="30"  y2="104" stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="109" y1="184" x2="30"  y2="216" stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="211" y1="136" x2="290" y2="104" stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="211" y1="184" x2="290" y2="216" stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="136" y1="211" x2="104" y2="290" stroke="white" stroke-width=".3" opacity=".55"/>
+      <line x1="184" y1="211" x2="216" y2="290" stroke="white" stroke-width=".3" opacity=".55"/>
+      <!-- Cross -->
+      <rect x="155" y="112" width="10" height="76" rx="2" fill="white"/>
+      <rect x="122" y="155" width="76" height="10" rx="2" fill="white"/>
+      <!-- Diamond tips -->
+      <polygon points="160,5 163,13 160,21 157,13"  fill="white"/>
+      <polygon points="160,299 163,307 160,315 157,307" fill="white"/>
+      <polygon points="5,160 13,163 21,160 13,157"  fill="white"/>
+      <polygon points="299,160 307,163 315,160 307,157" fill="white"/>
+    </svg>
 
-          <!-- 3-stat row -->
-          <div class="B-grid3">
-            <div class="B-card" style="text-align:center;">
-              <div class="B-card-label">Attendance</div>
-              <div class="B-big" style="font-size:20px;">92%</div>
-            </div>
-            <div class="B-card" style="text-align:center;">
-              <div class="B-card-label">Streak</div>
-              <div class="B-big" style="font-size:20px;">🔥 4</div>
-            </div>
-            <div class="B-card light" style="text-align:center;">
-              <div class="B-card-label" style="color:#2E7679;">Pending</div>
-              <div class="B-big" style="font-size:20px;color:#1E5254;">2</div>
-            </div>
-          </div>
+    <span class="a-kicker">✦ Jesus Project Community ✦</span>
+    <h1 class="a-h1">
+      <span>Grow in Faith.</span>
+      <span>Build Community.</span>
+      <span>Transform Lives.</span>
+    </h1>
+    <p class="a-sub">A discipleship community for university students — walking together through The Way, GBV, and beyond.</p>
+    <div class="a-ctas">
+      <button class="btn-teal">Apply Now</button>
+      <button class="btn-ghost">Learn More ↓</button>
+    </div>
+    <div class="a-stats">
+      <div class="a-stat"><div class="a-stat-val">5+</div><div class="a-stat-lbl">Seasons</div></div>
+      <div class="a-stat"><div class="a-stat-val">200+</div><div class="a-stat-lbl">Students</div></div>
+      <div class="a-stat"><div class="a-stat-val">10+</div><div class="a-stat-lbl">Years</div></div>
+    </div>
+  </section>
 
-          <!-- Next session -->
-          <div class="B-card">
-            <div class="B-card-label">Next session</div>
-            <div style="display:flex;align-items:center;gap:8px;">
-              <div class="B-session-dot"></div>
-              <div style="flex:1;">
-                <div style="font-size:9px;font-weight:700;color:#1F3260;">Portfolio Review</div>
-                <div style="font-size:7.5px;color:#9CA3AF;margin-top:1px;">Tomorrow · 10:00 AM · 90 min · Room 204</div>
-              </div>
-              <span class="B-tag teal">In 18h</span>
-            </div>
-          </div>
+  <!-- Diagonal divider down -->
+  <div style="height:52px;background:var(--navy-900);clip-path:polygon(0 0,100% 52px,100% 52px,0 52px);margin-top:-1px"></div>
 
-          <!-- Quick nav -->
-          <div class="B-qrow">
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Calendar</div></div>
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Tasks</div></div>
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">History</div></div>
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Profile</div></div>
-          </div>
-        </div>
+  <!-- Scripture pullquote -->
+  <section class="a-scripture">
+    <div class="a-quote-bg">&ldquo;</div>
+    <div class="a-cross-icon">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+        <rect x="17" y="4" width="6" height="32" rx="3" fill="#C9973C"/>
+        <rect x="4" y="15" width="32" height="6" rx="3" fill="#C9973C"/>
+      </svg>
+    </div>
+    <blockquote class="a-verse">&ldquo;Therefore go and make disciples of all nations, baptizing them in the name of the Father and of the Son and of the Holy Spirit, and teaching them to obey everything I have commanded you.&rdquo;</blockquote>
+    <cite class="a-ref">— Matthew 28:19–20</cite>
+    <p class="a-tagline">The mission that drives everything we do.</p>
+  </section>
+
+  <!-- Diagonal up -->
+  <div style="height:52px;background:var(--navy-950);clip-path:polygon(0 0,100% 0,100% 52px,0 0);margin-top:-1px"></div>
+
+  <!-- Programs -->
+  <section class="a-programs">
+    <div class="section-center">
+      <div class="section-kicker">The Journey</div>
+      <h2 class="section-h2">The JPC Path</h2>
+      <p class="section-sub">Three seasons that shape whole people for lives of faith and service.</p>
+    </div>
+    <div class="a-prog-grid">
+      <div class="a-prog-card">
+        <div class="a-step">01</div>
+        <div class="a-prog-name">The Way</div>
+        <div class="a-prog-desc">The foundational discipleship season. Learn to walk with Jesus, study Scripture, and build deep community.</div>
+      </div>
+      <div class="a-prog-card">
+        <div class="a-step">02</div>
+        <div class="a-prog-name">GBV</div>
+        <div class="a-prog-desc">Going Beyond Violence — applied ministry and servant leadership in real-world contexts of pain and need.</div>
+      </div>
+      <div class="a-prog-card">
+        <div class="a-step">03</div>
+        <div class="a-prog-name">3G</div>
+        <div class="a-prog-desc">Go, Grow, Give — equipping graduates to disciple others and multiply the community they received.</div>
       </div>
     </div>
-    <div class="screen-desc">Full dashboard with hero progress card (navy), 3-stat bento row, next session, and quick-nav strip.</div>
-  </div>
+  </section>
 
-  <!-- Dashboard — No season enrolled -->
-  <div class="screen-block">
-    <div class="screen-label">Dashboard · Not enrolled</div>
-    <div class="screen-frame">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div style="width:24px;"></div>
-          <div class="B-avatar">AJ</div>
-        </div>
-        <div class="B-inner">
-          <div>
-            <div class="B-heading">Hi, Alex 👋</div>
-            <div class="B-sub">Welcome to JPC Space</div>
-          </div>
-          <!-- Empty state card -->
-          <div class="B-card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:28px 16px;text-align:center;border:1.5px dashed #E5E7EB;">
-            <div style="width:36px;height:36px;border-radius:50%;background:#EFF2F7;display:flex;align-items:center;justify-content:center;">
-              <div style="width:18px;height:18px;background:linear-gradient(135deg,#1F3260,#7DCED1);border-radius:4px;"></div>
-            </div>
-            <div>
-              <div style="font-size:10px;font-weight:800;color:#1F3260;margin-bottom:3px;">Not enrolled yet</div>
-              <div style="font-size:7.5px;color:#9CA3AF;line-height:1.5;max-width:160px;">Contact your leader or admin to get enrolled in an active season.</div>
-            </div>
-          </div>
-          <!-- Profile nudge -->
-          <div class="B-card light">
-            <div class="B-card-label">While you wait</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <div>
-                <div style="font-size:9px;font-weight:700;color:#1E5254;">Complete your profile</div>
-                <div style="font-size:7.5px;color:#2E7679;margin-top:1px;">Add photo, bio, and goals</div>
-              </div>
-              <div style="font-size:9px;font-weight:700;color:#2E7679;">→</div>
-            </div>
-            <div class="B-bar-track light" style="margin-top:8px;"><div class="B-bar-fill navy" style="width:30%;"></div></div>
-            <div style="font-size:7px;color:#2E7679;margin-top:3px;">30% complete</div>
-          </div>
-        </div>
-      </div>
+  <!-- Testimonials -->
+  <section class="a-testimonials">
+    <div class="section-center">
+      <div class="section-kicker">Student Stories</div>
+      <h2 class="section-h2">Lives Transformed</h2>
     </div>
-    <div class="screen-desc">Empty state when the student isn't enrolled — still shows a profile completion nudge.</div>
-  </div>
-
+    <div class="a-testi-grid" style="margin-top:48px">
+      <figure class="a-testi-card">
+        <div class="a-quotemark">&ldquo;</div>
+        <blockquote class="a-testi-text">JPC didn't just teach me about Jesus — it showed me what it looks like to walk with Him every day. The Way season changed how I read Scripture, how I pray, and how I love people.</blockquote>
+        <figcaption class="a-testi-meta">
+          <div class="a-avatar av1">SM</div>
+          <div><div class="a-testi-name">Sara M.</div><div class="a-testi-role">2nd Year, Medicine</div></div>
+        </figcaption>
+      </figure>
+      <figure class="a-testi-card">
+        <div class="a-quotemark">&ldquo;</div>
+        <blockquote class="a-testi-text">I came in skeptical and left with a community I never expected. The depth of honesty in our small group is something I've never experienced anywhere else.</blockquote>
+        <figcaption class="a-testi-meta">
+          <div class="a-avatar av2">KA</div>
+          <div><div class="a-testi-name">Karim A.</div><div class="a-testi-role">3rd Year, Engineering</div></div>
+        </figcaption>
+      </figure>
+      <figure class="a-testi-card">
+        <div class="a-quotemark">&ldquo;</div>
+        <blockquote class="a-testi-text">Through GBV, I found that faith is not just for Sunday. It reaches into every broken place in society — and God calls us to be there too.</blockquote>
+        <figcaption class="a-testi-meta">
+          <div class="a-avatar av3">NR</div>
+          <div><div class="a-testi-name">Nadia R.</div><div class="a-testi-role">Graduate, Social Work</div></div>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ROW 2: Assignments
-═══════════════════════════════════════════════════ -->
-<div class="section-heading">Assignments</div>
-<div class="screen-row">
 
-  <!-- Assignments list -->
-  <div class="screen-block">
-    <div class="screen-label">Assignments · List view</div>
-    <div class="screen-frame">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div class="B-nav-pills">
-            <span class="B-pill active">Assignments</span>
-          </div>
-          <div class="B-avatar">AJ</div>
-        </div>
-        <div class="B-inner">
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-            <div>
-              <div class="B-heading">Assignments</div>
-              <div class="B-sub">Spring Cohort 2025</div>
-            </div>
-            <div style="display:flex;gap:5px;">
-              <span class="B-tag navy" style="margin:0;font-size:7px;padding:3px 7px;cursor:pointer;">All</span>
-              <span class="B-tag teal" style="margin:0;font-size:7px;padding:3px 7px;cursor:pointer;">Pending</span>
-            </div>
-          </div>
+<!-- ════════════════════════════════════════════════════════
+     OPTION B — BOLD EDITORIAL
+     Oversized type, alternating near-black bands, numbered list
+════════════════════════════════════════════════════════ -->
+<div id="option-b">
+  <p class="option-label">Option B — Bold Editorial</p>
+  <p class="option-desc">Oversized statement headlines (up to 8rem), full-width near-black bands, outlined ghosted giant words, numbered hover list</p>
 
-          <!-- Stats strip -->
-          <div class="B-grid3">
-            <div class="B-card" style="text-align:center;padding:8px;">
-              <div class="B-card-label">Submitted</div>
-              <div class="B-big" style="font-size:18px;color:#059669;">5</div>
-            </div>
-            <div class="B-card light" style="text-align:center;padding:8px;">
-              <div class="B-card-label" style="color:#2E7679;">Pending</div>
-              <div class="B-big" style="font-size:18px;color:#1E5254;">2</div>
-            </div>
-            <div class="B-card" style="text-align:center;padding:8px;">
-              <div class="B-card-label">Reviewed</div>
-              <div class="B-big" style="font-size:18px;">3</div>
-            </div>
-          </div>
-
-          <!-- Assignment list -->
-          <div class="B-card" style="padding:10px 12px;">
-            <div class="B-list">
-              <div class="B-list-item">
-                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
-                  <div class="B-status-dot" style="background:#DC2626;"></div>
-                  <div style="min-width:0;">
-                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Project Proposal</div>
-                    <div class="B-list-sub">Due in 2 days</div>
-                  </div>
-                </div>
-                <span class="B-tag red" style="margin:0;flex-shrink:0;">Overdue</span>
-              </div>
-              <div class="B-list-item">
-                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
-                  <div class="B-status-dot" style="background:#F59E0B;"></div>
-                  <div style="min-width:0;">
-                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Weekly Reflection #6</div>
-                    <div class="B-list-sub">Due in 5 days</div>
-                  </div>
-                </div>
-                <span class="B-tag orange" style="margin:0;flex-shrink:0;">Draft</span>
-              </div>
-              <div class="B-list-item">
-                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
-                  <div class="B-status-dot" style="background:#10B981;"></div>
-                  <div style="min-width:0;">
-                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Portfolio Intro</div>
-                    <div class="B-list-sub">Reviewed · 4 stars</div>
-                  </div>
-                </div>
-                <span class="B-tag green" style="margin:0;flex-shrink:0;">Reviewed</span>
-              </div>
-              <div class="B-list-item">
-                <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
-                  <div class="B-status-dot" style="background:#10B981;"></div>
-                  <div style="min-width:0;">
-                    <div class="B-list-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Weekly Reflection #5</div>
-                    <div class="B-list-sub">Submitted · Pending review</div>
-                  </div>
-                </div>
-                <span class="B-tag teal" style="margin:0;flex-shrink:0;">Submitted</span>
-              </div>
-            </div>
-          </div>
-        </div>
+  <section class="b-hero">
+    <div class="b-watermark">DISCIPLE</div>
+    <div class="b-tag">✦ Jesus Project Community — Cairo, Egypt</div>
+    <h1 class="b-h1">
+      <span>GROW.</span>
+      <span>BUILD.</span>
+      <span class="teal">TRANSFORM.</span>
+    </h1>
+    <div class="b-bottom">
+      <button class="b-apply">Apply Now →</button>
+      <span class="b-meta">University discipleship · Est. 2015</span>
+      <div class="b-nums">
+        <div><div class="b-num-val">5+</div><div class="b-num-lbl">Seasons</div></div>
+        <div><div class="b-num-val">200+</div><div class="b-num-lbl">Students</div></div>
       </div>
     </div>
-    <div class="screen-desc">Assignment list with 3-stat strip, color-coded status dots, and inline tags per row.</div>
-  </div>
+  </section>
 
-  <!-- Assignment detail -->
-  <div class="screen-block">
-    <div class="screen-label">Assignment · Detail / submission</div>
-    <div class="screen-frame">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div class="B-nav-pills">
-            <span class="B-pill active">Assignments</span>
-          </div>
-          <div class="B-avatar">AJ</div>
-        </div>
-        <div class="B-inner">
-          <div>
-            <div style="font-size:7.5px;color:#7DCED1;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;">← Assignments</div>
-            <div class="B-heading" style="font-size:14px;">Project Proposal</div>
-            <div style="display:flex;gap:5px;margin-top:5px;">
-              <span class="B-tag red" style="margin:0;">Due in 2 days</span>
-              <span class="B-tag orange" style="margin:0;">Draft</span>
-            </div>
-          </div>
+  <section class="b-band b-band-mid">
+    <span class="b-giant">MISSION</span>
+    <div class="b-two-col">
+      <div><div class="b-col-lbl">Our Mission</div><div class="b-col-text">To make disciples of Jesus Christ among university students in Egypt — equipping them to live by the Word, grow in community, and serve the world.</div></div>
+      <div><div class="b-col-lbl">Our Vision</div><div class="b-col-text">A generation of university students transformed by the Gospel, rooted in the Church, and sent out to disciple nations.</div></div>
+    </div>
+  </section>
 
-          <!-- Description card -->
-          <div class="B-card">
-            <div class="B-card-label">Brief</div>
-            <div style="font-size:8px;color:#374151;line-height:1.6;">Write a 1-page proposal for your capstone project. Include your problem statement, proposed solution, and timeline for completion.</div>
-          </div>
-
-          <!-- Submission text area mockup -->
-          <div class="B-card" style="flex:1;">
-            <div class="B-card-label">Your submission</div>
-            <div style="background:#F9FAFB;border:1px solid #E5E7EB;border-radius:8px;padding:8px;min-height:60px;">
-              <div style="font-size:7.5px;color:#6B7280;line-height:1.6;">I plan to build a community tool that helps young professionals…</div>
-            </div>
-          </div>
-
-          <!-- Submit button -->
-          <div style="background:#1F3260;border-radius:10px;padding:10px;text-align:center;">
-            <div style="font-size:9px;font-weight:800;color:white;">Submit Assignment</div>
-          </div>
-        </div>
+  <section class="b-band b-band-dark">
+    <span class="b-giant">THE WAY</span>
+    <div class="b-prog-list">
+      <div class="b-prog-row">
+        <div class="b-prog-num">01</div>
+        <div class="b-prog-info"><div class="b-prog-title">The Way</div><div class="b-prog-sub">Foundational discipleship season</div></div>
+        <div class="b-prog-arr">→</div>
+      </div>
+      <div class="b-prog-row">
+        <div class="b-prog-num">02</div>
+        <div class="b-prog-info"><div class="b-prog-title">GBV</div><div class="b-prog-sub">Going Beyond Violence — applied ministry</div></div>
+        <div class="b-prog-arr">→</div>
+      </div>
+      <div class="b-prog-row">
+        <div class="b-prog-num">03</div>
+        <div class="b-prog-info"><div class="b-prog-title">3G</div><div class="b-prog-sub">Go, Grow, Give — multiply the community</div></div>
+        <div class="b-prog-arr">→</div>
       </div>
     </div>
-    <div class="screen-desc">Assignment detail with description card, submission text area, and full-width navy CTA.</div>
-  </div>
+  </section>
 
+  <section class="b-band b-band-mid">
+    <span class="b-giant">STORIES</span>
+    <div class="b-testi-row">
+      <div class="b-testi-item">
+        <p class="b-testi-q">"JPC didn't just teach me about Jesus — it showed me what it looks like to walk with Him every day."</p>
+        <div class="b-testi-name">Sara M.</div><div class="b-testi-role">2nd Year, Medicine</div>
+      </div>
+      <div class="b-testi-item">
+        <p class="b-testi-q">"I came in skeptical and left with a community I never expected. The depth of honesty — nothing like it."</p>
+        <div class="b-testi-name">Karim A.</div><div class="b-testi-role">3rd Year, Engineering</div>
+      </div>
+      <div class="b-testi-item">
+        <p class="b-testi-q">"Through GBV, I found that faith is not just for Sunday. God calls us into every broken place."</p>
+        <div class="b-testi-name">Nadia R.</div><div class="b-testi-role">Graduate, Social Work</div>
+      </div>
+    </div>
+  </section>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ROW 3: Calendar + Profile
-═══════════════════════════════════════════════════ -->
-<div class="section-heading">Calendar + Profile</div>
-<div class="screen-row">
 
-  <!-- Calendar -->
-  <div class="screen-block">
-    <div class="screen-label">Calendar · Month view</div>
-    <div class="screen-frame">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div class="B-nav-pills">
-            <span class="B-pill active">Calendar</span>
-          </div>
-          <div class="B-avatar">AJ</div>
+<!-- ════════════════════════════════════════════════════════
+     OPTION C — LIVING COMMUNITY
+     Textured overlay hero, bento photo grid, portrait cards
+════════════════════════════════════════════════════════ -->
+<div id="option-c">
+  <p class="option-label">Option C — Living Community</p>
+  <p class="option-desc">Textured gradient overlay hero, community bento grid, portrait-style testimonial cards with face bubbles</p>
+
+  <section class="c-hero">
+    <div class="c-bg"></div>
+    <div class="c-grain"></div>
+    <div class="c-bg-overlay"></div>
+    <div class="c-content">
+      <span class="c-kicker">✦ Jesus Project Community</span>
+      <h1 class="c-h1">
+        <span>Grow in Faith.</span>
+        <span>Build Community.</span>
+        <span>Transform Lives.</span>
+      </h1>
+      <p class="c-sub">A discipleship community for university students in Egypt — walking together through The Way, GBV, and beyond.</p>
+      <div class="c-btns">
+        <button class="c-btn-primary">Apply Now</button>
+        <button class="c-btn-glass">Learn More ↓</button>
+      </div>
+    </div>
+    <div class="c-scroll-hint">
+      <div class="c-scroll-lbl">Scroll</div>
+      <div class="c-scroll-bar"></div>
+    </div>
+  </section>
+
+  <!-- Community bento -->
+  <section class="c-bento">
+    <div class="section-center">
+      <div class="section-kicker">Life at JPC</div>
+      <h2 class="section-h2">Where Faith Meets<br>Everyday Life</h2>
+    </div>
+    <div class="c-bento-grid">
+      <div class="c-tile" style="grid-row:span 2">
+        <div class="c-tile-bg bg-g1"></div>
+        <div class="c-tile-grad"></div>
+        <div class="c-tile-icon">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
         </div>
-        <div class="B-inner">
-          <div style="display:flex;justify-content:space-between;align-items:flex-end;">
-            <div class="B-heading" style="font-size:15px;">June 2025</div>
-            <div style="display:flex;gap:4px;">
-              <div style="font-size:9px;color:#9CA3AF;font-weight:500;cursor:pointer;">‹</div>
-              <div style="font-size:9px;color:#9CA3AF;font-weight:500;cursor:pointer;">›</div>
-            </div>
-          </div>
+        <div class="c-tile-lbl">Bible Study</div>
+      </div>
+      <div class="c-tile">
+        <div class="c-tile-bg bg-g2"></div><div class="c-tile-grad"></div>
+        <div class="c-tile-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.3"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg></div>
+        <div class="c-tile-lbl">Community</div>
+      </div>
+      <div class="c-tile">
+        <div class="c-tile-bg bg-g3"></div><div class="c-tile-grad"></div>
+        <div class="c-tile-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.3"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/></svg></div>
+        <div class="c-tile-lbl">Worship</div>
+      </div>
+      <div class="c-tile">
+        <div class="c-tile-bg bg-g4"></div><div class="c-tile-grad"></div>
+        <div class="c-tile-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M3 12h18"/></svg></div>
+        <div class="c-tile-lbl">Discipleship</div>
+      </div>
+      <div class="c-tile">
+        <div class="c-tile-bg bg-g5"></div><div class="c-tile-grad"></div>
+        <div class="c-tile-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3"/></svg></div>
+        <div class="c-tile-lbl">Outreach</div>
+      </div>
+    </div>
+  </section>
 
-          <!-- Calendar grid -->
-          <div class="B-card" style="padding:10px;">
-            <div class="B-cal-grid" style="margin-bottom:4px;">
-              <div class="B-cal-hdr">M</div><div class="B-cal-hdr">T</div><div class="B-cal-hdr">W</div>
-              <div class="B-cal-hdr">T</div><div class="B-cal-hdr">F</div><div class="B-cal-hdr">S</div><div class="B-cal-hdr">S</div>
-            </div>
-            <div class="B-cal-grid">
-              <div class="B-cal-day"></div><div class="B-cal-day"></div><div class="B-cal-day"></div>
-              <div class="B-cal-day"></div><div class="B-cal-day">1</div><div class="B-cal-day">2</div><div class="B-cal-day">3</div>
-              <div class="B-cal-day">4</div><div class="B-cal-day session">5</div><div class="B-cal-day">6</div>
-              <div class="B-cal-day">7</div><div class="B-cal-day">8</div><div class="B-cal-day">9</div><div class="B-cal-day">10</div>
-              <div class="B-cal-day today">11</div><div class="B-cal-day">12</div><div class="B-cal-day session">13</div>
-              <div class="B-cal-day">14</div><div class="B-cal-day">15</div><div class="B-cal-day">16</div><div class="B-cal-day">17</div>
-              <div class="B-cal-day">18</div><div class="B-cal-day session">19</div><div class="B-cal-day">20</div>
-              <div class="B-cal-day">21</div><div class="B-cal-day">22</div><div class="B-cal-day">23</div><div class="B-cal-day">24</div>
-              <div class="B-cal-day">25</div><div class="B-cal-day session">26</div><div class="B-cal-day">27</div>
-              <div class="B-cal-day">28</div><div class="B-cal-day">29</div><div class="B-cal-day">30</div><div class="B-cal-day"></div>
-            </div>
-            <div style="display:flex;gap:10px;margin-top:8px;">
-              <div style="display:flex;align-items:center;gap:3px;"><div style="width:7px;height:7px;background:#1F3260;border-radius:50%;"></div><span style="font-size:6.5px;color:#6B7280;">Today</span></div>
-              <div style="display:flex;align-items:center;gap:3px;"><div style="width:7px;height:7px;background:#DAF0F1;border-radius:50%;border:1px solid #7DCED1;"></div><span style="font-size:6.5px;color:#6B7280;">Session</span></div>
-            </div>
-          </div>
-
-          <!-- Upcoming sessions -->
-          <div class="B-card">
-            <div class="B-card-label">Upcoming</div>
-            <div class="B-list">
-              <div class="B-list-item">
-                <div style="display:flex;align-items:center;gap:7px;flex:1;">
-                  <div class="B-session-dot"></div>
-                  <div>
-                    <div class="B-list-title">Portfolio Review</div>
-                    <div class="B-list-sub">Jun 13 · 10:00 AM · 90 min</div>
-                  </div>
-                </div>
-                <span class="B-tag teal" style="margin:0;flex-shrink:0;">Tomorrow</span>
-              </div>
-              <div class="B-list-item">
-                <div style="display:flex;align-items:center;gap:7px;flex:1;">
-                  <div class="B-session-dot" style="background:#D1D5DB;"></div>
-                  <div>
-                    <div class="B-list-title">Group Workshop</div>
-                    <div class="B-list-sub">Jun 19 · 2:00 PM · 60 min</div>
-                  </div>
-                </div>
-                <span class="B-tag navy" style="margin:0;flex-shrink:0;">Jun 19</span>
-              </div>
-            </div>
-          </div>
+  <!-- Portrait testimonials -->
+  <section class="c-testimonials">
+    <div class="section-center">
+      <div class="section-kicker">Student Stories</div>
+      <h2 class="section-h2">Lives Transformed</h2>
+    </div>
+    <div class="c-testi-grid">
+      <div class="c-testi-card">
+        <div class="c-photo c-ph1"><div class="c-face">SM</div></div>
+        <div class="c-card-body">
+          <p class="c-card-q">"JPC didn't just teach me about Jesus — it showed me what it looks like to walk with Him every day."</p>
+          <div class="c-card-name">Sara M.</div><div class="c-card-role">2nd Year, Medicine</div>
+        </div>
+      </div>
+      <div class="c-testi-card">
+        <div class="c-photo c-ph2"><div class="c-face">KA</div></div>
+        <div class="c-card-body">
+          <p class="c-card-q">"I came in skeptical and left with a community I never expected. Nothing compares to the honesty in our group."</p>
+          <div class="c-card-name">Karim A.</div><div class="c-card-role">3rd Year, Engineering</div>
+        </div>
+      </div>
+      <div class="c-testi-card">
+        <div class="c-photo c-ph3"><div class="c-face">NR</div></div>
+        <div class="c-card-body">
+          <p class="c-card-q">"Through GBV I found that faith is not just for Sunday. God calls us into every broken place in society."</p>
+          <div class="c-card-name">Nadia R.</div><div class="c-card-role">Graduate, Social Work</div>
         </div>
       </div>
     </div>
-    <div class="screen-desc">Calendar with navy today-dot, teal session dots, and an upcoming sessions card below.</div>
-  </div>
-
-  <!-- Profile -->
-  <div class="screen-block">
-    <div class="screen-label">Profile page</div>
-    <div class="screen-frame">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div class="B-nav-pills">
-            <span class="B-pill active">Profile</span>
-          </div>
-          <div class="B-avatar">AJ</div>
-        </div>
-        <div class="B-inner">
-
-          <!-- Profile hero card -->
-          <div class="B-card navy" style="padding:14px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="B-avatar-lg">AJ</div>
-              <div>
-                <div style="font-size:13px;font-weight:900;color:white;">Alex Johnson</div>
-                <div style="font-size:7.5px;color:rgba(255,255,255,.5);margin-top:2px;">Spring Cohort 2025</div>
-                <div style="display:flex;gap:5px;margin-top:5px;">
-                  <span class="B-tag teal" style="margin:0;">Student</span>
-                  <span class="B-tag" style="margin:0;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);">Group A</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Season stats -->
-          <div class="B-grid3">
-            <div class="B-card" style="text-align:center;padding:8px;">
-              <div class="B-card-label">Attendance</div>
-              <div class="B-big" style="font-size:18px;">92%</div>
-            </div>
-            <div class="B-card" style="text-align:center;padding:8px;">
-              <div class="B-card-label">Assignments</div>
-              <div class="B-big" style="font-size:18px;">5/8</div>
-            </div>
-            <div class="B-card light" style="text-align:center;padding:8px;">
-              <div class="B-card-label" style="color:#2E7679;">Streak</div>
-              <div class="B-big" style="font-size:18px;color:#1E5254;">🔥4</div>
-            </div>
-          </div>
-
-          <!-- Info fields -->
-          <div class="B-card">
-            <div class="B-card-label">About</div>
-            <div class="B-list">
-              <div class="B-list-item">
-                <div>
-                  <div class="B-list-title">Email</div>
-                  <div class="B-list-sub">alex.johnson@email.com</div>
-                </div>
-              </div>
-              <div class="B-list-item">
-                <div>
-                  <div class="B-list-title">Leader</div>
-                  <div class="B-list-sub">Maria Santos · Group A</div>
-                </div>
-              </div>
-              <div class="B-list-item">
-                <div>
-                  <div class="B-list-title">Member since</div>
-                  <div class="B-list-sub">January 2025</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-    <div class="screen-desc">Profile hero with navy card, avatar, role chip. Below: 3-stat bento row + info list.</div>
-  </div>
-
+  </section>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     ROW 4: Mobile 375px preview
-═══════════════════════════════════════════════════ -->
-<div class="section-heading">Mobile (375px) — Dashboard</div>
-<div style="max-width:400px;margin:0 auto 3rem;">
-  <div class="screen-block">
-    <div class="screen-label">375px — Stacked bento grid</div>
-    <div class="screen-frame" style="max-width:375px;margin:0 auto;">
-      <div class="B-page">
-        <div class="B-topbar">
-          <span class="B-logo">JPC Space</span>
-          <div class="B-avatar">AJ</div>
-        </div>
-        <div class="B-inner" style="padding:12px;gap:8px;">
-          <div>
-            <div class="B-heading" style="font-size:15px;">Hi, Alex 👋</div>
-            <div class="B-chip">Season 2025</div>
-          </div>
-          <div class="B-card navy">
-            <div class="B-card-label">Season progress</div>
-            <div style="display:flex;justify-content:space-between;">
-              <div><div class="B-big" style="font-size:22px;">65%</div><div class="B-meta">Week 6 of 10</div></div>
-              <div style="text-align:right;"><div style="font-size:17px;font-weight:900;color:white;">5<span style="font-size:9px;color:rgba(255,255,255,.4)">/8</span></div><div class="B-meta">assignments</div></div>
-            </div>
-            <div class="B-bar-track"><div class="B-bar-fill" style="width:65%"></div></div>
-          </div>
-          <div class="B-row">
-            <div class="B-card" style="flex:1;text-align:center;">
-              <div class="B-card-label">Attendance</div>
-              <div class="B-big" style="font-size:18px;">92%</div>
-            </div>
-            <div class="B-card light" style="flex:1;text-align:center;">
-              <div class="B-card-label" style="color:#2E7679;">Pending</div>
-              <div class="B-big" style="font-size:18px;color:#1E5254;">2</div>
-            </div>
-          </div>
-          <div class="B-card">
-            <div class="B-card-label">Next session</div>
-            <div style="display:flex;align-items:center;gap:7px;">
-              <div class="B-session-dot"></div>
-              <div>
-                <div style="font-size:9px;font-weight:700;color:#1F3260;">Portfolio Review</div>
-                <div style="font-size:7.5px;color:#9CA3AF;">Tomorrow · 10:00 AM</div>
-              </div>
-            </div>
-          </div>
-          <div class="B-qrow">
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Cal</div></div>
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Tasks</div></div>
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">History</div></div>
-            <div class="B-qitem"><div class="B-qico"></div><div class="B-qlbl">Profile</div></div>
-          </div>
-        </div>
+
+<!-- ════════════════════════════════════════════════════════
+     OPTION D — RADIANT LIGHT
+     Dark navy hero → cream light sections → dark CTA + gold accent
+════════════════════════════════════════════════════════ -->
+<div id="option-d">
+  <p class="option-label">Option D — Radiant Light</p>
+  <p class="option-desc">Dark hero with sunray motifs and gold accent → cream/white light interior → dark navy CTA closer. Warmest feeling.</p>
+
+  <!-- Dark hero -->
+  <section class="d-hero">
+    <!-- Sunrays -->
+    <svg class="d-rays" viewBox="0 0 800 600" fill="none">
+      <g transform="translate(400,160)">
+        <line x1="0" y1="0" x2="0"   y2="-420" stroke="white" stroke-width="1"/>
+        <line x1="0" y1="0" x2="72"  y2="-413" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="140" y2="-390" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="200" y2="-347" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="250" y2="-289" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="289" y2="-217" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="313" y2="-140" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="321" y2="-56"  stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-72"  y2="-413" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-140" y2="-390" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-200" y2="-347" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-250" y2="-289" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-289" y2="-217" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-313" y2="-140" stroke="white" stroke-width=".6"/>
+        <line x1="0" y1="0" x2="-321" y2="-56"  stroke="white" stroke-width=".6"/>
+      </g>
+    </svg>
+    <div class="d-glow"></div>
+
+    <div class="d-content">
+      <span class="d-kicker">✦ Jesus Project Community</span>
+      <h1 class="d-h1">
+        <span>Grow in Faith.</span>
+        <span>Build Community.</span>
+        <span>Transform Lives.</span>
+      </h1>
+      <p class="d-sub">A discipleship community for university students — walking together through The Way, GBV, and beyond.</p>
+      <div class="d-btns">
+        <button class="btn-gold">Apply Now →</button>
+        <button class="btn-outline">Learn More ↓</button>
       </div>
     </div>
-    <div class="screen-desc">On mobile the 3-col stat row collapses to 2-col. Everything stacks vertically, no horizontal scroll.</div>
-  </div>
+  </section>
+
+  <!-- Light: Mission + Vision cards -->
+  <section class="d-light">
+    <div class="section-center">
+      <div class="section-kicker">Who We Are</div>
+      <h2 class="section-h2" style="color:var(--navy-900)">Built on Faith,<br>Community &amp; Purpose</h2>
+    </div>
+    <div class="d-mission-grid">
+      <div class="d-mission-card">
+        <div class="d-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3DA5A8" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg>
+        </div>
+        <div class="d-card-title">Our Mission</div>
+        <div class="d-card-body">To make disciples of Jesus Christ among university students in Egypt — equipping them to live by the Word, grow in community, and serve the world.</div>
+      </div>
+      <div class="d-mission-card">
+        <div class="d-ico">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3DA5A8" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253"/></svg>
+        </div>
+        <div class="d-card-title">Our Vision</div>
+        <div class="d-card-body">A generation of university students transformed by the Gospel, rooted in the Church, and sent out to disciple nations.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Light blue: Programs -->
+  <section class="d-programs">
+    <div class="section-center">
+      <div class="section-kicker">The Journey</div>
+      <h2 class="section-h2" style="color:var(--navy-900)">The JPC Path</h2>
+    </div>
+    <div class="d-prog-cards">
+      <div class="d-prog-card">
+        <div class="d-step">01</div>
+        <div class="d-name">The Way</div>
+        <div class="d-desc">The foundational discipleship season. Learn to walk with Jesus, study Scripture, and build deep community.</div>
+      </div>
+      <div class="d-prog-card">
+        <div class="d-step">02</div>
+        <div class="d-name">GBV</div>
+        <div class="d-desc">Going Beyond Violence — applied ministry and servant leadership in real-world contexts of pain and need.</div>
+      </div>
+      <div class="d-prog-card">
+        <div class="d-step">03</div>
+        <div class="d-name">3G</div>
+        <div class="d-desc">Go, Grow, Give — equipping graduates to disciple others and multiply the community they received.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dark CTA -->
+  <section class="d-cta">
+    <p class="d-cta-eyebrow">Apply Today</p>
+    <h2 class="d-cta-h2">Ready to Begin<br>Your Journey?</h2>
+    <p class="d-cta-sub">Applications are open for the next season of The Way.</p>
+    <button class="btn-gold" style="position:relative">Apply Now →</button>
+  </section>
 </div>
 
-<p class="hint">These are all in Bento Bold. Let me know if you want any screen adjusted before we write the spec.</p>
+
+<!-- ─── FOOTER ──────────────────────────────────────────── -->
+<div class="preview-footer">
+  <p>Reply with <strong>A</strong>, <strong>B</strong>, <strong>C</strong>, or <strong>D</strong> to choose a direction —<br>or tell me which elements you'd like to mix from multiple options.</p>
+</div>
 
 </body>
 </html>

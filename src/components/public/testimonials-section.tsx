@@ -5,8 +5,7 @@ import { useLang } from "@/components/public/lang-context";
 const content = {
   en: {
     kicker: "Student Stories",
-    heading: "Lives Transformed",
-    sub: "Hear from students who walked through The Way.",
+    heading: "LIVES TRANSFORMED",
     testimonials: [
       {
         quote:
@@ -14,6 +13,7 @@ const content = {
         name: "Sara M.",
         role: "2nd Year, Medicine",
         initials: "SM",
+        season: "The Way · 2024",
       },
       {
         quote:
@@ -21,6 +21,7 @@ const content = {
         name: "Karim A.",
         role: "3rd Year, Engineering",
         initials: "KA",
+        season: "The Way · 2023",
       },
       {
         quote:
@@ -28,13 +29,13 @@ const content = {
         name: "Nadia R.",
         role: "Graduate, Social Work",
         initials: "NR",
+        season: "GBV · 2023",
       },
     ],
   },
   ar: {
     kicker: "قصص الطلاب",
     heading: "حيوات تحوَّلت",
-    sub: "اسمع من طلاب ساروا خلال موسم الطريق.",
     testimonials: [
       {
         quote:
@@ -42,6 +43,7 @@ const content = {
         name: "سارة م.",
         role: "السنة الثانية، طب",
         initials: "سم",
+        season: "الطريق · ٢٠٢٤",
       },
       {
         quote:
@@ -49,6 +51,7 @@ const content = {
         name: "كريم أ.",
         role: "السنة الثالثة، هندسة",
         initials: "كأ",
+        season: "الطريق · ٢٠٢٣",
       },
       {
         quote:
@@ -56,15 +59,16 @@ const content = {
         name: "نادية ر.",
         role: "خريجة، عمل اجتماعي",
         initials: "نر",
+        season: "GBV · ٢٠٢٣",
       },
     ],
   },
 } as const;
 
-const avatarColors = [
-  "from-brand-teal-600 to-brand-teal-800",
-  "from-brand-navy-600 to-brand-navy-800",
-  "from-brand-teal-700 to-brand-navy-700",
+const photoGradients = [
+  "from-brand-teal-700 to-brand-navy-800",
+  "from-brand-navy-700 to-brand-teal-800",
+  "from-brand-teal-800 to-brand-navy-900",
 ] as const;
 
 export function TestimonialsSection() {
@@ -75,77 +79,99 @@ export function TestimonialsSection() {
   return (
     <section
       dir={dir}
-      className="relative overflow-hidden bg-brand-navy-950 px-4 py-20 md:py-28"
+      className="relative overflow-hidden bg-brand-navy-900 px-4 py-20 md:py-28"
     >
-      {/* Diagonal line texture */}
-      <svg
+      {/* Ghost heading watermark */}
+      <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.015]"
+        className="pointer-events-none absolute inset-x-0 top-4 select-none text-center font-black leading-none tracking-[-0.06em] text-transparent"
+        style={{
+          fontSize: "clamp(3.5rem, 12vw, 10rem)",
+          WebkitTextStroke: "1px rgba(93,185,188,0.07)",
+        }}
       >
-        <defs>
-          <pattern
-            id="diag-lines"
-            x="0"
-            y="0"
-            width="20"
-            height="20"
-            patternUnits="userSpaceOnUse"
-            patternTransform="rotate(45)"
-          >
-            <line x1="0" y1="0" x2="0" y2="20" stroke="white" strokeWidth="1" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#diag-lines)" />
-      </svg>
+        {t.heading}
+      </div>
 
       <div className="relative z-10 mx-auto max-w-6xl">
         <div className="mb-14 text-center">
-          <span className="mb-3 inline-block rounded-full border border-brand-teal-500/30 bg-brand-teal-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand-teal-400">
+          <span className="mb-4 inline-block rounded-full border border-brand-teal-500/30 bg-brand-teal-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand-teal-400">
             {t.kicker}
           </span>
-          <h2 className="mb-3 text-3xl font-bold text-white md:text-4xl">{t.heading}</h2>
-          <p className="text-white/45">{t.sub}</p>
+          <h2
+            className="font-black leading-none tracking-[-0.04em] text-white"
+            style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)" }}
+          >
+            {t.heading}
+          </h2>
         </div>
 
         <div className="grid gap-5 md:grid-cols-3">
           {t.testimonials.map((item, i) => (
             <figure
               key={item.name}
-              className="group relative flex flex-col rounded-2xl border border-white/8 bg-white/5 p-7 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-teal-500/25 hover:bg-white/8"
+              className="group overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.04] transition-all duration-300 hover:-translate-y-1 hover:border-brand-teal-500/25"
             >
-              {/* Large decorative quote mark */}
-              <svg
-                aria-hidden
-                className="mb-4 size-8 text-brand-teal-500 opacity-40"
-                viewBox="0 0 32 24"
-                fill="currentColor"
+              {/* Portrait photo area */}
+              <div
+                className={`relative h-32 bg-gradient-to-br ${photoGradients[i]} overflow-hidden`}
               >
-                <path d="M0 24V14.4C0 6.45 4.05 1.95 12.15 0L13.8 3C9.6 4.2 7.5 7.05 7.5 11.4H13.5V24H0zm18 0V14.4C18 6.45 22.05 1.95 30.15 0L31.8 3C27.6 4.2 25.5 7.05 25.5 11.4H31.5V24H18z" />
-              </svg>
-
-              <blockquote className="flex-1 text-sm leading-relaxed text-white/65">
-                {item.quote}
-              </blockquote>
-
-              <figcaption className="mt-6 flex items-center gap-3">
+                {/* Subtle pattern overlay */}
                 <div
-                  className={`flex size-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${avatarColors[i]} text-xs font-bold text-white`}
+                  aria-hidden
+                  className="absolute inset-0"
+                  style={{
+                    backgroundImage:
+                      "radial-gradient(circle at 70% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  }}
+                />
+                {/* Cross motif */}
+                <svg
+                  aria-hidden
+                  className="absolute inset-0 m-auto opacity-10"
+                  width="48"
+                  height="48"
+                  viewBox="0 0 40 40"
+                  fill="white"
                 >
+                  <rect x="17" y="4" width="6" height="32" rx="3" />
+                  <rect x="4" y="15" width="32" height="6" rx="3" />
+                </svg>
+                {/* Season label */}
+                <span className="absolute end-3 top-3 rounded-full border border-white/20 bg-black/20 px-2.5 py-1 text-[10px] font-semibold text-white/70 backdrop-blur-sm">
+                  {item.season}
+                </span>
+                {/* Avatar overlapping into body */}
+                <div className="absolute -bottom-6 start-5 flex size-14 shrink-0 items-center justify-center rounded-full border-[3px] border-brand-navy-900 bg-gradient-to-br from-brand-teal-500 to-brand-teal-700 text-sm font-black text-white shadow-lg">
                   {item.initials}
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{item.name}</p>
-                  <p className="text-xs text-white/40">{item.role}</p>
-                </div>
-              </figcaption>
+              </div>
 
-              {/* Hover teal glow */}
+              {/* Card body */}
+              <div className="p-6 pt-9">
+                {/* Quote mark */}
+                <svg
+                  aria-hidden
+                  className="mb-3 size-7 text-brand-teal-500 opacity-40"
+                  viewBox="0 0 32 24"
+                  fill="currentColor"
+                >
+                  <path d="M0 24V14.4C0 6.45 4.05 1.95 12.15 0L13.8 3C9.6 4.2 7.5 7.05 7.5 11.4H13.5V24H0zm18 0V14.4C18 6.45 22.05 1.95 30.15 0L31.8 3C27.6 4.2 25.5 7.05 25.5 11.4H31.5V24H18z" />
+                </svg>
+                <blockquote className="mb-5 text-sm leading-relaxed text-white/60">
+                  {item.quote}
+                </blockquote>
+                <figcaption>
+                  <p className="text-sm font-bold text-white">{item.name}</p>
+                  <p className="text-xs text-white/38">{item.role}</p>
+                </figcaption>
+              </div>
+
+              {/* Hover inner glow */}
               <div
                 aria-hidden
                 className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  boxShadow: "inset 0 0 40px rgba(93,185,188,0.04)",
-                }}
+                style={{ boxShadow: "inset 0 0 48px rgba(93,185,188,0.04)" }}
               />
             </figure>
           ))}

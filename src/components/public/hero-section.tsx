@@ -122,46 +122,49 @@ export function HeroSection() {
       />
 
       <div className="relative z-10 mx-auto max-w-4xl">
-        {/* Kicker pill */}
-        <span className="mb-7 inline-block rounded-full border border-brand-teal-500/30 bg-brand-teal-500/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-brand-teal-300">
-          {t.kicker}
+        {/* Kicker */}
+        <span className="mb-7 inline-block rounded-full border border-brand-teal-500/30 bg-brand-teal-500/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-teal-300">
+          ✦ {t.kicker} ✦
         </span>
 
+        {/* Bold editorial headline */}
         <h1
-          className="mb-6 whitespace-pre-line font-bold leading-[1.08] tracking-tight text-white"
-          style={{ fontSize: "clamp(2.6rem, 7vw, 5.2rem)" }}
+          className="relative mb-6 font-black leading-[0.95] tracking-[-0.04em] text-white"
+          style={{ fontSize: "clamp(3.2rem, 9vw, 7rem)" }}
         >
-          {t.headline}
+          <span className="block">{t.headline.split("\n")[0]}</span>
+          <span className="block">{t.headline.split("\n")[1]}</span>
+          <span className="block text-brand-teal-400">{t.headline.split("\n")[2]}</span>
         </h1>
 
-        <p className="mx-auto mb-10 max-w-xl text-base leading-relaxed text-white/50 md:text-lg">
+        <p className="mx-auto mb-10 max-w-lg text-base leading-relaxed text-white/48 md:text-lg">
           {t.sub}
         </p>
 
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/apply"
-            className="w-full rounded-xl bg-brand-teal-500 px-10 py-4 text-base font-semibold text-white shadow-[0_0_30px_rgba(93,185,188,0.4)] transition-all duration-200 hover:-translate-y-px hover:bg-brand-teal-400 hover:shadow-[0_0_45px_rgba(93,185,188,0.5)] sm:w-auto"
+            className="w-full rounded-xl bg-brand-teal-500 px-10 py-4 text-base font-bold text-white shadow-[0_0_32px_rgba(93,185,188,0.42)] transition-all duration-200 hover:-translate-y-px hover:bg-brand-teal-400 hover:shadow-[0_0_48px_rgba(93,185,188,0.55)] sm:w-auto"
           >
-            {t.cta}
+            {t.cta} →
           </Link>
           <a
             href="#mission"
-            className="w-full rounded-xl border border-white/15 px-10 py-4 text-base font-semibold text-white/60 transition-all duration-200 hover:border-white/35 hover:text-white sm:w-auto"
+            className="w-full rounded-xl border border-white/15 px-10 py-4 text-base font-semibold text-white/58 transition-all duration-200 hover:border-white/35 hover:text-white sm:w-auto"
           >
             {t.learn} ↓
           </a>
         </div>
 
         {/* Stats bar */}
-        <div className="mt-16 flex flex-wrap justify-center gap-x-0 gap-y-6">
+        <div className="mt-16 flex flex-wrap justify-center gap-x-0 gap-y-6 border-t border-white/[0.07] pt-10">
           {t.stats.map((s, i) => (
             <div
               key={s.label}
-              className={`px-8 text-center ${i > 0 ? "border-s border-white/12" : ""}`}
+              className={`px-10 text-center ${i > 0 ? "border-s border-white/10" : ""}`}
             >
-              <p className="text-3xl font-bold text-white md:text-4xl">{s.value}</p>
-              <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.2em] text-white/35">
+              <p className="text-[2.6rem] font-black leading-none tracking-tight text-white md:text-5xl">{s.value}</p>
+              <p className="mt-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/32">
                 {s.label}
               </p>
             </div>

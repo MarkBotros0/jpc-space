@@ -25,38 +25,42 @@ export function ScriptureSection() {
   return (
     <section
       dir={dir}
-      className="relative overflow-hidden bg-brand-navy-900 px-4 py-24 md:py-32"
+      className="relative overflow-hidden bg-brand-navy-800 px-4 py-24 md:py-32"
     >
-      {/* Large decorative quotation mark */}
-      <svg
+      {/* Oversized ghost quote mark */}
+      <div
         aria-hidden
-        className="pointer-events-none absolute start-8 top-8 size-32 opacity-[0.04] md:size-48"
-        viewBox="0 0 100 80"
-        fill="currentColor"
+        className="pointer-events-none absolute start-4 top-0 select-none font-black leading-none text-transparent"
+        style={{
+          fontSize: "clamp(10rem, 30vw, 22rem)",
+          WebkitTextStroke: "1px rgba(255,255,255,0.04)",
+          lineHeight: "0.8",
+        }}
       >
-        <path d="M0 80V48C0 21.5 13.5 6.5 40.5 0L46 10C32 14 25 23.5 25 38h15V80H0zm54 0V48C54 21.5 67.5 6.5 94.5 0L100 10C86 14 79 23.5 79 38h15V80H54z" />
-      </svg>
+        &ldquo;
+      </div>
 
-      {/* Radial glow centre */}
+      {/* Radial teal glow */}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(93,185,188,0.08) 0%, transparent 70%)",
+            "radial-gradient(ellipse 55% 45% at 50% 50%, rgba(93,185,188,0.09) 0%, transparent 70%)",
         }}
       />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <div className="mb-6 flex justify-center">
-          {/* Cross monogram */}
+        {/* Cross monogram */}
+        <div className="mb-8 flex justify-center">
           <svg
             aria-hidden
-            width="40"
-            height="40"
+            width="44"
+            height="44"
             viewBox="0 0 40 40"
             fill="none"
-            className="text-brand-teal-500 opacity-70"
+            className="text-brand-teal-500"
+            style={{ opacity: 0.75 }}
           >
             <rect x="17" y="4" width="6" height="32" rx="3" fill="currentColor" />
             <rect x="4" y="15" width="32" height="6" rx="3" fill="currentColor" />
@@ -64,17 +68,21 @@ export function ScriptureSection() {
         </div>
 
         <blockquote
-          className="mb-6 text-xl font-medium italic leading-relaxed text-white/80 md:text-2xl md:leading-relaxed"
-          style={{ fontStyle: "italic" }}
+          className="mb-7 font-medium italic leading-relaxed text-white/78"
+          style={{ fontSize: "clamp(1.15rem, 2.2vw, 1.55rem)" }}
         >
           &ldquo;{t.verse}&rdquo;
         </blockquote>
 
-        <cite className="block text-sm font-semibold not-italic tracking-widest text-brand-teal-400 uppercase">
-          {t.reference}
+        <cite className="block text-xs font-bold not-italic uppercase tracking-[0.28em] text-brand-teal-400">
+          — {t.reference}
         </cite>
 
-        <p className="mt-4 text-sm text-white/35">{t.tagline}</p>
+        <div className="mt-5 flex justify-center">
+          <span className="rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs text-white/35">
+            {t.tagline}
+          </span>
+        </div>
       </div>
     </section>
   );
