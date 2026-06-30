@@ -268,6 +268,44 @@ export async function canReviewSubmission(
   return false;
 }
 
+// Can the user comment on a peer's forum response? Requires the assignment to be
+// a FORUM with comments enabled, and the commenter to be in the same group as the
+// post's author (students) or a season admin / super.
+export async function canCommentOnForumSubmission(
+  user: SessionUser,
+  submissionId: number,
+): Promise<boolean> {
+  const sub = await db.submission.findUnique({
+    where: { id: submissionId },
+    select: {
+      studentUserId: true,
+      assignment: { select: { seasonId: true, type: true, forumAllowComments: true } },
+    },
+  });
+  if (!sub) return false;
+  if (sub.assignment.type !== "FORUM" || !sub.assignment.forumAllowComments) return false;
+
+  if (isSuper(user)) return true;
+  if (isAdminOfSeason(user, sub.assignment.seasonId)) return true;
+
+  if (user.role === "STUDENT") {
+    const [authorGroup, commenterGroup] = await Promise.all([
+      db.groupStudent.findUnique({
+        where: { studentUserId: sub.studentUserId },
+        select: { groupId: true },
+      }),
+      db.groupStudent.findUnique({
+        where: { studentUserId: user.userId },
+        select: { groupId: true },
+      }),
+    ]);
+    if (!authorGroup || !commenterGroup) return false;
+    return authorGroup.groupId === commenterGroup.groupId;
+  }
+
+  return false;
+}
+
 // ---------------------------------------------------------------------------
 // Student & notes gates
 // ---------------------------------------------------------------------------

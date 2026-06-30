@@ -75,21 +75,26 @@ enum JpcVisibility {
   ALUMNI_ONLY
 }
 
+enum AssignmentType {
+  STANDARD
+  FORUM
+}
+
 // ---------------------------------------------------------------------------
 // Identity & auth
 // ---------------------------------------------------------------------------
 
 model User {
-  id            Int       @id @default(autoincrement())
-  email         String    @unique
-  name          String
-  passwordHash  String?
-  role          UserRole
-  avatarPath    String?
-  lastLoginAt   DateTime?
-  deletedAt     DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  passwordHash String?
+  role         UserRole
+  avatarPath   String?
+  lastLoginAt  DateTime?
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   studentProfile StudentProfile?
 
@@ -110,20 +115,22 @@ model User {
   attendanceMarked        Attendance[]     @relation("AttendanceMarkedBy")
   engagementNotesAuthored EngagementNote[] @relation("EngagementNoteAuthor")
 
-  attendanceRecords  Attendance[]       @relation("AttendanceStudent")
-  submissionsAsStudent Submission[]     @relation("SubmissionStudent")
-  seasonEnrollments  SeasonEnrollment[] @relation("EnrollmentStudent")
-  engagementNotesAbout EngagementNote[] @relation("EngagementNoteStudent")
+  attendanceRecords    Attendance[]       @relation("AttendanceStudent")
+  submissionsAsStudent Submission[]       @relation("SubmissionStudent")
+  seasonEnrollments    SeasonEnrollment[] @relation("EnrollmentStudent")
+  engagementNotesAbout EngagementNote[]   @relation("EngagementNoteStudent")
 
-  notifications          Notification[]
-  notificationPreference NotificationPreference?
-  studentDocuments       StudentDocument[]       @relation("StudentDocumentStudent")
-  studentDocumentsUploaded StudentDocument[]     @relation("StudentDocumentUploader")
-  jpcEventsCreated       JpcEvent[]              @relation("JpcEventCreator")
+  notifications            Notification[]
+  notificationPreference   NotificationPreference?
+  studentDocuments         StudentDocument[]       @relation("StudentDocumentStudent")
+  studentDocumentsUploaded StudentDocument[]       @relation("StudentDocumentUploader")
+  jpcEventsCreated         JpcEvent[]              @relation("JpcEventCreator")
 
-  quizzesCreated  Quiz[]      @relation("QuizCreatedBy")
-  quizGrades      QuizGrade[] @relation("QuizGradeStudent")
-  quizGraded      QuizGrade[] @relation("QuizGradedBy")
+  quizzesCreated Quiz[]      @relation("QuizCreatedBy")
+  quizGrades     QuizGrade[] @relation("QuizGradeStudent")
+  quizGraded     QuizGrade[] @relation("QuizGradedBy")
+
+  forumCommentsAuthored ForumComment[] @relation("ForumCommentAuthor")
 
   @@index([role])
   @@index([deletedAt])
@@ -161,13 +168,13 @@ model PasswordResetToken {
 // ---------------------------------------------------------------------------
 
 model StudentProfile {
-  id                  Int       @id @default(autoincrement())
-  userId              Int       @unique
-  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // "One active season at a time" — enforced by FK + business rules.
-  activeSeasonId      Int?
-  activeSeason        Season?   @relation("StudentActiveSeason", fields: [activeSeasonId], references: [id], onDelete: SetNull)
+  activeSeasonId Int?
+  activeSeason   Season? @relation("StudentActiveSeason", fields: [activeSeasonId], references: [id], onDelete: SetNull)
 
   university          String?
   year                String?
@@ -191,25 +198,25 @@ model StudentProfile {
 model Season {
   id             Int          @id @default(autoincrement())
   code           String       @unique // e.g. "gbv-2026" — URL identifier
-  title          String       // e.g. "GBV 2026" — display title
+  title          String // e.g. "GBV 2026" — display title
   description    String?
   startDate      DateTime
   endDate        DateTime
   status         SeasonStatus @default(DRAFT)
   coverImagePath String?
 
-  lateThresholdMinutes  Int @default(15)
-  absenceBudgetMinutes  Int @default(180)
-  absenceWeightMinutes  Int @default(90)
-  lateWeightMinutes     Int @default(30)
+  lateThresholdMinutes Int @default(15)
+  absenceBudgetMinutes Int @default(180)
+  absenceWeightMinutes Int @default(90)
+  lateWeightMinutes    Int @default(30)
 
   createdById Int?
   createdBy   User?     @relation("SeasonCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
   updatedById Int?
   updatedBy   User?     @relation("SeasonUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
-  deletedAt             DateTime?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   admins            SeasonAdmin[]
   groups            Group[]
@@ -367,6 +374,12 @@ model Assignment {
   // When true, the assignment targets every group in the season (no AssignmentTarget rows).
   isAllGroups Boolean   @default(false)
 
+  type AssignmentType @default(STANDARD)
+
+  // FORUM-type config (ignored for STANDARD assignments).
+  forumMinWords      Int? // minimum word count required to post a response
+  forumAllowComments Boolean @default(false) // whether students may comment on peers' responses
+
   // File upload constraints (optional — null means no file uploads accepted).
   maxFileSizeMb         Int?
   allowedMimeCategories String[] @default([])
@@ -416,7 +429,8 @@ model Submission {
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
-  files SubmissionFile[]
+  files         SubmissionFile[]
+  forumComments ForumComment[]
 
   @@unique([assignmentId, studentUserId])
   @@index([studentUserId])
@@ -436,23 +450,39 @@ model SubmissionFile {
   @@index([submissionId])
 }
 
+// Peer comments on a forum-type assignment response (the parent Submission).
+// Only created when the assignment has `forumAllowComments = true`.
+model ForumComment {
+  id           Int        @id @default(autoincrement())
+  submissionId Int
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  authorUserId Int
+  authorUser   User       @relation("ForumCommentAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+  body         String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([submissionId])
+  @@index([authorUserId])
+}
+
 // ---------------------------------------------------------------------------
 // Engagement notes
 // ---------------------------------------------------------------------------
 
 model EngagementNote {
-  id            Int            @id @default(autoincrement())
-  studentUserId Int
-  studentUser   User           @relation("EngagementNoteStudent", fields: [studentUserId], references: [id], onDelete: Restrict)
-  authorUserId  Int
-  authorUser    User           @relation("EngagementNoteAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
-  seasonId      Int?
-  season        Season?        @relation(fields: [seasonId], references: [id], onDelete: SetNull)
-  body             String
-  visibility       NoteVisibility @default(LEADERS)
-  followUpFlagged  Boolean        @default(false)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
+  id              Int            @id @default(autoincrement())
+  studentUserId   Int
+  studentUser     User           @relation("EngagementNoteStudent", fields: [studentUserId], references: [id], onDelete: Restrict)
+  authorUserId    Int
+  authorUser      User           @relation("EngagementNoteAuthor", fields: [authorUserId], references: [id], onDelete: Restrict)
+  seasonId        Int?
+  season          Season?        @relation(fields: [seasonId], references: [id], onDelete: SetNull)
+  body            String
+  visibility      NoteVisibility @default(LEADERS)
+  followUpFlagged Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
   @@index([studentUserId, createdAt])
   @@index([authorUserId])
@@ -482,12 +512,12 @@ model NotificationPreference {
   userId Int  @unique
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  assignmentCreated   Boolean @default(true)
-  submissionReviewed  Boolean @default(true)
-  sessionRescheduled  Boolean @default(true)
-  lowAttendanceFlag   Boolean @default(true)
-  mentorFollowup      Boolean @default(true)
-  quizGraded          Boolean @default(true)
+  assignmentCreated  Boolean @default(true)
+  submissionReviewed Boolean @default(true)
+  sessionRescheduled Boolean @default(true)
+  lowAttendanceFlag  Boolean @default(true)
+  mentorFollowup     Boolean @default(true)
+  quizGraded         Boolean @default(true)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -513,19 +543,19 @@ model StudentDocument {
 // ---------------------------------------------------------------------------
 
 model Quiz {
-  id          Int       @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   seasonId    Int
-  season      Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  season      Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   sessionId   Int?
-  session     Session?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  session     Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
   title       String
-  maxScore    Int       @default(100)
+  maxScore    Int      @default(100)
   createdById Int?
-  createdBy   User?     @relation("QuizCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdBy   User?    @relation("QuizCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  grades      QuizGrade[]
+  grades QuizGrade[]
 
   @@index([seasonId])
   @@index([sessionId])
@@ -563,7 +593,7 @@ model JpcEvent {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  createdBy   User?         @relation("JpcEventCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy User? @relation("JpcEventCreator", fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([date])
 }

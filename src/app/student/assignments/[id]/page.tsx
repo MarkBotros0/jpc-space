@@ -7,9 +7,11 @@ import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { ensureDraftSubmission } from "@/lib/assignment-actions";
 import { loadAssignmentById } from "@/lib/assignments-query";
+import { loadForumView } from "@/lib/forum-query";
 import { Badge } from "@/components/ui/badge";
 import { RichTextView } from "@/components/ui/rich-text-view";
 import { StudentSubmissionForm } from "@/components/assignments/student-submission-form";
+import { ForumView } from "@/components/forum/forum-view";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -36,6 +38,42 @@ export default async function StudentAssignmentPage({ params }: PageProps) {
   }
 
   const stub = await ensureDraftSubmission(assignment.id, user.userId);
+
+  if (assignment.type === "FORUM") {
+    const forum = await loadForumView(assignment.id, user.userId, stub.id);
+    return (
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div>
+          <Link
+            href="/student/assignments"
+            className="text-xs font-semibold text-brand-teal-700 hover:underline dark:text-brand-teal-300"
+          >
+            ← Assignments
+          </Link>
+          <div className="mt-2 rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft)]">
+            <div className="mb-2 flex items-center gap-2">
+              <Badge variant="teal">Forum</Badge>
+            </div>
+            <h1 className="text-xl font-black text-brand-navy-900 dark:text-foreground">
+              {assignment.title}
+            </h1>
+          </div>
+        </div>
+
+        {assignment.description && (
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-[var(--shadow-soft)]">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">
+              Question
+            </p>
+            <RichTextView html={assignment.description} />
+          </div>
+        )}
+
+        <ForumView data={forum} currentUserId={user.userId} />
+      </div>
+    );
+  }
+
   const submission = await db.submission.findUnique({
     where: { id: stub.id },
     select: {
