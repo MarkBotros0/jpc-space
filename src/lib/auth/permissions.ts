@@ -7,6 +7,7 @@ import {
   isMentor,
   isAdminOfSeason,
   isLeaderOfGroup,
+  isLeaderInSeason,
   canReadAllStudents,
   canManageUsers,
 } from "@/lib/rbac";
@@ -126,6 +127,35 @@ export async function canManageSessionVideo(
   });
   if (!session) return false;
   return isAdminOfSeason(user, session.seasonId);
+}
+
+// Authoring/managing a quiz (create questions, publish, reopen retakes).
+// Season-scoped ADMIN + SUPER only.
+export async function canManageQuiz(
+  user: SessionUser,
+  quizId: number,
+): Promise<boolean> {
+  if (isSuper(user)) return true;
+  const quiz = await db.quiz.findUnique({
+    where: { id: quizId },
+    select: { seasonId: true },
+  });
+  if (!quiz) return false;
+  return isAdminOfSeason(user, quiz.seasonId);
+}
+
+// Grading a quiz (paper scores, essay answers). SUPER, season ADMIN, or a group
+// LEADER whose group belongs to the quiz's season.
+export async function canGradeQuiz(
+  user: SessionUser,
+  quizId: number,
+): Promise<boolean> {
+  const quiz = await db.quiz.findUnique({
+    where: { id: quizId },
+    select: { seasonId: true },
+  });
+  if (!quiz) return false;
+  return isLeaderInSeason(user, quiz.seasonId);
 }
 
 export async function canViewSubmission(

@@ -80,6 +80,22 @@ enum AssignmentType {
   FORUM
 }
 
+enum QuizKind {
+  PAPER
+  ONLINE
+}
+
+enum QuizQuestionType {
+  MCQ
+  ESSAY
+}
+
+enum QuizAttemptStatus {
+  IN_PROGRESS
+  SUBMITTED
+  GRADED
+}
+
 // ---------------------------------------------------------------------------
 // Identity & auth
 // ---------------------------------------------------------------------------
@@ -129,6 +145,9 @@ model User {
   quizzesCreated Quiz[]      @relation("QuizCreatedBy")
   quizGrades     QuizGrade[] @relation("QuizGradeStudent")
   quizGraded     QuizGrade[] @relation("QuizGradedBy")
+
+  quizAttempts       QuizAttempt[] @relation("QuizAttemptStudent")
+  quizAttemptsGraded QuizAttempt[] @relation("QuizAttemptGradedBy")
 
   forumCommentsAuthored ForumComment[] @relation("ForumCommentAuthor")
 
@@ -597,19 +616,25 @@ model StudentDocument {
 // ---------------------------------------------------------------------------
 
 model Quiz {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   seasonId    Int
-  season      Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  season      Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   sessionId   Int?
-  session     Session? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  session     Session?  @relation(fields: [sessionId], references: [id], onDelete: SetNull)
   title       String
-  maxScore    Int      @default(100)
+  kind        QuizKind  @default(PAPER)
+  // For ONLINE quizzes maxScore is recomputed as the sum of question points.
+  maxScore    Int       @default(100)
+  // ONLINE availability: null = draft, students only see published quizzes.
+  publishedAt DateTime?
   createdById Int?
-  createdBy   User?    @relation("QuizCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdBy   User?     @relation("QuizCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  grades QuizGrade[]
+  grades    QuizGrade[]
+  questions QuizQuestion[]
+  attempts  QuizAttempt[]
 
   @@index([seasonId])
   @@index([sessionId])
@@ -631,6 +656,70 @@ model QuizGrade {
 
   @@unique([quizId, studentUserId])
   @@index([studentUserId])
+}
+
+// Questions for an ONLINE quiz. MCQ questions carry options + correctIndex
+// (auto-graded); ESSAY questions are graded manually by a leader/admin.
+model QuizQuestion {
+  id           Int              @id @default(autoincrement())
+  quizId       Int
+  quiz         Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  order        Int
+  type         QuizQuestionType
+  prompt       String
+  points       Int              @default(1)
+  options      String[]
+  correctIndex Int?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  answers QuizAnswer[]
+
+  @@index([quizId, order])
+}
+
+// A student's run at an ONLINE quiz. One active attempt per student; an admin
+// can reopen a retake, which creates a new attempt with the next attemptNumber.
+model QuizAttempt {
+  id            Int               @id @default(autoincrement())
+  quizId        Int
+  quiz          Quiz              @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  studentUserId Int
+  studentUser   User              @relation("QuizAttemptStudent", fields: [studentUserId], references: [id], onDelete: Restrict)
+  attemptNumber Int               @default(1)
+  status        QuizAttemptStatus @default(IN_PROGRESS)
+  autoScore     Int?
+  manualScore   Int?
+  totalScore    Int?
+  submittedAt   DateTime?
+  gradedById    Int?
+  gradedBy      User?             @relation("QuizAttemptGradedBy", fields: [gradedById], references: [id], onDelete: SetNull)
+  gradedAt      DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  answers QuizAnswer[]
+
+  @@unique([quizId, studentUserId, attemptNumber])
+  @@index([studentUserId])
+  @@index([quizId, status])
+}
+
+model QuizAnswer {
+  id            Int          @id @default(autoincrement())
+  attemptId     Int
+  attempt       QuizAttempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId    Int
+  question      QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedIndex Int?
+  text          String?
+  isCorrect     Boolean?
+  pointsAwarded Int?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([attemptId, questionId])
+  @@index([questionId])
 }
 
 // ---------------------------------------------------------------------------

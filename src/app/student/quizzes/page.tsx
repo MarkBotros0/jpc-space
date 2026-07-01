@@ -1,15 +1,37 @@
 import { format } from "date-fns";
-import { PenLine } from "lucide-react";
+import { PenLine, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
-import { listQuizResultsForStudent } from "@/lib/quiz-query";
+import { listQuizResultsForStudent, type StudentQuizResult } from "@/lib/quiz-query";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { ProgressRing } from "@/components/ui/progress-ring";
 
 export const metadata = { title: "Quizzes" };
+
+function QuizStatus({ r }: { r: StudentQuizResult }) {
+  if (r.score !== null) {
+    const pct = Math.round((r.score / r.maxScore) * 100);
+    return (
+      <div>
+        <p className="text-lg font-black text-brand-navy-900 dark:text-foreground">
+          {r.score}
+          <span className="text-sm font-normal text-muted-foreground">/{r.maxScore}</span>
+        </p>
+        <p className="text-xs text-muted-foreground">{pct}%</p>
+      </div>
+    );
+  }
+  if (r.kind === "ONLINE") {
+    if (r.attemptStatus === null) return <Badge variant="teal">Take quiz</Badge>;
+    if (r.attemptStatus === "IN_PROGRESS") return <Badge variant="warning">Resume</Badge>;
+    return <Badge variant="outline">Awaiting grading</Badge>;
+  }
+  return <Badge variant="outline">Pending</Badge>;
+}
 
 export default async function StudentQuizzesPage() {
   const user = await getCurrentUserOrRedirect();
@@ -75,12 +97,8 @@ export default async function StudentQuizzesPage() {
       ) : (
         <div className="flex flex-col gap-3">
           {results.map((r) => {
-            const pct = r.score !== null ? Math.round((r.score / r.maxScore) * 100) : null;
-            return (
-              <div
-                key={r.quizId}
-                className="rounded-2xl border border-border bg-card px-4 py-4 shadow-[var(--shadow-soft)]"
-              >
+            const inner = (
+              <>
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-brand-navy-900 dark:text-foreground">{r.title}</p>
@@ -91,17 +109,10 @@ export default async function StudentQuizzesPage() {
                       </p>
                     )}
                   </div>
-                  <div className="shrink-0 text-right">
-                    {r.score !== null ? (
-                      <>
-                        <p className="text-lg font-black text-brand-navy-900 dark:text-foreground">
-                          {r.score}
-                          <span className="text-sm font-normal text-muted-foreground">/{r.maxScore}</span>
-                        </p>
-                        <p className="text-xs text-muted-foreground">{pct}%</p>
-                      </>
-                    ) : (
-                      <Badge variant="outline">Pending</Badge>
+                  <div className="flex shrink-0 items-center gap-1 text-right">
+                    <QuizStatus r={r} />
+                    {r.kind === "ONLINE" && (
+                      <ChevronRight className="size-4 text-muted-foreground" />
                     )}
                   </div>
                 </div>
@@ -115,6 +126,26 @@ export default async function StudentQuizzesPage() {
                     Graded {format(r.gradedAt, "MMM d, yyyy")}
                   </p>
                 )}
+              </>
+            );
+
+            if (r.kind === "ONLINE") {
+              return (
+                <Link
+                  key={r.quizId}
+                  href={`/student/quizzes/${r.quizId}`}
+                  className="rounded-2xl border border-border bg-card px-4 py-4 shadow-[var(--shadow-soft)] transition-colors hover:border-brand-teal-500"
+                >
+                  {inner}
+                </Link>
+              );
+            }
+            return (
+              <div
+                key={r.quizId}
+                className="rounded-2xl border border-border bg-card px-4 py-4 shadow-[var(--shadow-soft)]"
+              >
+                {inner}
               </div>
             );
           })}
