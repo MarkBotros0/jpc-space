@@ -190,15 +190,26 @@ export async function ensureDraftSubmission(
     select: { id: true, publicId: true },
   });
   if (existing) return existing;
-  return db.submission.create({
-    data: {
-      assignmentId,
-      studentUserId,
-      publicId: newPublicId(),
-      status: "DRAFT",
-    },
-    select: { id: true, publicId: true },
-  });
+  try {
+    return await db.submission.create({
+      data: {
+        assignmentId,
+        studentUserId,
+        publicId: newPublicId(),
+        status: "DRAFT",
+      },
+      select: { id: true, publicId: true },
+    });
+  } catch (err) {
+    // A concurrent render (Next prefetch + navigation) may have created the draft
+    // between our findUnique and create. Re-read and return it if so.
+    const row = await db.submission.findUnique({
+      where: { assignmentId_studentUserId: { assignmentId, studentUserId } },
+      select: { id: true, publicId: true },
+    });
+    if (row) return row;
+    throw err;
+  }
 }
 
 function zodErrors(err: z.ZodError): { ok: false; error: string; fieldErrors: Record<string, string> } {
