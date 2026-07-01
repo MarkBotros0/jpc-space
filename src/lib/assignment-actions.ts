@@ -20,6 +20,9 @@ const assignmentSchema = z.object({
   description: z.string().max(20000).optional().nullable(),
   dueAt: z.coerce.date().optional().nullable(),
   sessionId: z.number().int().nullable().optional(),
+  type: z.enum(["STANDARD", "FORUM"]).default("STANDARD"),
+  forumMinWords: z.number().int().min(0).max(2000).optional().nullable(),
+  forumAllowComments: z.boolean().default(false),
   maxFileSizeMb: z.number().int().min(1).max(100).optional().nullable(),
   allowedMimeCategories: z.array(z.enum(["image", "pdf", "doc", "audio", "video", "text"])).default([]),
 });
@@ -29,6 +32,9 @@ export interface AssignmentInput {
   description?: string | null;
   dueAt?: Date | string | null;
   sessionId?: number | null;
+  type: "STANDARD" | "FORUM";
+  forumMinWords?: number | null;
+  forumAllowComments?: boolean;
   maxFileSizeMb?: number | null;
   allowedMimeCategories?: string[];
   isAllGroups: boolean;
@@ -54,8 +60,11 @@ export async function createAssignmentAction(
         description: parsed.data.description ?? null,
         dueAt: parsed.data.dueAt ?? null,
         isAllGroups: input.isAllGroups,
-        maxFileSizeMb: parsed.data.maxFileSizeMb ?? null,
-        allowedMimeCategories: parsed.data.allowedMimeCategories,
+        type: parsed.data.type,
+        forumMinWords: parsed.data.type === "FORUM" ? parsed.data.forumMinWords ?? null : null,
+        forumAllowComments: parsed.data.type === "FORUM" ? parsed.data.forumAllowComments : false,
+        maxFileSizeMb: parsed.data.type === "FORUM" ? null : parsed.data.maxFileSizeMb ?? null,
+        allowedMimeCategories: parsed.data.type === "FORUM" ? [] : parsed.data.allowedMimeCategories,
         createdById: user.userId,
         updatedById: user.userId,
       },
@@ -108,8 +117,11 @@ export async function updateAssignmentAction(
         description: parsed.data.description ?? null,
         dueAt: parsed.data.dueAt ?? null,
         isAllGroups: input.isAllGroups,
-        maxFileSizeMb: parsed.data.maxFileSizeMb ?? null,
-        allowedMimeCategories: parsed.data.allowedMimeCategories,
+        type: parsed.data.type,
+        forumMinWords: parsed.data.type === "FORUM" ? parsed.data.forumMinWords ?? null : null,
+        forumAllowComments: parsed.data.type === "FORUM" ? parsed.data.forumAllowComments : false,
+        maxFileSizeMb: parsed.data.type === "FORUM" ? null : parsed.data.maxFileSizeMb ?? null,
+        allowedMimeCategories: parsed.data.type === "FORUM" ? [] : parsed.data.allowedMimeCategories,
         updatedById: user.userId,
       },
     });
@@ -178,15 +190,26 @@ export async function ensureDraftSubmission(
     select: { id: true, publicId: true },
   });
   if (existing) return existing;
-  return db.submission.create({
-    data: {
-      assignmentId,
-      studentUserId,
-      publicId: newPublicId(),
-      status: "DRAFT",
-    },
-    select: { id: true, publicId: true },
-  });
+  try {
+    return await db.submission.create({
+      data: {
+        assignmentId,
+        studentUserId,
+        publicId: newPublicId(),
+        status: "DRAFT",
+      },
+      select: { id: true, publicId: true },
+    });
+  } catch (err) {
+    // A concurrent render (Next prefetch + navigation) may have created the draft
+    // between our findUnique and create. Re-read and return it if so.
+    const row = await db.submission.findUnique({
+      where: { assignmentId_studentUserId: { assignmentId, studentUserId } },
+      select: { id: true, publicId: true },
+    });
+    if (row) return row;
+    throw err;
+  }
 }
 
 function zodErrors(err: z.ZodError): { ok: false; error: string; fieldErrors: Record<string, string> } {

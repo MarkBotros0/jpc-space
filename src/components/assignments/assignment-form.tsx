@@ -8,6 +8,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { FormField } from "@/components/ui/form-field";
 import { DatePicker } from "@/components/ui/date-picker";
 import { TimePicker } from "@/components/ui/time-picker";
@@ -38,6 +39,9 @@ const schema = z.object({
     minute: z.number().int().min(0).max(59),
   }),
   sessionId: z.string().nullable(),
+  type: z.enum(["STANDARD", "FORUM"]),
+  forumMinWords: z.number().int().min(0).max(2000).optional(),
+  forumAllowComments: z.boolean(),
   acceptsFiles: z.boolean(),
   maxFileSizeMb: z.number().int().min(1).max(100).optional(),
   allowedMimeCategories: z.array(z.string()),
@@ -59,6 +63,9 @@ export interface AssignmentFormProps {
     description: string | null;
     dueAt: Date | null;
     sessionId: number | null;
+    type: "STANDARD" | "FORUM";
+    forumMinWords: number | null;
+    forumAllowComments: boolean;
     maxFileSizeMb: number | null;
     allowedMimeCategories: string[];
     isAllGroups: boolean;
@@ -107,6 +114,9 @@ export function AssignmentForm({
         ? { hour: initialDueAt.getHours(), minute: initialDueAt.getMinutes() }
         : { hour: 23, minute: 59 },
       sessionId: defaultValues?.sessionId != null ? String(defaultValues.sessionId) : null,
+      type: defaultValues?.type ?? "STANDARD",
+      forumMinWords: defaultValues?.forumMinWords ?? 50,
+      forumAllowComments: defaultValues?.forumAllowComments ?? false,
       acceptsFiles: Boolean(defaultValues?.maxFileSizeMb),
       maxFileSizeMb: defaultValues?.maxFileSizeMb ?? 10,
       allowedMimeCategories: defaultValues?.allowedMimeCategories ?? [],
@@ -117,6 +127,8 @@ export function AssignmentForm({
 
   const targetMode = watch("targetMode");
   const acceptsFiles = watch("acceptsFiles");
+  const assignmentType = watch("type");
+  const isForum = assignmentType === "FORUM";
 
   const onSubmit = handleSubmit((values) => {
     setSubmitError(null);
@@ -129,13 +141,18 @@ export function AssignmentForm({
           })()
         : null;
 
+      const isForumType = values.type === "FORUM";
       const payload: AssignmentInput = {
         title: values.title,
         description: values.description ?? null,
         dueAt,
         sessionId: values.sessionId ? Number(values.sessionId) : null,
-        maxFileSizeMb: values.acceptsFiles ? values.maxFileSizeMb ?? 10 : null,
-        allowedMimeCategories: values.acceptsFiles ? values.allowedMimeCategories : [],
+        type: values.type,
+        forumMinWords: isForumType ? values.forumMinWords ?? 0 : null,
+        forumAllowComments: isForumType ? values.forumAllowComments : false,
+        maxFileSizeMb: !isForumType && values.acceptsFiles ? values.maxFileSizeMb ?? 10 : null,
+        allowedMimeCategories:
+          !isForumType && values.acceptsFiles ? values.allowedMimeCategories : [],
         isAllGroups: values.targetMode === "all",
         groupIds: values.targetMode === "groups" ? values.groupIds.map(Number) : [],
       };
@@ -178,6 +195,54 @@ export function AssignmentForm({
           )}
         />
       </FormField>
+
+      <fieldset className="rounded-lg border border-border p-4">
+        <legend className="px-1 text-sm font-medium">Type</legend>
+        <div className="mt-2 flex flex-col gap-2">
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input type="radio" value="STANDARD" {...register("type")} className="size-4" />
+            Standard — students submit a private response (optional file uploads)
+          </label>
+          <label className="inline-flex items-center gap-2 text-sm">
+            <input type="radio" value="FORUM" {...register("type")} className="size-4" />
+            Forum — students post a response and can see their group-mates&apos; responses
+          </label>
+        </div>
+        {isForum && (
+          <div className="mt-4 flex flex-col gap-4">
+            <FormField
+              label="Minimum words"
+              description="Students must write at least this many words to post."
+              error={errors.forumMinWords?.message}
+            >
+              <Input
+                type="number"
+                min={0}
+                max={2000}
+                {...register("forumMinWords", { valueAsNumber: true })}
+              />
+            </FormField>
+            <Controller
+              control={control}
+              name="forumAllowComments"
+              render={({ field }) => (
+                <label className="flex items-center justify-between gap-3 text-sm">
+                  <span className="flex flex-col">
+                    <span className="font-medium">Allow peer comments</span>
+                    <span className="text-muted-foreground">
+                      Let students comment on each other&apos;s responses.
+                    </span>
+                  </span>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </label>
+              )}
+            />
+          </div>
+        )}
+      </fieldset>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <FormField label="Due date" error={errors.date?.message}>
@@ -222,6 +287,7 @@ export function AssignmentForm({
         />
       </FormField>
 
+      {!isForum && (
       <fieldset className="rounded-lg border border-border p-4">
         <legend className="px-1 text-sm font-medium">File submissions</legend>
         <label className="mt-2 inline-flex items-center gap-2 text-sm">
@@ -255,6 +321,7 @@ export function AssignmentForm({
           </div>
         )}
       </fieldset>
+      )}
 
       <fieldset className="rounded-lg border border-border p-4">
         <legend className="px-1 text-sm font-medium">Assign to</legend>

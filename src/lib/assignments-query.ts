@@ -62,6 +62,9 @@ export interface AssignmentDetailData {
   description: string | null;
   dueAt: Date | null;
   isAllGroups: boolean;
+  type: "STANDARD" | "FORUM";
+  forumMinWords: number | null;
+  forumAllowComments: boolean;
   maxFileSizeMb: number | null;
   allowedMimeCategories: string[];
   groupIds: number[];
@@ -80,6 +83,9 @@ export async function loadAssignmentById(id: number): Promise<AssignmentDetailDa
       description: true,
       dueAt: true,
       isAllGroups: true,
+      type: true,
+      forumMinWords: true,
+      forumAllowComments: true,
       maxFileSizeMb: true,
       allowedMimeCategories: true,
       targets: { select: { groupId: true } },
@@ -97,6 +103,9 @@ export async function loadAssignmentById(id: number): Promise<AssignmentDetailDa
     description: a.description,
     dueAt: a.dueAt,
     isAllGroups: a.isAllGroups,
+    type: a.type,
+    forumMinWords: a.forumMinWords,
+    forumAllowComments: a.forumAllowComments,
     maxFileSizeMb: a.maxFileSizeMb,
     allowedMimeCategories: a.allowedMimeCategories,
     groupIds: a.targets.map((t) => t.groupId),
