@@ -22,6 +22,8 @@ import { CheckInQr } from "@/components/sessions/check-in-qr";
 import { CheckInAttendanceList } from "@/components/sessions/check-in-attendance-list";
 import { CreateQuizForm } from "@/components/quizzes/create-quiz-form";
 import { listQuizzesForSession } from "@/lib/quiz-query";
+import { VideoQuestionsEditor } from "@/components/sessions/video-questions-editor";
+import { listVideoQuestions } from "@/lib/video-quiz-query";
 
 interface PageProps {
   params: Promise<{ code: string; id: string }>;
@@ -58,6 +60,7 @@ export default async function SessionDetailPage({ params }: PageProps) {
     : null;
 
   const quizzes = await listQuizzesForSession(session.id);
+  const videoQuestions = await listVideoQuestions(session.id);
 
   const enrollments = await db.seasonEnrollment.findMany({
     where: { seasonId: season.id, status: "ACTIVE" },
@@ -154,6 +157,22 @@ export default async function SessionDetailPage({ params }: PageProps) {
                 </li>
               ))}
             </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Interactive video questions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Video questions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {session.youtubeUrl ? (
+            <VideoQuestionsEditor sessionId={session.id} questions={videoQuestions} />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Add a video URL to this session (via Edit) to place timed questions.
+            </p>
           )}
         </CardContent>
       </Card>

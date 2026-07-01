@@ -132,6 +132,10 @@ model User {
 
   forumCommentsAuthored ForumComment[] @relation("ForumCommentAuthor")
 
+  videoQuestionsCreated SessionVideoQuestion[]         @relation("VideoQuestionCreatedBy")
+  videoResponses        SessionVideoQuestionResponse[] @relation("VideoResponseStudent")
+  videoProgress         SessionVideoProgress[]         @relation("VideoProgressStudent")
+
   @@index([role])
   @@index([deletedAt])
 }
@@ -331,12 +335,62 @@ model Session {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  attendance  Attendance[]
-  assignments Assignment[]
-  quizzes     Quiz[]
+  attendance     Attendance[]
+  assignments    Assignment[]
+  quizzes        Quiz[]
+  videoQuestions SessionVideoQuestion[]
+  videoProgress  SessionVideoProgress[]
 
   @@index([seasonId, startsAt])
   @@index([recurrenceGroupId])
+}
+
+// Interactive video quizzes: admin places timed MCQ questions on a session's
+// video; students answer inline while watching (graded, gated, no retries).
+model SessionVideoQuestion {
+  id           Int      @id @default(autoincrement())
+  sessionId    Int
+  session      Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  atSeconds    Int
+  prompt       String
+  options      String[]
+  correctIndex Int
+  points       Int      @default(1)
+  createdById  Int?
+  createdBy    User?    @relation("VideoQuestionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  responses SessionVideoQuestionResponse[]
+
+  @@index([sessionId, atSeconds])
+}
+
+model SessionVideoQuestionResponse {
+  id            Int                  @id @default(autoincrement())
+  questionId    Int
+  question      SessionVideoQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  studentUserId Int
+  studentUser   User                 @relation("VideoResponseStudent", fields: [studentUserId], references: [id], onDelete: Restrict)
+  selectedIndex Int
+  isCorrect     Boolean
+  answeredAt    DateTime             @default(now())
+
+  @@unique([questionId, studentUserId])
+  @@index([studentUserId])
+}
+
+model SessionVideoProgress {
+  id              Int       @id @default(autoincrement())
+  sessionId       Int
+  session         Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentUserId   Int
+  studentUser     User      @relation("VideoProgressStudent", fields: [studentUserId], references: [id], onDelete: Restrict)
+  furthestSeconds Int       @default(0)
+  completedAt     DateTime?
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([sessionId, studentUserId])
 }
 
 model Attendance {
