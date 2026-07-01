@@ -113,6 +113,21 @@ export async function canMarkAttendance(
   return groupInSeason !== null;
 }
 
+// Authoring/managing interactive video questions on a session. Season-scoped
+// ADMIN + SUPER only (not group LEADER), matching the assignment authoring gate.
+export async function canManageSessionVideo(
+  user: SessionUser,
+  sessionId: number,
+): Promise<boolean> {
+  if (isSuper(user)) return true;
+  const session = await db.session.findUnique({
+    where: { id: sessionId },
+    select: { seasonId: true },
+  });
+  if (!session) return false;
+  return isAdminOfSeason(user, session.seasonId);
+}
+
 export async function canViewSubmission(
   user: SessionUser,
   submissionId: number,

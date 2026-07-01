@@ -7,8 +7,11 @@ import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { loadSessionById } from "@/lib/sessions-query";
+import { loadStudentVideoQuiz } from "@/lib/video-quiz-query";
+import { parseYouTubeId } from "@/lib/youtube";
 import { Badge } from "@/components/ui/badge";
 import { StudentCheckinButton } from "@/components/sessions/student-checkin-button";
+import { InteractiveVideoPlayer } from "@/components/sessions/interactive-video-player";
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -41,6 +44,10 @@ export default async function StudentSessionPage({ params }: PageProps) {
   );
   const isOnline = Boolean(session.youtubeUrl);
 
+  const videoId = session.youtubeUrl ? parseYouTubeId(session.youtubeUrl) : null;
+  const quiz = videoId ? await loadStudentVideoQuiz(session.id, user.userId) : null;
+  const hasInteractiveVideo = videoId !== null && quiz !== null && quiz.questions.length > 0;
+
   return (
     <div className="flex flex-col gap-3 md:gap-4">
       {/* Header */}
@@ -65,17 +72,21 @@ export default async function StudentSessionPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* YouTube button */}
-      {session.youtubeUrl && (
-        <a
-          href={session.youtubeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-lg bg-brand-teal-600 px-4 py-3 text-sm font-bold text-white shadow-[0_2px_8px_rgba(93,185,188,0.35)] transition-colors hover:bg-brand-teal-700"
-        >
-          <Video className="size-4 shrink-0" />
-          Watch recording
-        </a>
+      {/* Interactive video quiz, or a plain link when there are no questions */}
+      {hasInteractiveVideo && videoId && quiz ? (
+        <InteractiveVideoPlayer sessionId={session.id} videoId={videoId} quiz={quiz} />
+      ) : (
+        session.youtubeUrl && (
+          <a
+            href={session.youtubeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-lg bg-brand-teal-600 px-4 py-3 text-sm font-bold text-white shadow-[0_2px_8px_rgba(93,185,188,0.35)] transition-colors hover:bg-brand-teal-700"
+          >
+            <Video className="size-4 shrink-0" />
+            Watch recording
+          </a>
+        )
       )}
 
       {/* Details card */}
