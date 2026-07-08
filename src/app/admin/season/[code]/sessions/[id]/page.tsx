@@ -139,9 +139,13 @@ export default async function SessionDetailPage({ params }: PageProps) {
 
       {/* Quizzes */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <CardTitle className="text-base">Quizzes</CardTitle>
-          <CreateQuizForm sessionId={session.id} seasonId={season.id} />
+          <CreateQuizForm
+            sessionId={session.id}
+            seasonId={season.id}
+            seasonCode={season.code}
+          />
         </CardHeader>
         <CardContent>
           {quizzes.length === 0 ? (
@@ -150,10 +154,42 @@ export default async function SessionDetailPage({ params }: PageProps) {
             <ul className="flex flex-col divide-y divide-border">
               {quizzes.map((q) => (
                 <li key={q.id} className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
-                  <div>
-                    <p className="text-sm font-semibold text-brand-navy-900 dark:text-foreground">{q.title}</p>
-                    <p className="text-xs text-muted-foreground">Max score: {q.maxScore} · {q.gradedCount} graded</p>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="truncate text-sm font-semibold text-brand-navy-900 dark:text-foreground">{q.title}</p>
+                      <Badge variant={q.kind === "ONLINE" ? "teal" : "outline"}>
+                        {q.kind === "ONLINE" ? "Online" : "Paper"}
+                      </Badge>
+                      {q.kind === "ONLINE" && (
+                        <Badge variant={q.publishedAt ? "outline" : "warning"}>
+                          {q.publishedAt ? "Published" : "Draft"}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {q.kind === "ONLINE"
+                        ? `${q.questionCount} question${q.questionCount === 1 ? "" : "s"} · ${q.maxScore} pts`
+                        : `Max score: ${q.maxScore} · ${q.gradedCount} graded`}
+                    </p>
                   </div>
+                  {q.kind === "ONLINE" && (
+                    <div className="flex shrink-0 gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        render={<Link href={`/admin/season/${season.code}/quizzes/${q.id}/edit`} />}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        render={<Link href={`/admin/season/${season.code}/quizzes/${q.id}/grade`} />}
+                      >
+                        Grade
+                      </Button>
+                    </div>
+                  )}
                 </li>
               ))}
             </ul>
