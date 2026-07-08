@@ -86,6 +86,7 @@ function UserMenu({ role, userName, initials, avatarUrl, signOutAction }: UserMe
             </MenuPrimitive.Item>
             <MenuPrimitive.Item
               closeOnClick={false}
+              nativeButton
               render={
                 <button
                   type="button"
@@ -99,7 +100,7 @@ function UserMenu({ role, userName, initials, avatarUrl, signOutAction }: UserMe
             </MenuPrimitive.Item>
             <MenuPrimitive.Separator className="my-1 h-px bg-border" />
             <form action={signOutAction}>
-              <MenuPrimitive.Item render={<button type="submit" className={itemClass} />}>
+              <MenuPrimitive.Item nativeButton render={<button type="submit" className={itemClass} />}>
                 <LogOut className="size-4" />
                 Sign out
               </MenuPrimitive.Item>
