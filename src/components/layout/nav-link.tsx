@@ -19,6 +19,7 @@ import {
   Settings,
   Sparkles,
   User,
+  UserCheck,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -45,6 +46,7 @@ const iconMap: Record<NavIconName, LucideIcon> = {
   quizzes: PenLine,
   more: MoreHorizontal,
   settings: Settings,
+  applications: UserCheck,
 };
 
 interface NavLinkProps {

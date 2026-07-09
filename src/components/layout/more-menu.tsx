@@ -15,6 +15,7 @@ import {
   Settings,
   Sparkles,
   User,
+  UserCheck,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -45,6 +46,7 @@ const iconMap: Record<NavIconName, LucideIcon> = {
   quizzes: PenLine,
   more: MoreHorizontal,
   settings: Settings,
+  applications: UserCheck,
 };
 
 type RoleColor = "super" | "admin" | "leader" | "mentor" | "student";
@@ -58,7 +60,7 @@ const roleColor: Record<SessionUser["role"], RoleColor> = {
 
 async function signOutAction() {
   "use server";
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirectTo: "/" });
 }
 
 function extraItemsFor(user: SessionUser): NavItem[] {

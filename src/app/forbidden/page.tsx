@@ -8,7 +8,7 @@ export const metadata = { title: "Forbidden — JPC Space" };
 
 async function signOutAction() {
   "use server";
-  await signOut({ redirectTo: "/login" });
+  await signOut({ redirectTo: "/" });
 }
 
 export default function ForbiddenPage() {

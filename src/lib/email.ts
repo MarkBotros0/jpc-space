@@ -157,3 +157,54 @@ export async function sendNotificationEmail(
     html: renderShell(title, "Jesus Project Community", bodyHtml),
   });
 }
+
+export async function sendRejectionEmail(
+  email: string,
+  name: string,
+  note?: string,
+): Promise<void> {
+  const body = `
+    <p style="font-size: 16px; color: ${TEXT}; line-height: 1.6; margin: 0 0 20px 0;">
+      Dear <strong>${name}</strong>,
+    </p>
+    <p style="font-size: 16px; color: ${TEXT}; line-height: 1.6; margin: 0 0 20px 0;">
+      Thank you for your interest in joining JPC. After careful review, we are unable to move forward with your application at this time.
+    </p>
+    ${
+      note
+        ? `<div style="background-color: ${TEAL_FAINT}; border-left: 4px solid ${TEAL}; padding: 15px; border-radius: 5px; margin: 25px 0;">
+        <p style="font-size: 14px; color: ${NAVY_DARK}; margin: 0 0 8px 0; font-weight: bold;">Note from the team</p>
+        <p style="font-size: 14px; color: ${NAVY}; margin: 0; line-height: 1.5;">${note}</p>
+      </div>`
+        : ""
+    }
+    <p style="font-size: 14px; color: ${MUTED}; line-height: 1.6; margin: 25px 0 0 0;">
+      We encourage you to apply again in a future season. God bless you.
+    </p>`;
+
+  const transporter = getTransporter();
+  await transporter.sendMail({
+    from: fromAddress(),
+    to: email,
+    subject: "JPC Space — Application Update",
+    html: renderShell("Application Update", "Jesus Project Community", body),
+  });
+}
+
+export async function sendNewsletterConfirmation(email: string): Promise<void> {
+  const body = `
+    <p style="font-size: 16px; color: ${TEXT}; line-height: 1.6; margin: 0 0 20px 0;">
+      You've been successfully subscribed to JPC Space news and updates. We'll keep you informed about upcoming seasons, events, and community news.
+    </p>
+    <p style="font-size: 14px; color: ${MUTED}; line-height: 1.6; margin: 25px 0 0 0; text-align: center;">
+      If you didn't subscribe, you can safely ignore this email.
+    </p>`;
+
+  const transporter = getTransporter();
+  await transporter.sendMail({
+    from: fromAddress(),
+    to: email,
+    subject: "JPC Space — You're subscribed!",
+    html: renderShell("Subscribed to JPC News", "Jesus Project Community", body),
+  });
+}

@@ -155,6 +155,9 @@ model User {
   videoResponses        SessionVideoQuestionResponse[] @relation("VideoResponseStudent")
   videoProgress         SessionVideoProgress[]         @relation("VideoProgressStudent")
 
+  applicationsReviewed Application[] @relation("ApplicationReviewedBy")
+  jpcPostsCreated      JpcPost[]     @relation("JpcPostCreatedBy")
+
   @@index([role])
   @@index([deletedAt])
 }
@@ -249,6 +252,7 @@ model Season {
   activeForStudents StudentProfile[]   @relation("StudentActiveSeason")
   engagementNotes   EngagementNote[]
   quizzes           Quiz[]
+  applications      Application[]
 
   @@index([status])
   @@index([startDate])
@@ -739,4 +743,68 @@ model JpcEvent {
   createdBy User? @relation("JpcEventCreator", fields: [createdById], references: [id], onDelete: SetNull)
 
   @@index([date])
+}
+
+// ---------------------------------------------------------------------------
+// Public site — applications, posts, newsletter
+// ---------------------------------------------------------------------------
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+model Application {
+  id                  Int               @id @default(autoincrement())
+  fullName            String
+  email               String
+  phone               String
+  dateOfBirth         DateTime
+  university          String
+  yearOfStudy         String
+  spiritualBackground String
+  whyJoin             String
+  howHeard            String
+  photoPath           String?
+  status              ApplicationStatus @default(PENDING)
+  targetSeasonId      Int?
+  targetSeason        Season?           @relation(fields: [targetSeasonId], references: [id], onDelete: SetNull)
+  reviewedById        Int?
+  reviewedBy          User?             @relation("ApplicationReviewedBy", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt          DateTime?
+  rejectionNote       String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+
+model JpcPost {
+  id             Int        @id @default(autoincrement())
+  title          String
+  titleAr        String?
+  body           String
+  bodyAr         String?
+  coverImagePath String?
+  status         PostStatus @default(DRAFT)
+  publishedAt    DateTime?
+  createdById    Int?
+  createdBy      User?      @relation("JpcPostCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([status, publishedAt])
+}
+
+model NewsletterSubscriber {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  subscribedAt DateTime @default(now())
 }
