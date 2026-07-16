@@ -23,12 +23,14 @@ const entrySchema = z.object({
     AttendanceStatus.LATE,
   ]),
   notes: z.string().max(500).optional().nullable(),
+  lateMinutes: z.number().int().min(0).max(600).optional().nullable(),
 });
 
 export interface AttendanceEntryInput {
   studentUserId: number;
   status: AttendanceStatus;
   notes?: string | null;
+  lateMinutes?: number | null;
 }
 
 export async function saveAttendanceAction(
@@ -53,6 +55,7 @@ export async function saveAttendanceAction(
         update: {
           status: e.status,
           notes: e.notes ?? null,
+          lateMinutes: e.status === AttendanceStatus.LATE ? (e.lateMinutes ?? null) : null,
           markedById: user.userId,
           markedAt: new Date(),
         },
@@ -61,6 +64,7 @@ export async function saveAttendanceAction(
           studentUserId: e.studentUserId,
           status: e.status,
           notes: e.notes ?? null,
+          lateMinutes: e.status === AttendanceStatus.LATE ? (e.lateMinutes ?? null) : null,
           markedById: user.userId,
         },
       }),
@@ -159,7 +163,6 @@ export async function checkInByTokenAction(token: string): Promise<CheckInResult
       seasonId: true,
       checkInOpenAt: true,
       checkInClosedAt: true,
-      season: { select: { lateThresholdMinutes: true } },
     },
   });
 
@@ -206,8 +209,7 @@ export async function checkInByTokenAction(token: string): Promise<CheckInResult
     0,
     Math.floor((now.getTime() - session.checkInOpenAt.getTime()) / 60_000),
   );
-  const status: "PRESENT" | "LATE" =
-    minutesLate > session.season.lateThresholdMinutes ? "LATE" : "PRESENT";
+  const status: "PRESENT" | "LATE" = minutesLate > 0 ? "LATE" : "PRESENT";
 
   await db.attendance.upsert({
     where: {
@@ -221,12 +223,14 @@ export async function checkInByTokenAction(token: string): Promise<CheckInResult
       studentUserId: user.userId,
       status,
       checkedInAt: now,
+      lateMinutes: status === "LATE" ? minutesLate : null,
       markedById: user.userId,
       markedAt: now,
     },
     update: {
       status,
       checkedInAt: now,
+      lateMinutes: status === "LATE" ? minutesLate : null,
     },
   });
 
@@ -244,6 +248,7 @@ const overrideSchema = z.object({
     AttendanceStatus.LATE,
   ]),
   notes: z.string().max(500).optional().nullable(),
+  lateMinutes: z.number().int().min(0).max(600).optional().nullable(),
 });
 
 export async function manualOverrideAction(
@@ -268,12 +273,16 @@ export async function manualOverrideAction(
       studentUserId: parsed.data.studentUserId,
       status: parsed.data.status,
       notes: parsed.data.notes ?? null,
+      lateMinutes:
+        parsed.data.status === AttendanceStatus.LATE ? (parsed.data.lateMinutes ?? null) : null,
       markedById: user.userId,
       markedAt: new Date(),
     },
     update: {
       status: parsed.data.status,
       notes: parsed.data.notes ?? null,
+      lateMinutes:
+        parsed.data.status === AttendanceStatus.LATE ? (parsed.data.lateMinutes ?? null) : null,
       markedById: user.userId,
       markedAt: new Date(),
     },

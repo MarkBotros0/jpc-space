@@ -6,6 +6,7 @@ import { Check, X, Clock, AlertCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { AttendanceStatus } from "@/generated/prisma/enums";
 import { saveAttendanceAction, type AttendanceEntryInput } from "@/lib/attendance-actions";
 import type { AttendanceRosterEntry } from "@/lib/sessions-query";
@@ -35,11 +36,22 @@ export function AttendanceForm({ sessionId, roster, returnHref }: AttendanceForm
   const [statuses, setStatuses] = React.useState<Map<number, AttendanceStatus | null>>(
     () => new Map(roster.map((r) => [r.studentUserId, r.status])),
   );
+  const [lateMins, setLateMins] = React.useState<Map<number, string>>(
+    () => new Map(roster.map((r) => [r.studentUserId, r.lateMinutes != null ? String(r.lateMinutes) : ""])),
+  );
 
   function setStatus(studentUserId: number, status: AttendanceStatus) {
     setStatuses((prev) => {
       const next = new Map(prev);
       next.set(studentUserId, status);
+      return next;
+    });
+  }
+
+  function setLateMinutes(studentUserId: number, val: string) {
+    setLateMins((prev) => {
+      const next = new Map(prev);
+      next.set(studentUserId, val);
       return next;
     });
   }
@@ -56,7 +68,14 @@ export function AttendanceForm({ sessionId, roster, returnHref }: AttendanceForm
     setError(null);
     const entries: AttendanceEntryInput[] = [];
     for (const [studentUserId, status] of statuses) {
-      if (status) entries.push({ studentUserId, status, notes: null });
+      if (!status) continue;
+      const entry: AttendanceEntryInput = { studentUserId, status, notes: null };
+      if (status === AttendanceStatus.LATE) {
+        const raw = (lateMins.get(studentUserId) ?? "").trim();
+        const n = raw === "" ? null : Number(raw);
+        entry.lateMinutes = n !== null && Number.isFinite(n) && n >= 0 ? Math.floor(n) : null;
+      }
+      entries.push(entry);
     }
     if (entries.length === 0) {
       setError("Mark at least one student before saving.");
@@ -144,6 +163,26 @@ export function AttendanceForm({ sessionId, roster, returnHref }: AttendanceForm
                   })}
                 </div>
               </div>
+              {current === AttendanceStatus.LATE && (
+                <div className="mt-2 flex items-center gap-2">
+                  <label
+                    htmlFor={`late-${r.studentUserId}`}
+                    className="text-xs font-medium text-muted-foreground"
+                  >
+                    Minutes late
+                  </label>
+                  <Input
+                    id={`late-${r.studentUserId}`}
+                    type="number"
+                    min={0}
+                    max={600}
+                    value={lateMins.get(r.studentUserId) ?? ""}
+                    onChange={(e) => setLateMinutes(r.studentUserId, e.target.value)}
+                    disabled={pending}
+                    className="h-9 w-24"
+                  />
+                </div>
+              )}
             </li>
           );
         })}
