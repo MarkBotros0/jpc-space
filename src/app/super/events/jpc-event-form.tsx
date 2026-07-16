@@ -86,6 +86,35 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium" htmlFor="endDate">
+            End date <span className="text-muted-foreground">(optional)</span>
+          </label>
+          <Input
+            id="endDate"
+            name="endDate"
+            type="date"
+            defaultValue={event?.endDate ? format(event.endDate, "yyyy-MM-dd") : ""}
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium" htmlFor="endTime">
+            End time <span className="text-muted-foreground">(optional)</span>
+          </label>
+          <Input
+            id="endTime"
+            name="endTime"
+            type="time"
+            defaultValue={
+              event?.endDate && (event.endDate.getHours() !== 0 || event.endDate.getMinutes() !== 0)
+                ? format(event.endDate, "HH:mm")
+                : ""
+            }
+          />
+        </div>
+      </div>
+
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium" htmlFor="url">Link (optional)</label>
         <Input

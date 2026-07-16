@@ -729,6 +729,7 @@ model JpcEvent {
   id          Int           @id @default(autoincrement())
   title       String
   date        DateTime
+  endDate     DateTime?
   url         String?
   visibility  JpcVisibility @default(ALL)
   createdById Int?
