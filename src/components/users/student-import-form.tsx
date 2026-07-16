@@ -21,6 +21,8 @@ import {
   previewStudentImportAction,
   commitStudentImportAction,
 } from "@/lib/student-import-actions";
+import { sendInvitesAction } from "@/lib/invite-actions";
+import { toast } from "sonner";
 import type {
   ImportPreview,
   ImportPreviewRow,
@@ -57,6 +59,8 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
   const [previewing, setPreviewing] = React.useState(false);
   const [committing, setCommitting] = React.useState(false);
   const [result, setResult] = React.useState<ImportCommitResult | null>(null);
+  const [inviting, setInviting] = React.useState(false);
+  const [invited, setInvited] = React.useState(false);
 
   if (seasons.length === 0) {
     return (
@@ -72,6 +76,7 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
     setFile(files[0] ?? null);
     setPreview(null);
     setResult(null);
+    setInvited(false);
     setError(null);
   }
 
@@ -108,10 +113,33 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
       return;
     }
     setResult(res.result);
+    setInvited(false);
     setPreview(null);
     setFile(null);
     router.refresh();
   }
+
+  async function sendInvitesForBatch() {
+    if (!result) return;
+    const ids = result.rows
+      .filter((r) => r.outcome === "created" && typeof r.userId === "number")
+      .map((r) => r.userId as number);
+    if (ids.length === 0) return;
+    setInviting(true);
+    const res = await sendInvitesAction(ids);
+    setInviting(false);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    setInvited(true);
+    toast.success(`Invites sent: ${res.sent}${res.failed ? ` · ${res.failed} failed` : ""}`);
+    router.refresh();
+  }
+
+  const seasonItems: Record<string, string> = Object.fromEntries(
+    seasons.map((s) => [String(s.id), s.title]),
+  );
 
   const columns: DataTableColumn<ImportPreviewRow>[] = [
     { key: "row", header: "Row", cell: (r) => <span className="tabular-nums text-muted-foreground">{r.rowNumber}</span> },
@@ -144,6 +172,11 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
               <p className="text-success-700 dark:text-success-300">
                 {result.created} created · {result.skipped} skipped · {result.failed} failed
               </p>
+              {result.created > 0 && !invited ? (
+                <p className="mt-1 text-success-700 dark:text-success-300">
+                  Invites haven&rsquo;t been sent yet — send them below when you&rsquo;re ready.
+                </p>
+              ) : null}
             </div>
           </div>
           {result.rows.some((r) => r.outcome !== "created") ? (
@@ -158,16 +191,35 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
             </ul>
           ) : null}
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-            <Button variant="outline" onClick={() => setResult(null)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setResult(null);
+                setInvited(false);
+              }}
+            >
               Import another file
             </Button>
+            {result.created > 0 ? (
+              <Button variant="outline" onClick={sendInvitesForBatch} disabled={inviting || invited}>
+                {inviting
+                  ? "Sending…"
+                  : invited
+                    ? "Invites sent"
+                    : `Send ${result.created} invite${result.created === 1 ? "" : "s"}`}
+              </Button>
+            ) : null}
             <Button onClick={() => router.push("/super/users")}>View users</Button>
           </div>
         </div>
       ) : (
         <>
           <FormField label="Season" required>
-            <Select value={seasonId} onValueChange={(v) => setSeasonId(v as string)}>
+            <Select
+              items={seasonItems}
+              value={seasonId}
+              onValueChange={(v) => setSeasonId(v as string)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Choose the season to enroll students in" />
               </SelectTrigger>

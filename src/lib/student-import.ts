@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import { db } from "@/lib/db";
 import { UserRole, EnrollmentStatus } from "@/generated/prisma/enums";
-import { createInvite } from "@/lib/invites";
 
 export class ImportParseError extends Error {}
 
@@ -131,6 +130,7 @@ export interface CommitResultRow {
   email: string;
   outcome: CommitOutcome;
   message?: string;
+  userId?: number;
 }
 
 export interface ImportCommitResult {
@@ -152,7 +152,6 @@ function isUniqueViolation(err: unknown): boolean {
 export async function commitStudentImport(
   input: ImportCommitRow[],
   seasonId: number,
-  importedById: number,
 ): Promise<ImportCommitResult> {
   const rows: CommitResultRow[] = [];
 
@@ -188,13 +187,7 @@ export async function commitStudentImport(
         return user;
       });
 
-      try {
-        await createInvite(created.id, importedById);
-        rows.push({ name, email, outcome: "created" });
-      } catch (err) {
-        console.error(`[student-import] invite failed for ${email}:`, err);
-        rows.push({ name, email, outcome: "created", message: "Account created, but the invite email may not have been sent." });
-      }
+      rows.push({ name, email, outcome: "created", userId: created.id });
     } catch (err) {
       if (isUniqueViolation(err)) {
         rows.push({ name, email, outcome: "skipped", message: "Already in the system." });

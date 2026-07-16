@@ -15,6 +15,7 @@ export interface UserRow {
   role: UserRole;
   lastLoginAt: Date | null;
   deletedAt: Date | null;
+  activated?: boolean;
   invitePending?: boolean;
 }
 
@@ -73,10 +74,12 @@ export function UsersList({ rows }: UsersListProps) {
       cell: (row) =>
         row.deletedAt ? (
           <Badge variant="warning">Inactive</Badge>
+        ) : row.activated ? (
+          <Badge variant="success">Active</Badge>
         ) : row.invitePending ? (
           <Badge variant="info">Invited</Badge>
         ) : (
-          <Badge variant="success">Active</Badge>
+          <Badge variant="outline">No invite</Badge>
         ),
     },
     {

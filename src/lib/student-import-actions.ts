@@ -73,7 +73,7 @@ export async function commitStudentImportAction(
   });
   if (!season) return { ok: false, error: "The selected season no longer exists." };
 
-  const result = await commitStudentImport(parsed.data.rows, season.id, user.userId);
+  const result = await commitStudentImport(parsed.data.rows, season.id);
   revalidatePath("/super/users");
   return { ok: true, result };
 }
