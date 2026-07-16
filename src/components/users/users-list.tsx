@@ -15,6 +15,7 @@ export interface UserRow {
   role: UserRole;
   lastLoginAt: Date | null;
   deletedAt: Date | null;
+  invitePending?: boolean;
 }
 
 const roleColor: Record<UserRole, "super" | "admin" | "leader" | "mentor" | "student"> = {
@@ -72,6 +73,8 @@ export function UsersList({ rows }: UsersListProps) {
       cell: (row) =>
         row.deletedAt ? (
           <Badge variant="warning">Inactive</Badge>
+        ) : row.invitePending ? (
+          <Badge variant="info">Invited</Badge>
         ) : (
           <Badge variant="success">Active</Badge>
         ),

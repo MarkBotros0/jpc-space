@@ -21,8 +21,19 @@ export default async function SuperUsersPage() {
       role: true,
       lastLoginAt: true,
       deletedAt: true,
+      passwordHash: true,
     },
   });
+
+  const rows = users.map((u) => ({
+    id: u.id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+    lastLoginAt: u.lastLoginAt,
+    deletedAt: u.deletedAt,
+    invitePending: u.passwordHash === null && u.lastLoginAt === null,
+  }));
 
   return (
     <div className="flex flex-col gap-4">
@@ -31,9 +42,12 @@ export default async function SuperUsersPage() {
           <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Users</h1>
           <p className="mt-1 text-sm text-muted-foreground">{users.filter((u) => !u.deletedAt).length} active · {users.length} total</p>
         </div>
-        <Button render={<Link href="/super/users/new" />}>New user</Button>
+        <div className="flex gap-2">
+          <Button variant="outline" render={<Link href="/super/users/import" />}>Import students</Button>
+          <Button render={<Link href="/super/users/new" />}>New user</Button>
+        </div>
       </div>
-      <UsersList rows={users} />
+      <UsersList rows={rows} />
     </div>
   );
 }
