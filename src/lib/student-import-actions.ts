@@ -49,7 +49,23 @@ export async function previewStudentImportAction(formData: FormData): Promise<Pr
 const commitSchema = z.object({
   seasonId: z.number().int().positive(),
   rows: z
-    .array(z.object({ name: z.string(), email: z.string() }))
+    .array(
+      z.object({
+        name: z.string(),
+        email: z.string(),
+        profile: z
+          .object({
+            phone: z.string().optional(),
+            university: z.string().optional(),
+            year: z.string().optional(),
+            dateOfBirth: z.string().optional(),
+            spiritualBackground: z.string().optional(),
+            gifts: z.string().optional(),
+            notes: z.string().optional(),
+          })
+          .optional(),
+      }),
+    )
     .min(1)
     .max(2000),
 });

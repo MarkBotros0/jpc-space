@@ -12,7 +12,7 @@ Bulk-create student accounts from a spreadsheet instead of one at a time. This d
 |---|---|---|
 | Who can run it | **SUPER only** | Creating `User` rows is `canManageUsers` → SUPER-only. Import writes to the global user table, so it stays SUPER-scoped. |
 | File formats | **CSV and .xlsx** | Parsed server-side with `exceljs` (one dependency reads both). |
-| Columns | **`name`, `email`** (header row, case-insensitive) | Students only; role fixed to `STUDENT`. |
+| Columns | **`name`, `email` required**; optional `Mobile No`/`phone`, `University`, `Year`, `Date of birth`, `Spiritual background`, `Gifts`, `Notes` (header row, case-insensitive, aliased) | Students only; role fixed to `STUDENT`. Optional columns map to `StudentProfile` fields; unknown columns are ignored. |
 | Identity / dedup key | **`email`** (`User.email @unique`) | The only unique identifier in the schema; reliable for this cohort. |
 | Activation | **Invite token**, sent as a **separate step** (reuse `createInvite`) | Import creates the profile only; it does **not** email anyone. Invites are issued afterwards (see below) so a SUPER can review the batch first. Student sets their own password via `/accept-invite`; 72h expiry. `passwordHash` stays `null` until accepted, so the account cannot be logged into before activation. |
 | Season placement | **One season for the whole batch** | SUPER picks it in the UI. |

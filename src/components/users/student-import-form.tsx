@@ -101,7 +101,7 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
     if (!preview || !seasonId) return;
     const rows = preview.rows
       .filter((r) => r.status === "new")
-      .map((r) => ({ name: r.name, email: r.email }));
+      .map((r) => ({ name: r.name, email: r.email, profile: r.profile }));
     if (rows.length === 0) return;
 
     setCommitting(true);
@@ -236,7 +236,9 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
           <FormField label="Spreadsheet" required>
             <FileUpload accept=".csv,.xlsx" maxSizeMb={5} onFilesChange={onFilesChange} />
             <p className="mt-1 text-xs text-muted-foreground">
-              CSV or Excel with a header row containing <code>name</code> and <code>email</code> columns.
+              CSV or Excel with a header row. <code>name</code> and <code>email</code> are required.
+              Optional columns: Mobile No, University, Year, Date of birth, Spiritual background,
+              Gifts, Notes.
             </p>
           </FormField>
 
@@ -257,6 +259,9 @@ export function StudentImportForm({ seasons }: StudentImportFormProps) {
               <p className="text-sm text-muted-foreground">
                 {preview.counts.total} rows · <span className="font-medium text-success-700 dark:text-success-400">{preview.counts.new} new</span> ·{" "}
                 {preview.counts.exists} existing · {preview.counts.duplicate} duplicate · {preview.counts.invalid} invalid
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Columns detected: {preview.detectedColumns.join(", ")}
               </p>
               <DataTable columns={columns} rows={preview.rows} rowKey={(r) => r.rowNumber} />
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
