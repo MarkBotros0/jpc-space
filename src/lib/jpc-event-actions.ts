@@ -14,13 +14,25 @@ const jpcEventSchema = z.object({
   visibility: z.enum(["ALL", "ALUMNI_ONLY"]),
 });
 
+/**
+ * Combine the `date` (yyyy-MM-dd) and optional `time` (HH:mm) fields into a single
+ * datetime string. A missing time means a full-day event (midnight).
+ */
+function combineDateTime(formData: FormData): string {
+  const date = formData.get("date");
+  if (typeof date !== "string" || !date) return "";
+  const time = formData.get("time");
+  const hhmm = typeof time === "string" && time ? time : "00:00";
+  return `${date}T${hhmm}`;
+}
+
 export async function createJpcEventAction(formData: FormData) {
   const user = await getCurrentUserOrRedirect();
   if (!canManageUsers(user)) throw new Error("Forbidden");
 
   const parsed = jpcEventSchema.safeParse({
     title: formData.get("title"),
-    date: formData.get("date"),
+    date: combineDateTime(formData),
     url: formData.get("url"),
     visibility: formData.get("visibility"),
   });
@@ -50,7 +62,7 @@ export async function updateJpcEventAction(id: number, formData: FormData) {
 
   const parsed = jpcEventSchema.safeParse({
     title: formData.get("title"),
-    date: formData.get("date"),
+    date: combineDateTime(formData),
     url: formData.get("url"),
     visibility: formData.get("visibility"),
   });

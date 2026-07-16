@@ -58,15 +58,32 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
         />
       </div>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-sm font-medium" htmlFor="date">Date</label>
-        <Input
-          id="date"
-          name="date"
-          type="date"
-          defaultValue={event ? format(event.date, "yyyy-MM-dd") : ""}
-          required
-        />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium" htmlFor="date">Date</label>
+          <Input
+            id="date"
+            name="date"
+            type="date"
+            defaultValue={event ? format(event.date, "yyyy-MM-dd") : ""}
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium" htmlFor="time">
+            Time <span className="text-muted-foreground">(optional)</span>
+          </label>
+          <Input
+            id="time"
+            name="time"
+            type="time"
+            defaultValue={
+              event && (event.date.getHours() !== 0 || event.date.getMinutes() !== 0)
+                ? format(event.date, "HH:mm")
+                : ""
+            }
+          />
+        </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
