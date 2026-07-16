@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Pencil } from "lucide-react";
 
 import { SeasonStatus } from "@/generated/prisma/enums";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
@@ -24,6 +24,8 @@ interface SeasonsListProps {
   emptyTitle?: string;
   emptyDescription?: string;
   emptyAction?: React.ReactNode;
+  /** When provided, an edit (pencil) action is shown per row linking here. */
+  getEditHref?: (row: SeasonRow) => string;
 }
 
 export function SeasonsList({
@@ -32,6 +34,7 @@ export function SeasonsList({
   emptyTitle = "No seasons yet",
   emptyDescription = "Create your first season to get started.",
   emptyAction,
+  getEditHref,
 }: SeasonsListProps) {
   const columns: DataTableColumn<SeasonRow>[] = [
     {
@@ -70,6 +73,26 @@ export function SeasonsList({
       header: "Groups",
       cell: (row) => row.groupCount,
     },
+    ...(getEditHref
+      ? [
+          {
+            key: "actions",
+            header: "",
+            className: "w-px text-right",
+            cell: (row: SeasonRow) => (
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                render={
+                  <Link href={getEditHref(row)} aria-label={`Edit ${row.title}`} />
+                }
+              >
+                <Pencil className="size-4" />
+              </Button>
+            ),
+          } satisfies DataTableColumn<SeasonRow>,
+        ]
+      : []),
   ];
 
   return (

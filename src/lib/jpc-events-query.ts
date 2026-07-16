@@ -5,6 +5,7 @@ export interface JpcEventRow {
   id: number;
   title: string;
   date: Date;
+  endDate: Date | null;
   url: string | null;
   visibility: JpcVisibility;
   createdById: number | null;
@@ -20,6 +21,7 @@ export async function listJpcEvents(opts: {
       id: true,
       title: true,
       date: true,
+      endDate: true,
       url: true,
       visibility: true,
       createdById: true,
