@@ -52,6 +52,7 @@ export default async function SuperSeasonsPage() {
         rows={rows}
         basePath="/super/seasons"
         emptyAction={<SeasonCreateButton />}
+        getEditHref={(r) => `/super/seasons/${r.code}/edit`}
       />
     </div>
   );
