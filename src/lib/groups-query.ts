@@ -106,3 +106,45 @@ export async function listStudentsForPicker(seasonId: number): Promise<UserPicke
     orderBy: { name: "asc" },
   });
 }
+
+export interface GroupSelectOption {
+  id: number;
+  name: string;
+}
+
+export async function listGroupsForSelect(seasonId: number): Promise<GroupSelectOption[]> {
+  return db.group.findMany({
+    where: { seasonId },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
+}
+
+export interface RosterStudent {
+  userId: number;
+  name: string | null;
+  email: string;
+  groupId: number | null;
+}
+
+export async function listSeasonRoster(seasonId: number): Promise<RosterStudent[]> {
+  const students = await db.studentProfile.findMany({
+    where: { activeSeasonId: seasonId, deletedAt: null, user: { deletedAt: null } },
+    select: { userId: true, user: { select: { name: true, email: true } } },
+    orderBy: { user: { name: "asc" } },
+  });
+  if (students.length === 0) return [];
+
+  const memberships = await db.groupStudent.findMany({
+    where: { studentUserId: { in: students.map((s) => s.userId) }, group: { seasonId } },
+    select: { studentUserId: true, groupId: true },
+  });
+  const groupByStudent = new Map(memberships.map((m) => [m.studentUserId, m.groupId]));
+
+  return students.map((s) => ({
+    userId: s.userId,
+    name: s.user.name,
+    email: s.user.email,
+    groupId: groupByStudent.get(s.userId) ?? null,
+  }));
+}

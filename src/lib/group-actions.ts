@@ -180,6 +180,73 @@ export async function deleteGroupAction(groupId: number): Promise<void> {
   redirect(`/admin/season/${existing.season.code}/groups`);
 }
 
+const assignSchema = z
+  .array(
+    z.object({
+      studentUserId: z.number().int().positive(),
+      groupId: z.number().int().positive().nullable(),
+    }),
+  )
+  .max(2000);
+
+export async function assignStudentsToGroupsAction(
+  seasonId: number,
+  assignments: { studentUserId: number; groupId: number | null }[],
+): Promise<ActionResult> {
+  const user = await getCurrentUserOrRedirect();
+  if (!isAdminOfSeason(user, seasonId)) throw new ForbiddenError();
+
+  const parsed = assignSchema.safeParse(assignments);
+  if (!parsed.success) return { ok: false, error: "Invalid assignment data." };
+  if (parsed.data.length === 0) return { ok: true };
+
+  const groupIds = [
+    ...new Set(parsed.data.map((a) => a.groupId).filter((g): g is number => g !== null)),
+  ];
+  const validGroups = new Set(
+    (
+      await db.group.findMany({ where: { id: { in: groupIds }, seasonId }, select: { id: true } })
+    ).map((g) => g.id),
+  );
+  if (groupIds.some((id) => !validGroups.has(id))) {
+    return { ok: false, error: "A selected group does not belong to this season." };
+  }
+
+  // Only students whose active season is this one may be assigned here.
+  const validStudents = new Set(
+    (
+      await db.studentProfile.findMany({
+        where: { activeSeasonId: seasonId, userId: { in: parsed.data.map((a) => a.studentUserId) } },
+        select: { userId: true },
+      })
+    ).map((s) => s.userId),
+  );
+
+  await db.$transaction(
+    async (tx) => {
+      for (const a of parsed.data) {
+        if (!validStudents.has(a.studentUserId)) continue;
+        // GroupStudent.studentUserId is unique — a student is in one group at a time.
+        await tx.groupStudent.deleteMany({ where: { studentUserId: a.studentUserId } });
+        if (a.groupId !== null) {
+          await tx.groupStudent.create({
+            data: { groupId: a.groupId, studentUserId: a.studentUserId },
+          });
+        }
+        await tx.seasonEnrollment.upsert({
+          where: { studentUserId_seasonId: { studentUserId: a.studentUserId, seasonId } },
+          update: { groupId: a.groupId },
+          create: { studentUserId: a.studentUserId, seasonId, groupId: a.groupId },
+        });
+      }
+    },
+    { timeout: 20000 },
+  );
+
+  revalidatePath("/admin/season");
+  return { ok: true };
+}
+
 function zodErrors(err: z.ZodError): { ok: false; error: string; fieldErrors: Record<string, string> } {
   const fieldErrors: Record<string, string> = {};
   for (const issue of err.issues) {
