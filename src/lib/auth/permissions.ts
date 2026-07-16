@@ -59,6 +59,7 @@ export async function canAccessSeason(
   }
 
   if (user.role === "STUDENT") {
+    if (user.activeSeasonId === seasonId) return true;
     const enrollment = await db.seasonEnrollment.findUnique({
       where: { studentUserId_seasonId: { studentUserId: user.userId, seasonId } },
       select: { id: true },
