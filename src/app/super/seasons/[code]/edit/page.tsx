@@ -29,10 +29,8 @@ export default async function EditSeasonPage({ params }: PageProps) {
       status: true,
       startDate: true,
       endDate: true,
-      lateThresholdMinutes: true,
       absenceBudgetMinutes: true,
       absenceWeightMinutes: true,
-      lateWeightMinutes: true,
     },
   });
   if (!season) notFound();
@@ -58,10 +56,8 @@ export default async function EditSeasonPage({ params }: PageProps) {
               status: season.status,
               startDate: season.startDate,
               endDate: season.endDate,
-              lateThresholdMinutes: season.lateThresholdMinutes,
               absenceBudgetMinutes: season.absenceBudgetMinutes,
               absenceWeightMinutes: season.absenceWeightMinutes,
-              lateWeightMinutes: season.lateWeightMinutes,
             }}
           />
         </CardContent>

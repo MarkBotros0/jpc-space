@@ -48,9 +48,7 @@ export default async function StudentAttendancePage() {
       where: { id: seasonId },
       select: {
         absenceWeightMinutes: true,
-        lateWeightMinutes: true,
         absenceBudgetMinutes: true,
-        lateThresholdMinutes: true,
       },
     }),
     db.session.findMany({
@@ -67,6 +65,7 @@ export default async function StudentAttendancePage() {
             status: true,
             checkedInAt: true,
             markedAt: true,
+            lateMinutes: true,
           },
         },
       },
@@ -117,7 +116,7 @@ export default async function StudentAttendancePage() {
             </p>
             {season && (
               <p className="text-xs text-muted-foreground">
-                Absent = {season.absenceWeightMinutes} min · Late = {season.lateWeightMinutes} min
+                Absent = {season.absenceWeightMinutes} min · Late = actual minutes late
               </p>
             )}
           </div>
@@ -141,22 +140,14 @@ export default async function StudentAttendancePage() {
               const record = s.attendance[0] ?? null;
               const status = record?.status ?? null;
 
-              // Actual late minutes: prefer QR check-in time, fall back to marked time
-              let lateMinutes: number | null = null;
-              if (status === "LATE" && s.checkInOpenAt) {
-                const ref = record?.checkedInAt ?? record?.markedAt;
-                if (ref) {
-                  lateMinutes = Math.max(
-                    0,
-                    Math.floor((ref.getTime() - s.checkInOpenAt.getTime()) / 60_000),
-                  );
-                }
-              }
+              // Actual minutes late are recorded on the attendance row.
+              const lateMinutes: number | null =
+                status === "LATE" ? (record?.lateMinutes ?? null) : null;
 
               // Budget cost for this session
               let costMinutes: number | null = null;
               if (status === "ABSENT" && season) costMinutes = season.absenceWeightMinutes;
-              if (status === "LATE" && season) costMinutes = season.lateWeightMinutes;
+              if (status === "LATE") costMinutes = record?.lateMinutes ?? null;
 
               return (
                 <li key={s.id} className="flex items-start gap-3 px-4 py-3 last:pb-4">

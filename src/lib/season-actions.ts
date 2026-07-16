@@ -31,10 +31,8 @@ const seasonSchema = z
       SeasonStatus.COMPLETED,
       SeasonStatus.ARCHIVED,
     ]),
-    lateThresholdMinutes: z.number().int().min(1).max(120).default(15),
     absenceBudgetMinutes: z.number().int().min(1).default(180),
     absenceWeightMinutes: z.number().int().min(1).default(90),
-    lateWeightMinutes: z.number().int().min(1).default(30),
   })
   .refine((v) => isValidSeasonCode(v.code), {
     message: "Code must be lowercase letters, numbers, and dashes.",
@@ -52,10 +50,8 @@ export interface SeasonInput {
   startDate: Date | string;
   endDate: Date | string;
   status: SeasonStatus;
-  lateThresholdMinutes?: number;
   absenceBudgetMinutes?: number;
   absenceWeightMinutes?: number;
-  lateWeightMinutes?: number;
 }
 
 export async function createSeasonAction(
@@ -144,10 +140,8 @@ export async function updateSeasonAction(
       startDate: parsed.data.startDate,
       endDate: parsed.data.endDate,
       status: parsed.data.status,
-      lateThresholdMinutes: parsed.data.lateThresholdMinutes,
       absenceBudgetMinutes: parsed.data.absenceBudgetMinutes,
       absenceWeightMinutes: parsed.data.absenceWeightMinutes,
-      lateWeightMinutes: parsed.data.lateWeightMinutes,
       updatedById: user.userId,
     },
     select: { code: true },

@@ -228,10 +228,8 @@ model Season {
   status         SeasonStatus @default(DRAFT)
   coverImagePath String?
 
-  lateThresholdMinutes Int @default(15)
   absenceBudgetMinutes Int @default(180)
   absenceWeightMinutes Int @default(90)
-  lateWeightMinutes    Int @default(30)
 
   createdById Int?
   createdBy   User?     @relation("SeasonCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
@@ -424,6 +422,7 @@ model Attendance {
   markedBy      User?            @relation("AttendanceMarkedBy", fields: [markedById], references: [id], onDelete: SetNull)
   markedAt      DateTime         @default(now())
   checkedInAt   DateTime?
+  lateMinutes   Int?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 

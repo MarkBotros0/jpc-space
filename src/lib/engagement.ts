@@ -115,12 +115,11 @@ export async function computeAttendanceBudget(
     select: {
       absenceBudgetMinutes: true,
       absenceWeightMinutes: true,
-      lateWeightMinutes: true,
     },
   });
   if (!season) return null;
 
-  const [absentCount, lateCount] = await Promise.all([
+  const [absentCount, lateAgg] = await Promise.all([
     db.attendance.count({
       where: {
         studentUserId,
@@ -128,18 +127,20 @@ export async function computeAttendanceBudget(
         session: { seasonId },
       },
     }),
-    db.attendance.count({
+    db.attendance.aggregate({
       where: {
         studentUserId,
         status: "LATE",
         session: { seasonId },
       },
+      _count: { _all: true },
+      _sum: { lateMinutes: true },
     }),
   ]);
+  const lateCount = lateAgg._count._all;
+  const lateMinutesUsed = lateAgg._sum.lateMinutes ?? 0;
 
-  const minutesUsed =
-    absentCount * season.absenceWeightMinutes +
-    lateCount * season.lateWeightMinutes;
+  const minutesUsed = absentCount * season.absenceWeightMinutes + lateMinutesUsed;
 
   const budgetPct = Math.min(
     Math.round((minutesUsed / season.absenceBudgetMinutes) * 100),
@@ -178,7 +179,6 @@ export async function computeAtRiskStudents(
     select: {
       absenceBudgetMinutes: true,
       absenceWeightMinutes: true,
-      lateWeightMinutes: true,
     },
   });
   if (!season) return [];
@@ -208,21 +208,24 @@ export async function computeAtRiskStudents(
       session: { seasonId },
     },
     _count: { status: true },
+    _sum: { lateMinutes: true },
   });
 
-  const byStudent = new Map<number, { absent: number; late: number }>();
+  const byStudent = new Map<number, { absent: number; late: number; lateMinutes: number }>();
   for (const row of counts) {
-    const entry = byStudent.get(row.studentUserId) ?? { absent: 0, late: 0 };
+    const entry = byStudent.get(row.studentUserId) ?? { absent: 0, late: 0, lateMinutes: 0 };
     if (row.status === "ABSENT") entry.absent = row._count.status;
-    if (row.status === "LATE") entry.late = row._count.status;
+    if (row.status === "LATE") {
+      entry.late = row._count.status;
+      entry.lateMinutes = row._sum.lateMinutes ?? 0;
+    }
     byStudent.set(row.studentUserId, entry);
   }
 
   const results: AtRiskStudent[] = [];
   for (const e of enrollments) {
-    const { absent = 0, late = 0 } = byStudent.get(e.studentUserId) ?? {};
-    const minutesUsed =
-      absent * season.absenceWeightMinutes + late * season.lateWeightMinutes;
+    const { absent = 0, late = 0, lateMinutes = 0 } = byStudent.get(e.studentUserId) ?? {};
+    const minutesUsed = absent * season.absenceWeightMinutes + lateMinutes;
     if (minutesUsed >= season.absenceBudgetMinutes) {
       results.push({
         userId: e.studentUserId,

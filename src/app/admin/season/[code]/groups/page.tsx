@@ -35,7 +35,12 @@ export default async function AdminGroupsPage({ params }: PageProps) {
           <h1 className="text-2xl font-black text-brand-navy-900 dark:text-foreground">Groups</h1>
           <p className="mt-1 text-sm text-muted-foreground">{`${groups.length} group${groups.length === 1 ? "" : "s"} in ${season.title}`}</p>
         </div>
-        <Button render={<Link href={createHref} />}>New group</Button>
+        <div className="flex flex-wrap justify-end gap-2">
+          <Button variant="outline" render={<Link href={`/admin/season/${season.code}/roster`} />}>
+            Assign to groups
+          </Button>
+          <Button render={<Link href={createHref} />}>New group</Button>
+        </div>
       </div>
       <GroupsList
         rows={groups}

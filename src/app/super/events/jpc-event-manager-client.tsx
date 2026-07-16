@@ -81,7 +81,12 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {format(e.date, "EEE, MMM d, yyyy")}
+                  {format(
+                    e.date,
+                    e.date.getHours() !== 0 || e.date.getMinutes() !== 0
+                      ? "EEE, MMM d, yyyy · h:mm a"
+                      : "EEE, MMM d, yyyy",
+                  )}
                 </p>
                 {e.url && (
                   <a

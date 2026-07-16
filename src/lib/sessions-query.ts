@@ -150,6 +150,7 @@ export interface AttendanceRosterEntry {
   groupName: string | null;
   status: "PRESENT" | "ABSENT" | "EXCUSED" | "LATE" | null;
   notes: string | null;
+  lateMinutes: number | null;
 }
 
 export async function loadAttendanceRoster(
@@ -178,7 +179,7 @@ export async function loadAttendanceRoster(
 
   const attendance = await db.attendance.findMany({
     where: { sessionId },
-    select: { studentUserId: true, status: true, notes: true },
+    select: { studentUserId: true, status: true, notes: true, lateMinutes: true },
   });
   const byStudent = new Map(attendance.map((a) => [a.studentUserId, a]));
 
@@ -191,6 +192,7 @@ export async function loadAttendanceRoster(
       groupName: e.group?.name ?? null,
       status: a?.status ?? null,
       notes: a?.notes ?? null,
+      lateMinutes: a?.lateMinutes ?? null,
     };
   });
 }
