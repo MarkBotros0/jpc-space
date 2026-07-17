@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { UpcomingEventsCard } from "@/components/events/upcoming-events-card";
 
 export const metadata = { title: "Mentor dashboard" };
 
@@ -95,6 +96,8 @@ export default async function MentorDashboard() {
         <h1 className="text-2xl font-black text-brand-navy-900">Mentor dashboard</h1>
         <p className="mt-1 text-sm text-neutral-500">Cross-season pastoral view. You can read everything; writes are limited to your notes.</p>
       </div>
+
+      <UpcomingEventsCard includeAlumniOnly={true} />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>

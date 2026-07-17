@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { StatCard } from "@/components/students/stat-card";
+import { UpcomingEventsCard } from "@/components/events/upcoming-events-card";
 
 export const metadata = { title: "Dashboard" };
 
@@ -157,6 +158,9 @@ export default async function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Upcoming JPC events */}
+      <UpcomingEventsCard includeAlumniOnly={true} />
 
       {/* Stat row */}
       <div className="grid grid-cols-3 gap-3">

@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth/permissions";
 import { computeAtRiskStudents } from "@/lib/engagement";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatCard } from "@/components/students/stat-card";
+import { UpcomingEventsCard } from "@/components/events/upcoming-events-card";
 
 export const metadata = { title: "Dashboard" };
 
@@ -40,6 +41,9 @@ export default async function SuperDashboard() {
         <StatCard label="Active seasons" value={activeSeasonCount} href="/super/seasons" />
         <StatCard label="Active students" value={activeStudentCount} href="/super/students" />
       </div>
+
+      {/* Upcoming JPC events */}
+      <UpcomingEventsCard includeAlumniOnly={true} />
 
       {/* Quick nav */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">

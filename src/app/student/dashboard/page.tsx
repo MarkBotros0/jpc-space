@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatCard } from "@/components/students/stat-card";
+import { UpcomingEventsCard } from "@/components/events/upcoming-events-card";
 
 export const metadata = { title: "Dashboard" };
 
@@ -240,6 +241,9 @@ export default async function StudentDashboard() {
               </p>
             )}
           </div>
+
+          {/* Upcoming JPC events */}
+          <UpcomingEventsCard includeAlumniOnly={false} />
 
           {/* Due soon */}
           {pending.length > 0 && (
