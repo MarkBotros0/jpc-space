@@ -25,7 +25,7 @@ const PROFILE_HREF: Record<UserRole, string> = {
   SUPER: "/super/settings",
   ADMIN: "/admin/settings",
   LEADER: "/leader/settings",
-  MENTOR: "/mentor/profile",
+  MENTOR: "/mentor/settings",
   STUDENT: "/student/profile",
 };
 
@@ -67,7 +67,9 @@ function UserMenu({ role, userName, initials, avatarUrl, signOutAction }: UserMe
               "min-w-56 rounded-md border border-border bg-popover p-1 text-popover-foreground shadow-md outline-none",
             )}
           >
-            <div className="flex flex-col gap-1 px-2 py-2">
+            <MenuPrimitive.Item
+              render={<Link href={PROFILE_HREF[role]} className={cn(itemClass, "flex-col items-start gap-1 py-2")} />}
+            >
               {userName && (
                 <span className="truncate text-sm font-medium text-foreground">
                   {userName}
@@ -76,7 +78,7 @@ function UserMenu({ role, userName, initials, avatarUrl, signOutAction }: UserMe
               <Badge role={roleColor[role]} className="w-fit">
                 {role}
               </Badge>
-            </div>
+            </MenuPrimitive.Item>
             <MenuPrimitive.Separator className="my-1 h-px bg-border" />
             <MenuPrimitive.Item
               render={<Link href={PROFILE_HREF[role]} className={itemClass} />}
