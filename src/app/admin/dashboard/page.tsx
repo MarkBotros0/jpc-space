@@ -160,7 +160,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Upcoming JPC events */}
-      <UpcomingEventsCard includeAlumniOnly={true} />
+      <UpcomingEventsCard user={user} />
 
       {/* Stat row */}
       <div className="grid grid-cols-3 gap-3">

@@ -243,7 +243,7 @@ export default async function StudentDashboard() {
           </div>
 
           {/* Upcoming JPC events */}
-          <UpcomingEventsCard includeAlumniOnly={false} />
+          <UpcomingEventsCard user={user} />
 
           {/* Due soon */}
           {pending.length > 0 && (

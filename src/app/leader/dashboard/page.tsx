@@ -235,7 +235,7 @@ export default async function LeaderDashboard() {
       </div>
 
       {/* Upcoming JPC events */}
-      <UpcomingEventsCard includeAlumniOnly={true} />
+      <UpcomingEventsCard user={user} />
 
       {/* Students */}
       <div className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">

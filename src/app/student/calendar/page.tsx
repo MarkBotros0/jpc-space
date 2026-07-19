@@ -3,7 +3,7 @@ import { Calendar } from "lucide-react";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { listSessionsForSeason } from "@/lib/sessions-query";
-import { listJpcEvents } from "@/lib/jpc-events-query";
+import { listJpcEvents, viewerSeasonIds } from "@/lib/jpc-events-query";
 import { SeasonCalendar } from "@/components/sessions/season-calendar";
 import { EmptyState } from "@/components/ui/empty-state";
 
@@ -28,7 +28,7 @@ export default async function StudentCalendarPage() {
 
   const [sessions, jpcEvents] = await Promise.all([
     listSessionsForSeason(user.activeSeasonId),
-    listJpcEvents({ includeAlumniOnly: false }),
+    listJpcEvents({ includeAlumniOnly: false, seasonIds: await viewerSeasonIds(user) }),
   ]);
 
   return (

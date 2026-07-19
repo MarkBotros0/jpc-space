@@ -19,15 +19,28 @@ import type { JpcEventRow } from "@/lib/jpc-events-query";
 
 interface JpcEventFormProps {
   event?: JpcEventRow;
+  seasons: { id: number; title: string }[];
   onDone: () => void;
 }
 
-export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
+type Visibility = "ALL" | "ALUMNI_ONLY" | "SEASON";
+
+export function JpcEventForm({ event, seasons, onDone }: JpcEventFormProps) {
   const router = useRouter();
   const [error, setError] = React.useState<string | null>(null);
   const [pending, setPending] = React.useState(false);
-  const [visibility, setVisibility] = React.useState<"ALL" | "ALUMNI_ONLY">(
-    event?.visibility ?? "ALL"
+  const [visibility, setVisibility] = React.useState<Visibility>(event?.visibility ?? "ALL");
+  const [seasonId, setSeasonId] = React.useState<string>(
+    event?.seasonId ? String(event.seasonId) : "",
+  );
+
+  const visibilityItems: Record<string, string> = {
+    ALL: "Everyone",
+    ALUMNI_ONLY: "Alumni only",
+    SEASON: "Season only",
+  };
+  const seasonItems: Record<string, string> = Object.fromEntries(
+    seasons.map((s) => [String(s.id), s.title]),
   );
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -163,17 +176,35 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
 
       <div className="flex flex-col gap-1.5">
         <label className="text-sm font-medium" htmlFor="visibility">Visibility</label>
-        <Select value={visibility} onValueChange={(v) => setVisibility(v as "ALL" | "ALUMNI_ONLY")}>
+        <Select items={visibilityItems} value={visibility} onValueChange={(v) => setVisibility(v as Visibility)}>
           <SelectTrigger id="visibility">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">Everyone</SelectItem>
             <SelectItem value="ALUMNI_ONLY">Alumni only (leaders, admins)</SelectItem>
+            <SelectItem value="SEASON">Season only</SelectItem>
           </SelectContent>
         </Select>
         <input type="hidden" name="visibility" value={visibility} />
       </div>
+
+      {visibility === "SEASON" && (
+        <div className="flex flex-col gap-1.5">
+          <label className="text-sm font-medium" htmlFor="seasonId">Season</label>
+          <Select items={seasonItems} value={seasonId} onValueChange={(v) => setSeasonId(v as string)}>
+            <SelectTrigger id="seasonId">
+              <SelectValue placeholder="Choose a season" />
+            </SelectTrigger>
+            <SelectContent>
+              {seasons.map((s) => (
+                <SelectItem key={s.id} value={String(s.id)}>{s.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <input type="hidden" name="seasonId" value={seasonId} />
+        </div>
+      )}
 
       {error && <p className="text-sm text-error-500">{error}</p>}
 

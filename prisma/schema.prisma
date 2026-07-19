@@ -73,6 +73,7 @@ enum NotificationType {
 enum JpcVisibility {
   ALL
   ALUMNI_ONLY
+  SEASON
 }
 
 enum AssignmentType {
@@ -245,6 +246,7 @@ model Season {
   assignments       Assignment[]
   enrollments       SeasonEnrollment[]
   activeForStudents StudentProfile[]   @relation("StudentActiveSeason")
+  jpcEvents         JpcEvent[]         @relation("JpcEventSeason")
   engagementNotes   EngagementNote[]
   quizzes           Quiz[]
 
@@ -734,11 +736,13 @@ model JpcEvent {
   imagePath   String?
   url         String?
   visibility  JpcVisibility @default(ALL)
+  seasonId    Int?
   createdById Int?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
-  createdBy User? @relation("JpcEventCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy User?   @relation("JpcEventCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  season    Season? @relation("JpcEventSeason", fields: [seasonId], references: [id], onDelete: SetNull)
 
   @@index([date])
 }

@@ -1,7 +1,8 @@
 import { format, startOfDay } from "date-fns";
 import { CalendarDays } from "lucide-react";
 
-import { listJpcEvents } from "@/lib/jpc-events-query";
+import { listJpcEvents, viewerSeasonIds } from "@/lib/jpc-events-query";
+import type { SessionUser } from "@/lib/rbac";
 
 function fmtOne(d: Date): string {
   const timed = d.getHours() !== 0 || d.getMinutes() !== 0;
@@ -14,10 +15,15 @@ function whenLabel(start: Date, end: Date | null): string {
   return sameDay ? fmtOne(start) : `${fmtOne(start)} – ${fmtOne(end)}`;
 }
 
-/** Upcoming JPC events for a dashboard. `includeAlumniOnly` should be false for students. */
-export async function UpcomingEventsCard({ includeAlumniOnly }: { includeAlumniOnly: boolean }) {
+/** Upcoming JPC events for a dashboard, scoped to what this user may see. */
+export async function UpcomingEventsCard({ user }: { user: SessionUser }) {
   const today = startOfDay(new Date());
-  const events = (await listJpcEvents({ includeAlumniOnly }))
+  const events = (
+    await listJpcEvents({
+      includeAlumniOnly: user.role !== "STUDENT",
+      seasonIds: await viewerSeasonIds(user),
+    })
+  )
     .filter((e) => (e.endDate ?? e.date) >= today)
     .slice(0, 4);
 
