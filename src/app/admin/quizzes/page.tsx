@@ -82,7 +82,7 @@ export default async function AdminQuizzesPage() {
             return (
               <Link
                 key={q.id}
-                href={q.sessionId && season ? `/admin/season/${season.code}/sessions/${q.sessionId}` : "#"}
+                href={season ? `/admin/season/${season.code}/quizzes/${q.id}/grade` : "#"}
                 className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card px-4 py-4 shadow-[var(--shadow-soft)] transition-shadow hover:shadow-[var(--shadow-pop)]"
               >
                 <div className="min-w-0">
