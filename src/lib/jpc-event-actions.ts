@@ -3,7 +3,10 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 
+import { randomUUID } from "node:crypto";
+
 import { db } from "@/lib/db";
+import { getStorage, buildStorageKey } from "@/lib/storage";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { canManageUsers } from "@/lib/rbac";
 
@@ -12,6 +15,7 @@ const jpcEventSchema = z
     title: z.string().min(1, "Title is required").max(200),
     date: z.coerce.date(),
     endDate: z.coerce.date().nullable(),
+    description: z.string().max(2000).optional().or(z.literal("")),
     url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
     visibility: z.enum(["ALL", "ALUMNI_ONLY"]),
   })
@@ -32,6 +36,28 @@ function combineDateTime(formData: FormData, dateKey: string, timeKey: string): 
   return `${date}T${hhmm}`;
 }
 
+const ALLOWED_IMAGE = ["image/jpeg", "image/png", "image/webp"];
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5 MB
+
+/** Reads an optional "photo" upload; returns the stored path, an error, or null when none provided. */
+async function readEventPhoto(
+  formData: FormData,
+): Promise<{ path: string } | { error: string } | null> {
+  const file = formData.get("photo");
+  if (!(file instanceof File) || file.size === 0) return null;
+  if (!ALLOWED_IMAGE.includes(file.type)) return { error: "Photo must be JPEG, PNG, or WebP." };
+  if (file.size > MAX_IMAGE_BYTES) return { error: "Photo must be under 5 MB." };
+  const ext = file.type.split("/")[1] ?? "jpg";
+  const key = buildStorageKey({
+    bucket: "events",
+    publicId: randomUUID(),
+    originalName: `event.${ext}`,
+  });
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const { path } = await getStorage().put(key, buffer, { mime: file.type });
+  return { path };
+}
+
 export async function createJpcEventAction(formData: FormData) {
   const user = await getCurrentUserOrRedirect();
   if (!canManageUsers(user)) throw new Error("Forbidden");
@@ -40,16 +66,22 @@ export async function createJpcEventAction(formData: FormData) {
     title: formData.get("title"),
     date: combineDateTime(formData, "date", "time") ?? "",
     endDate: combineDateTime(formData, "endDate", "endTime"),
+    description: formData.get("description"),
     url: formData.get("url"),
     visibility: formData.get("visibility"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+
+  const photo = await readEventPhoto(formData);
+  if (photo && "error" in photo) return { error: photo.error };
 
   await db.jpcEvent.create({
     data: {
       title: parsed.data.title,
       date: parsed.data.date,
       endDate: parsed.data.endDate,
+      description: parsed.data.description || null,
+      imagePath: photo && "path" in photo ? photo.path : null,
       url: parsed.data.url || null,
       visibility: parsed.data.visibility,
       createdById: user.userId,
@@ -72,10 +104,14 @@ export async function updateJpcEventAction(id: number, formData: FormData) {
     title: formData.get("title"),
     date: combineDateTime(formData, "date", "time") ?? "",
     endDate: combineDateTime(formData, "endDate", "endTime"),
+    description: formData.get("description"),
     url: formData.get("url"),
     visibility: formData.get("visibility"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+
+  const photo = await readEventPhoto(formData);
+  if (photo && "error" in photo) return { error: photo.error };
 
   await db.jpcEvent.update({
     where: { id },
@@ -83,6 +119,8 @@ export async function updateJpcEventAction(id: number, formData: FormData) {
       title: parsed.data.title,
       date: parsed.data.date,
       endDate: parsed.data.endDate,
+      description: parsed.data.description || null,
+      ...(photo && "path" in photo ? { imagePath: photo.path } : {}),
       url: parsed.data.url || null,
       visibility: parsed.data.visibility,
     },

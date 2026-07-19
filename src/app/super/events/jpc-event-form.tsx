@@ -3,8 +3,10 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectTrigger,
@@ -55,6 +57,19 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
           defaultValue={event?.title}
           placeholder="Spring Retreat"
           required
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium" htmlFor="description">
+          Description <span className="text-muted-foreground">(optional)</span>
+        </label>
+        <Textarea
+          id="description"
+          name="description"
+          defaultValue={event?.description ?? ""}
+          rows={3}
+          placeholder="What's this event about?"
         />
       </div>
 
@@ -124,6 +139,26 @@ export function JpcEventForm({ event, onDone }: JpcEventFormProps) {
           defaultValue={event?.url ?? ""}
           placeholder="https://..."
         />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium" htmlFor="photo">
+          Photo <span className="text-muted-foreground">(optional)</span>
+        </label>
+        {event?.imageUrl && (
+          <Image
+            src={event.imageUrl}
+            alt=""
+            width={480}
+            height={192}
+            unoptimized
+            className="h-40 w-full rounded-lg object-cover"
+          />
+        )}
+        <Input id="photo" name="photo" type="file" accept="image/*" />
+        {event?.imageUrl && (
+          <p className="text-xs text-muted-foreground">Upload a new photo to replace the current one.</p>
+        )}
       </div>
 
       <div className="flex flex-col gap-1.5">

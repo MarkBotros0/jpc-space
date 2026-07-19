@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ProgressRing } from "@/components/ui/progress-ring";
 import { StatCard } from "@/components/students/stat-card";
+import { UpcomingEventsCard } from "@/components/events/upcoming-events-card";
 
 export const metadata = { title: "Dashboard" };
 
@@ -232,6 +233,9 @@ export default async function LeaderDashboard() {
           <p className="mt-2 text-sm italic text-muted-foreground">No upcoming sessions.</p>
         )}
       </div>
+
+      {/* Upcoming JPC events */}
+      <UpcomingEventsCard includeAlumniOnly={true} />
 
       {/* Students */}
       <div className="rounded-2xl border border-border bg-card shadow-[var(--shadow-soft)]">

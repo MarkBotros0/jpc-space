@@ -80,7 +80,8 @@ export async function saveAttendanceAction(
   return { ok: true };
 }
 
-/** If any student has 3+ consecutive ABSENTs across past sessions in this season, flag. */
+/** If a student has 2+ consecutive ABSENTs in this season, flag them as high-risk
+ *  to their group leaders and season admins (each with a link they can actually open). */
 async function flagLowAttendance(
   sessionId: number,
   entries: { studentUserId: number; status: AttendanceStatus }[],
@@ -103,10 +104,10 @@ async function flagLowAttendance(
         session: { seasonId: session.seasonId, startsAt: { lte: session.startsAt } },
       },
       orderBy: { session: { startsAt: "desc" } },
-      take: 3,
+      take: 2,
       select: { status: true },
     });
-    if (recent.length < 3) continue;
+    if (recent.length < 2) continue;
     if (!recent.every((r) => r.status === AttendanceStatus.ABSENT)) continue;
 
     const membership = await db.groupStudent.findUnique({
@@ -123,19 +124,33 @@ async function flagLowAttendance(
       where: { seasonId: session.seasonId },
       select: { userId: true },
     });
-    const recipientIds = Array.from(
-      new Set([...leaders.map((l) => l.userId), ...admins.map((a) => a.userId)]),
-    );
+    const adminIds = admins.map((a) => a.userId);
+    const leaderOnlyIds = leaders
+      .map((l) => l.userId)
+      .filter((id) => !adminIds.includes(id));
     const student = await db.user.findUnique({
       where: { id: studentUserId },
       select: { name: true },
     });
-    await createNotificationsBulk(recipientIds, {
-      type: "LOW_ATTENDANCE_FLAG",
-      title: `${student?.name ?? "A student"} has 3 consecutive absences`,
-      body: "Consider reaching out for a check-in.",
-      link: `/admin/students/${studentUserId}`,
-    });
+    const title = `${student?.name ?? "A student"} is at high risk — 2 consecutive absences`;
+    const body = "Consider reaching out for a check-in.";
+    // Each recipient gets a link they can actually open: admins → admin view, leaders → leader view.
+    if (adminIds.length > 0) {
+      await createNotificationsBulk(adminIds, {
+        type: "LOW_ATTENDANCE_FLAG",
+        title,
+        body,
+        link: `/admin/students/${studentUserId}`,
+      });
+    }
+    if (leaderOnlyIds.length > 0) {
+      await createNotificationsBulk(leaderOnlyIds, {
+        type: "LOW_ATTENDANCE_FLAG",
+        title,
+        body,
+        link: `/leader/students/${studentUserId}`,
+      });
+    }
   }
 }
 
