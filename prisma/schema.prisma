@@ -730,6 +730,8 @@ model JpcEvent {
   title       String
   date        DateTime
   endDate     DateTime?
+  description String?
+  imagePath   String?
   url         String?
   visibility  JpcVisibility @default(ALL)
   createdById Int?

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { format } from "date-fns";
 import { CalendarDays, ExternalLink, Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -95,6 +96,16 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
               key={e.id}
               className="flex items-center gap-4 rounded-lg border border-border bg-card p-4"
             >
+              {e.imageUrl && (
+                <Image
+                  src={e.imageUrl}
+                  alt=""
+                  width={64}
+                  height={64}
+                  unoptimized
+                  className="size-16 shrink-0 rounded-lg object-cover"
+                />
+              )}
               <div className="flex flex-1 flex-col gap-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold truncate">{e.title}</span>
@@ -105,6 +116,9 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
                 <p className="text-sm text-muted-foreground">
                   {formatEventWhen(e.date, e.endDate)}
                 </p>
+                {e.description && (
+                  <p className="text-sm text-muted-foreground line-clamp-2">{e.description}</p>
+                )}
                 {e.url && (
                   <a
                     href={e.url}
