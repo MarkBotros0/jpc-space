@@ -36,14 +36,12 @@ const statusVariant: Record<
   PRESENT: "success",
   LATE: "warning",
   ABSENT: "error",
-  EXCUSED: "info",
 };
 
 const ALL_STATUSES: AttendanceStatus[] = [
   AttendanceStatus.PRESENT,
   AttendanceStatus.LATE,
   AttendanceStatus.ABSENT,
-  AttendanceStatus.EXCUSED,
 ];
 
 export function CheckInAttendanceList({

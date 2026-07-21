@@ -257,7 +257,6 @@ export default function DesignSystemPage() {
         <div className="flex flex-wrap gap-2">
           <AttendancePill status="PRESENT" />
           <AttendancePill status="ABSENT" />
-          <AttendancePill status="EXCUSED" />
           <AttendancePill status="LATE" />
         </div>
       </Section>
@@ -372,7 +371,7 @@ interface DemoRow {
   id: number;
   name: string;
   role: "SUPER" | "ADMIN" | "LEADER" | "MENTOR" | "STUDENT";
-  status: "PRESENT" | "ABSENT" | "LATE" | "EXCUSED";
+  status: "PRESENT" | "ABSENT" | "LATE";
 }
 
 const demoRows: DemoRow[] = [

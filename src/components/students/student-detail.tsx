@@ -208,7 +208,7 @@ export function StudentDetail({
                         </p>
                       </div>
                       <AttendancePill
-                        status={a.status as "PRESENT" | "ABSENT" | "EXCUSED" | "LATE"}
+                        status={a.status as "PRESENT" | "ABSENT" | "LATE"}
                       />
                     </li>
                   ))}

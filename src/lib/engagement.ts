@@ -244,8 +244,8 @@ export async function computeAtRiskStudents(
 
 /**
  * Consecutive sessions attended (PRESENT or LATE) counting backwards from
- * the most recent past session. EXCUSED does not break or increment the streak.
- * ABSENT resets it. Sessions with no attendance record are skipped (not penalised).
+ * the most recent past session. ABSENT resets it. Sessions with no attendance
+ * record are skipped (not penalised).
  */
 export async function computeAttendanceStreak(
   studentUserId: number,
@@ -268,7 +268,6 @@ export async function computeAttendanceStreak(
     if (!record) continue; // no record — skip, don't break
     if (record.status === "ABSENT") break; // breaks streak
     if (record.status === "PRESENT" || record.status === "LATE") streak++;
-    // EXCUSED: don't increment, don't break
   }
   return streak;
 }

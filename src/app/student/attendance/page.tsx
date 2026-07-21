@@ -18,7 +18,6 @@ function statusBadge(status: AttendanceStatus | null) {
   if (status === "PRESENT") return <Badge variant="success">Present</Badge>;
   if (status === "LATE") return <Badge variant="warning">Late</Badge>;
   if (status === "ABSENT") return <Badge variant="error">Absent</Badge>;
-  if (status === "EXCUSED") return <Badge variant="outline">Excused</Badge>;
   return null;
 }
 
