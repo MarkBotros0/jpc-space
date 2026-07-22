@@ -44,7 +44,6 @@ enum EnrollmentStatus {
 enum AttendanceStatus {
   PRESENT
   ABSENT
-  EXCUSED
   LATE
 }
 

@@ -19,7 +19,6 @@ const entrySchema = z.object({
   status: z.enum([
     AttendanceStatus.PRESENT,
     AttendanceStatus.ABSENT,
-    AttendanceStatus.EXCUSED,
     AttendanceStatus.LATE,
   ]),
   notes: z.string().max(500).optional().nullable(),
@@ -259,7 +258,6 @@ const overrideSchema = z.object({
   status: z.enum([
     AttendanceStatus.PRESENT,
     AttendanceStatus.ABSENT,
-    AttendanceStatus.EXCUSED,
     AttendanceStatus.LATE,
   ]),
   notes: z.string().max(500).optional().nullable(),

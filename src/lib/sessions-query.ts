@@ -148,7 +148,7 @@ export interface AttendanceRosterEntry {
   name: string | null;
   email: string;
   groupName: string | null;
-  status: "PRESENT" | "ABSENT" | "EXCUSED" | "LATE" | null;
+  status: "PRESENT" | "ABSENT" | "LATE" | null;
   notes: string | null;
   lateMinutes: number | null;
 }

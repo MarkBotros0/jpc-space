@@ -34,6 +34,7 @@ export default async function AdminSeasonReportsPage({ params }: PageProps) {
       <ReportsView
         data={data}
         exportCsvHref={`/api/reports/export?season=${season.id}`}
+        exportXlsxHref={`/api/season/export?season=${season.id}`}
         studentDetailBase="/admin/students"
       />
     </div>

@@ -15,10 +15,11 @@ import type { ReportsData } from "@/lib/reports-query";
 interface ReportsViewProps {
   data: ReportsData;
   exportCsvHref: string;
+  exportXlsxHref?: string;
   studentDetailBase: string;
 }
 
-export function ReportsView({ data, exportCsvHref, studentDetailBase }: ReportsViewProps) {
+export function ReportsView({ data, exportCsvHref, exportXlsxHref, studentDetailBase }: ReportsViewProps) {
   if (data.attendanceTrend.length === 0 && data.submissionRates.length === 0 && data.rawStudents.length === 0) {
     return (
       <EmptyState
@@ -32,6 +33,11 @@ export function ReportsView({ data, exportCsvHref, studentDetailBase }: ReportsV
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap justify-end gap-2">
+        {exportXlsxHref && (
+          <Button variant="outline" render={<Link href={exportXlsxHref} />}>
+            Export Excel
+          </Button>
+        )}
         <Button variant="outline" render={<Link href={exportCsvHref} />}>
           Export CSV
         </Button>

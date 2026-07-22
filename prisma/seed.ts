@@ -349,9 +349,9 @@ async function main() {
   console.log("→ Marking attendance for past GBV sessions…");
   // First 2 sessions are past (offsetWeeks -2, -1).
   const pastSessions = gbvSessions.slice(0, 2);
-  const ATTENDANCE_MIX: ("PRESENT" | "ABSENT" | "EXCUSED" | "LATE")[] = [
+  const ATTENDANCE_MIX: ("PRESENT" | "ABSENT" | "LATE")[] = [
     "PRESENT", "PRESENT", "PRESENT", "PRESENT", "PRESENT", "PRESENT",
-    "LATE", "EXCUSED", "ABSENT",
+    "LATE", "ABSENT", "ABSENT",
   ];
   for (const session of pastSessions) {
     for (let i = 0; i < gbvStudents.length; i++) {
@@ -362,6 +362,7 @@ async function main() {
           sessionId: session.id,
           studentUserId: student.id,
           status,
+          lateMinutes: status === "LATE" ? 5 + ((i * 3) % 20) : null,
           markedById: leaderUsers[i % leaderUsers.length].id,
         },
       });

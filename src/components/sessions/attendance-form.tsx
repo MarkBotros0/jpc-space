@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Check, X, Clock, AlertCircle } from "lucide-react";
+import { Check, X, Clock } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,6 @@ const STATUS_OPTIONS: {
 }[] = [
   { value: AttendanceStatus.PRESENT, label: "Present", icon: Check, className: "bg-success-100 text-success-800 ring-success-300" },
   { value: AttendanceStatus.LATE, label: "Late", icon: Clock, className: "bg-warning-100 text-warning-800 ring-warning-300" },
-  { value: AttendanceStatus.EXCUSED, label: "Excused", icon: AlertCircle, className: "bg-info-100 text-info-800 ring-info-300" },
   { value: AttendanceStatus.ABSENT, label: "Absent", icon: X, className: "bg-error-100 text-error-800 ring-error-300" },
 ];
 

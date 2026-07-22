@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Check, Clock, Minus, X } from "lucide-react";
+import { Check, Clock, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { AttendanceStatus } from "@/generated/prisma/enums";
@@ -17,11 +17,6 @@ const map: Record<
     label: "Absent",
     classes: "bg-error-100 text-error-800",
     icon: X,
-  },
-  EXCUSED: {
-    label: "Excused",
-    classes: "bg-info-100 text-info-800",
-    icon: Minus,
   },
   LATE: {
     label: "Late",
