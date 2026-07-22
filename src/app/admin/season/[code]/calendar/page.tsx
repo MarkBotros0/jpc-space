@@ -6,7 +6,7 @@ import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole, canEditSeason } from "@/lib/auth/permissions";
 import { loadSeasonByCode } from "@/lib/seasons-query";
 import { listSessionsForSeason } from "@/lib/sessions-query";
-import { listJpcEvents } from "@/lib/jpc-events-query";
+import { listJpcEvents, viewerSeasonIds } from "@/lib/jpc-events-query";
 import { Button } from "@/components/ui/button";
 import { SeasonCalendar } from "@/components/sessions/season-calendar";
 
@@ -30,7 +30,7 @@ export default async function AdminCalendarPage({ params }: PageProps) {
 
   const [sessions, jpcEvents] = await Promise.all([
     listSessionsForSeason(season.id),
-    listJpcEvents({ includeAlumniOnly: true }),
+    listJpcEvents({ includeAlumniOnly: true, seasonIds: await viewerSeasonIds(user) }),
   ]);
 
   return (

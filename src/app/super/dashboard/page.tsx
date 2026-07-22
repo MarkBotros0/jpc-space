@@ -43,7 +43,7 @@ export default async function SuperDashboard() {
       </div>
 
       {/* Upcoming JPC events */}
-      <UpcomingEventsCard includeAlumniOnly={true} />
+      <UpcomingEventsCard user={user} />
 
       {/* Quick nav */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">

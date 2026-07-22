@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { getCurrentUserOrRedirect } from "@/lib/auth/session";
 import { requireRole } from "@/lib/auth/permissions";
 import { listSessionsForSeason } from "@/lib/sessions-query";
-import { listJpcEvents } from "@/lib/jpc-events-query";
+import { listJpcEvents, viewerSeasonIds } from "@/lib/jpc-events-query";
 import { SeasonCalendar } from "@/components/sessions/season-calendar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Calendar } from "lucide-react";
@@ -39,7 +39,7 @@ export default async function LeaderCalendarPage() {
     Promise.all(seasonIds.map((id) => listSessionsForSeason(id))).then((arr) =>
       arr.flat().sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()),
     ),
-    listJpcEvents({ includeAlumniOnly: true }),
+    listJpcEvents({ includeAlumniOnly: true, seasonIds: await viewerSeasonIds(user) }),
   ]);
 
   return (

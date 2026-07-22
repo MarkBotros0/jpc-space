@@ -38,9 +38,10 @@ function formatEventWhen(start: Date, end: Date | null): string {
 
 interface JpcEventManagerClientProps {
   events: JpcEventRow[];
+  seasons: { id: number; title: string }[];
 }
 
-export function JpcEventManagerClient({ events: initialEvents }: JpcEventManagerClientProps) {
+export function JpcEventManagerClient({ events: initialEvents, seasons }: JpcEventManagerClientProps) {
   const router = useRouter();
   const [creating, setCreating] = React.useState(false);
   const [editingId, setEditingId] = React.useState<number | null>(null);
@@ -59,7 +60,7 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
     return (
       <div className="rounded-lg border border-border bg-card p-6 max-w-lg">
         <h2 className="text-base font-semibold mb-4">New JPC event</h2>
-        <JpcEventForm onDone={() => setCreating(false)} />
+        <JpcEventForm seasons={seasons} onDone={() => setCreating(false)} />
       </div>
     );
   }
@@ -69,7 +70,7 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
     return (
       <div className="rounded-lg border border-border bg-card p-6 max-w-lg">
         <h2 className="text-base font-semibold mb-4">Edit event</h2>
-        <JpcEventForm event={event} onDone={() => setEditingId(null)} />
+        <JpcEventForm event={event} seasons={seasons} onDone={() => setEditingId(null)} />
       </div>
     );
   }
@@ -109,8 +110,12 @@ export function JpcEventManagerClient({ events: initialEvents }: JpcEventManager
               <div className="flex flex-1 flex-col gap-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-semibold truncate">{e.title}</span>
-                  <Badge variant={e.visibility === "ALUMNI_ONLY" ? "warning" : "outline"}>
-                    {e.visibility === "ALUMNI_ONLY" ? "Alumni only" : "Everyone"}
+                  <Badge variant={e.visibility === "ALL" ? "outline" : "warning"}>
+                    {e.visibility === "ALUMNI_ONLY"
+                      ? "Alumni only"
+                      : e.visibility === "SEASON"
+                        ? `${e.seasonTitle ?? "Season"} only`
+                        : "Everyone"}
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">

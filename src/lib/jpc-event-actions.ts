@@ -17,11 +17,16 @@ const jpcEventSchema = z
     endDate: z.coerce.date().nullable(),
     description: z.string().max(2000).optional().or(z.literal("")),
     url: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-    visibility: z.enum(["ALL", "ALUMNI_ONLY"]),
+    visibility: z.enum(["ALL", "ALUMNI_ONLY", "SEASON"]),
+    seasonId: z.coerce.number().int().positive().nullable(),
   })
   .refine((v) => !v.endDate || v.endDate.getTime() >= v.date.getTime(), {
     message: "End must be on or after the start.",
     path: ["endDate"],
+  })
+  .refine((v) => v.visibility !== "SEASON" || v.seasonId != null, {
+    message: "Choose a season for a season-only event.",
+    path: ["seasonId"],
   });
 
 /**
@@ -69,6 +74,7 @@ export async function createJpcEventAction(formData: FormData) {
     description: formData.get("description"),
     url: formData.get("url"),
     visibility: formData.get("visibility"),
+    seasonId: formData.get("seasonId") || null,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
@@ -84,6 +90,7 @@ export async function createJpcEventAction(formData: FormData) {
       imagePath: photo && "path" in photo ? photo.path : null,
       url: parsed.data.url || null,
       visibility: parsed.data.visibility,
+      seasonId: parsed.data.visibility === "SEASON" ? parsed.data.seasonId : null,
       createdById: user.userId,
     },
   });
@@ -107,6 +114,7 @@ export async function updateJpcEventAction(id: number, formData: FormData) {
     description: formData.get("description"),
     url: formData.get("url"),
     visibility: formData.get("visibility"),
+    seasonId: formData.get("seasonId") || null,
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
@@ -123,6 +131,7 @@ export async function updateJpcEventAction(id: number, formData: FormData) {
       ...(photo && "path" in photo ? { imagePath: photo.path } : {}),
       url: parsed.data.url || null,
       visibility: parsed.data.visibility,
+      seasonId: parsed.data.visibility === "SEASON" ? parsed.data.seasonId : null,
     },
   });
 

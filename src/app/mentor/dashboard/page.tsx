@@ -97,7 +97,7 @@ export default async function MentorDashboard() {
         <p className="mt-1 text-sm text-neutral-500">Cross-season pastoral view. You can read everything; writes are limited to your notes.</p>
       </div>
 
-      <UpcomingEventsCard includeAlumniOnly={true} />
+      <UpcomingEventsCard user={user} />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
